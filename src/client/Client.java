@@ -1,7 +1,5 @@
 package client;
 
-import server.ConfigManager;
-
 /**
  * Main class for client side. 
  */
