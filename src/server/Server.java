@@ -16,7 +16,7 @@ public class Server {
 		ArrayList<Replica> replicas = new ArrayList<Replica>();
 		for (Replica replica : replicas){
 			System.out.println(replica);
-			// create a thread to dela with this connection
+			// create a thread to deal with this connection
 		}
 	}
 }
