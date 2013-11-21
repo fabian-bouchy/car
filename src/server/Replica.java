@@ -1,13 +1,13 @@
 package server;
 
-public class Replicat {
+public class Replica {
 	
 	private String 	sName;
 	private String 	sIpAdresse;
 	private int 	iPriority;
 	private int 	iPort;
 
-	public Replicat(String sName, String sIpAdresse, int iPriority, int iPort) {
+	public Replica(String sName, String sIpAdresse, int iPriority, int iPort) {
 		super();
 		this.sName 		= sName;
 		this.sIpAdresse = sIpAdresse;
