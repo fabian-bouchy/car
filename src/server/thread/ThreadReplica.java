@@ -1,9 +1,13 @@
 package server.thread;
 
+import server.Replica;
+
 public class ThreadReplica implements Runnable{
 	
-	public ThreadReplica(){
-		
+	private Replica replica;
+	
+	public ThreadReplica(Replica replica){
+		this.replica = replica;
 	}
 
 	@Override

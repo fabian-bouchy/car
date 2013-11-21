@@ -5,14 +5,14 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ThreadRead implements Runnable{
+public class ThreadReplicaServer implements Runnable{
 
 	private Socket clientSocket;
 	private ServerSocket serverSocket;
 	private PrintWriter out;
 	private BufferedReader in;
 	
-	public ThreadRead(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in){
+	public ThreadReplicaServer(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in){
 		this.serverSocket = serverSocket;
 		this.clientSocket = clientSocket;
 		this.out = out;
