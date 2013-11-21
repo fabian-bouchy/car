@@ -29,7 +29,8 @@ public class Server {
 		
 		// wait for new connections from clients and other replicas
 		try {
-			ServerSocket serverSocket = new ServerSocket(9999);
+			int port = 9999;
+			ServerSocket serverSocket = new ServerSocket(port);
 			
 			while (true){
 		        try {
@@ -41,6 +42,8 @@ public class Server {
 	                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
 	                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 	                String inputLine = in.readLine();
+	                
+	                System.out.println("[Server] Received a message: '" + inputLine + "' " + clientSocket.getInetAddress());
 	                
 	                if (inputLine.equals("replica")){
 	                	
@@ -66,7 +69,7 @@ public class Server {
 	                
 	            } catch (IOException e) {
 	                System.out.println("Exception caught when trying to listen on port "
-	                    + 9999 + " or listening for a connection");
+	                    + port + " or listening for a connection");
 	                System.out.println(e.getMessage());
 	            }
 			}
