@@ -13,17 +13,17 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 
-import server.Replicat;
+import server.Replica;
 
 public class ConfigManager {
 
 	
 	private static final String DEFAULT_CONFIG_FILE_NAME = "config.json";
 	
-	private static ArrayList<Replicat> replicats;
+	private static ArrayList<Replica> replicas;
 	
 	static {
-		replicats = new ArrayList<Replicat>();
+		replicas = new ArrayList<Replica>();
 	}
 	
 	private ConfigManager(){}
