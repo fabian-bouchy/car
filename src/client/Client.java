@@ -17,8 +17,8 @@ public class Client {
 		// ConfigManager.init();
 		
 		// parse values
-		String hostName = args[0];
-		int portNumber = Integer.parseInt(args[1]);
+		String hostName = args[1];
+		int portNumber = Integer.parseInt(args[2]);
 		try{
 			Socket echoSocket = new Socket(hostName, portNumber);
 			PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
