@@ -4,6 +4,10 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 
+import server.thread.ThreadRead;
+import server.thread.ThreadReplicaServer;
+import server.thread.ThreadWrite;
+
 public class Server {
 	
 	public void run(String[] args){
@@ -26,6 +30,7 @@ public class Server {
 		// wait for new connections from clients and other replicas
 		try {
 			ServerSocket serverSocket = new ServerSocket(9999);
+			
 			while (true){
 		        try {
 		        	// accept any new connection
@@ -38,17 +43,25 @@ public class Server {
 	                String inputLine = in.readLine();
 	                
 	                if (inputLine.equals("replica")){
+	                	
 	                	// instantiate a replica server thread
 	                	System.out.println("[Server] Initializing a replica server thread for " + clientSocket.getInetAddress());
-	                	
+	            		ThreadReplicaServer thread = new ThreadReplicaServer(serverSocket, clientSocket, out, in);
+	            		new Thread(thread).start();
+	            		
 	                }else if (inputLine.equals("read")){
+	                	
 	                	// instantiate a read thread
 	                	System.out.println("[Server] Initializing a read thread for " + clientSocket.getInetAddress());
-	                	
+	            		ThreadRead thread = new ThreadRead(serverSocket, clientSocket, out, in);
+	            		new Thread(thread).start();
+	            		
 	                }else{
+	                	
 	                	// instantiate a create/update/delete thread
 	                	System.out.println("[Server] Initializing a write thread for " + clientSocket.getInetAddress());
-	                	
+	            		ThreadWrite thread = new ThreadWrite(serverSocket, clientSocket, out, in);
+	            		new Thread(thread).start();
 	                }
 	                
 	            } catch (IOException e) {
