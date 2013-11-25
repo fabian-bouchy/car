@@ -5,32 +5,30 @@ import java.util.Map;
 
 public class FileManager {
 	
-	private static Map<String, File> MapFichiers;
+	private static Map<String, File> MapFiles;
 
 	private FileManager(){
 		Map<String, File> mapFich = new HashMap<String, File>();
-		setMapFichiers(mapFich);
+		setMapFiles(mapFich);
 	}
 	
-	public static Map<String, File> getMapFichiers() {
-		return MapFichiers;
+	public static Map<String, File> getMapFiles() {
+		return MapFiles;
 	}
 
-	public static void setMapFichiers(Map<String, File> mapFichiers) {
-		MapFichiers = mapFichiers;
+	public static void setMapFiles(Map<String, File> mapFiles) {
+		MapFiles = mapFiles;
 	}
 	
-	public static File getFichier(String id){
-		return MapFichiers.get(id);
+	public static File getFile(String id){
+		return MapFiles.get(id);
 	}
 	
-	public static void addFichier(String id, File fichier){
-		getMapFichiers().put(id, fichier);
+	public static void addFile(String id, File file){
+		getMapFiles().put(id, file);
 	}
 	
-	public static void replaceFichier(String id, File fichier){
-		getMapFichiers().put(id, fichier);
-		
+	public static void replaceFile(String id, File file){
+		getMapFiles().put(id, file);
 	}
-
 }
