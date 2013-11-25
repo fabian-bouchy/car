@@ -37,10 +37,8 @@ public class ThreadReplicaServer implements Runnable{
 			System.out.println("Object received: " + file);
 			file.writeToFile(file.getId());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -51,11 +51,28 @@ public class Replica {
 
 	}
 	
-	public boolean has(String id){
-		return false;
+	public boolean has(String id) throws UnknownHostException, IOException{
+		Socket echoSocket = connect();
+		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+		
+		// send the command
+		// a replica should answer "true" or "false"
+		out.println("replica:has:"+id);
+		
+		// test the output
+		return in.readLine().equals("true");
 	}
 	
-	
+	public boolean delete(String id)throws UnknownHostException, IOException{
+		Socket echoSocket = connect();
+		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+		
+		out.println("replica:delete:"+id);
+		
+		return in.readLine().equals("OK");
+	}
 	
 	
 
