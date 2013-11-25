@@ -2,7 +2,8 @@ package server;
 
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
+
+import common.ConfigManager;
 
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
@@ -10,19 +11,20 @@ import server.thread.ThreadWrite;
 
 public class Server {
 	
-	public void run(String[] args){
+	public void run(String[] args) throws Exception{
 		
 		// initialize the configuration
-		if (args.length == 2){
-			//ConfigManager.init(args[1]);
+		if (args.length == 3){
+			ConfigManager.init(args[1], args[2]);
 		}else{
-			//ConfigManager.init();
+			ConfigManager.init();
 		}
 		
-		// wait for new connections from clients and other replicas
 		try {
-			int port = 9999;
-			ServerSocket serverSocket = new ServerSocket(port);
+			Replica me = ConfigManager.getMe();
+			
+			// create a socket and wait for connections
+			ServerSocket serverSocket = new ServerSocket(me.getPort());
 			
 			while (true){
 		        try {
@@ -33,24 +35,27 @@ public class Server {
 	                // create io
 	                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
 	                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-	                String inputLine = in.readLine();
+	                String command = in.readLine();
 	                
-	                System.out.println("[Server] Received a message: '" + inputLine + "' " + clientSocket.getInetAddress());
+	                System.out.println("[Server] Received a message: '" + command + "' " + clientSocket.getInetAddress());
 	                
-	                if (inputLine.contains("replica")){
+	                // the replica commands family - interactions between servers
+	                if (command.contains("replica")){
 	                	
 	                	// instantiate a replica server thread
 	                	System.out.println("[Server] Initializing a replica server thread for " + clientSocket.getInetAddress());
 	            		ThreadReplicaServer thread = new ThreadReplicaServer(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
-	            		
-	                }else if (inputLine.equals("read")){
+	            	
+	            	// a client asks to read a file
+	                }else if (command.equals("read")){
 	                	
 	                	// instantiate a read thread
 	                	System.out.println("[Server] Initializing a read thread for " + clientSocket.getInetAddress());
 	            		ThreadRead thread = new ThreadRead(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
-	            		
+	            	
+	            	// a client asks to write or delete
 	                }else{
 	                	
 	                	// instantiate a create/update/delete thread
@@ -60,13 +65,11 @@ public class Server {
 	                }
 	                
 	            } catch (IOException e) {
-	                System.out.println("Exception caught when trying to listen on port "
-	                    + port + " or listening for a connection");
+	                System.out.println("Exception caught when trying to listen on port " + me.getPort() + " or listening for a connection");
 	                System.out.println(e.getMessage());
 	            }
 			}
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

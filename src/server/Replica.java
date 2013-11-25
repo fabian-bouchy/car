@@ -14,13 +14,15 @@ public class Replica {
 	
 	private String 	sName;
 	private String 	sIpAddress;
+	private String 	sInterface;
 	private int 	iPriority;
 	private int 	iPort;
 
-	public Replica(String sName, String sIpAddress, int iPriority, int iPort) {
+	public Replica(String sName, String sIpAddress, String sInterface, int iPriority, int iPort) {
 		super();
 		this.sName 		= sName;
 		this.sIpAddress = sIpAddress;
+		this.sInterface = sInterface;
 		this.iPriority 	= iPriority;
 		this.iPort 		= iPort;
 	}
@@ -106,10 +108,12 @@ public class Replica {
 	public int getPort() {
 		return iPort;
 	}
-
+	
 	public void setPort(int iPort) {
 		this.iPort = iPort;
 	}
 	
-	
+	public String toString(){
+		return "[replica] ["+iPriority+"] "+sName+" - "+sIpAddress+"("+sInterface+"):"+iPort;
+	}
 }
