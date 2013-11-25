@@ -22,7 +22,7 @@ public class Client {
 		
 		try{
 			
-			Replica replica = new Replica("bob", hostName, 1, portNumber);
+			Replica replica = new Replica("bob", hostName, "em0", 1, portNumber);
 			File f = new File(args[3], args[3]);
 			replica.write(f);
 			
