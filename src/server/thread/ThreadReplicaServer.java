@@ -28,20 +28,38 @@ public class ThreadReplicaServer implements Runnable{
 	@Override
 	public void run() {
 		System.out.println("[thread replica server] run");
-		
 		try {
-			out.println("OK");
+			String input = in.readLine();
+			String[] cmd = input.split(":");
 			
-			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
-			File file = (File) reader.readObject();
-			System.out.println("Object received: " + file);
-			file.writeToFile(file.getId());
+			/**
+			 * 0 : should be replica
+			 * 1 : action write etc...
+			 */
+			if(cmd.length >= 2) {
+				// Be sure that the message is for the replica thread!
+				if(cmd[0].compareTo("replica") != 0)
+					return;
+
+				// To the job:
+				switch (cmd[1]) {
+				case "write":
+					out.println("replica:write:ready");
+					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
+					File file = (File) reader.readObject();
+					System.out.println("Object received: " + file);
+					file.writeToFile(file.getId());
+					out.println("replica:write:ok");
+					break;
+
+				default:
+					break;
+				}
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 	}
-
 }

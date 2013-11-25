@@ -28,8 +28,7 @@ public class Replica {
 	public Socket connect() throws UnknownHostException, IOException{
 		return new Socket(sIpAddress, iPort);
 	}
-	
-	
+
 	public void write(File file) throws UnknownHostException, IOException{
 		
 		Socket echoSocket = connect();
@@ -40,15 +39,21 @@ public class Replica {
 		
 		String line = in.readLine();
 		
-		if (line.equals("OK")){
+		if (line.equals("replica:write:ready")){
 			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
 			outStream.writeObject(file);
 			outStream.close();
+
+
+			// Check if write successed
+			String status = in.readLine();
+			if(status.equals("replica:write:ok"))
+				System.out.println("Replication successed file: " + file);
+			else
+				throw new IOException();
 		}else{
 			throw new IOException();
 		}
-		
-
 	}
 	
 	public boolean has(String id) throws UnknownHostException, IOException{
