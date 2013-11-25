@@ -41,7 +41,7 @@ public class ThreadWrite implements Runnable{
 			// TODO check if replication successed
 			replicasManager.replicate(file);
 			// send to client that the write successed
-			out.println("server:write:ready");
+			out.println("server:write:ok");
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}

@@ -49,6 +49,7 @@ public class ThreadReplicaServer implements Runnable{
 					File file = (File) reader.readObject();
 					System.out.println("Object received: " + file);
 					file.writeToFile(file.getId());
+					// TODO add support FileManager
 					out.println("replica:write:ok");
 					break;
 

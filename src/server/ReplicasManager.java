@@ -16,6 +16,7 @@ public class ReplicasManager {
 	}
 
 	public void replicate(File file){
+		// TODO need to be change
 		for (Replica replica : replicas) {
 			try {
 				replica.write(file);

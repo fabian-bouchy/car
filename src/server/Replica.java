@@ -42,8 +42,6 @@ public class Replica {
 		if (line.equals("replica:write:ready")){
 			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
 			outStream.writeObject(file);
-			outStream.close();
-
 
 			// Check if write successed
 			String status = in.readLine();
