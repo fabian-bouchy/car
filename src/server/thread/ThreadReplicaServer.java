@@ -8,6 +8,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import common.File;
+import common.FileManager;
+import common.UtilBobby;
 
 public class ThreadReplicaServer implements Runnable{
 
@@ -30,7 +32,7 @@ public class ThreadReplicaServer implements Runnable{
 		System.out.println("[thread replica server] run");
 		try {
 			String input = in.readLine();
-			String[] cmd = input.split(":");
+			String[] cmd = input.split(UtilBobby.SPLIT_REGEX);
 			
 			/**
 			 * 0 : should be replica
@@ -38,19 +40,23 @@ public class ThreadReplicaServer implements Runnable{
 			 */
 			if(cmd.length >= 2) {
 				// Be sure that the message is for the replica thread!
-				if(cmd[0].compareTo("replica") != 0)
+				if(cmd[0].compareTo(UtilBobby.REPLICA) != 0)
 					return;
 
 				// To the job:
 				switch (cmd[1]) {
 				case "write":
-					out.println("replica:write:ready");
+					out.println(UtilBobby.REPLICA_WRITE_READY);
 					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 					File file = (File) reader.readObject();
 					System.out.println("Object received: " + file);
+					// Persit object on hdd
 					file.writeToFile(file.getId());
-					// TODO add support FileManager
-					out.println("replica:write:ok");
+
+					// TODO check support of FileManager
+					// Persit object in memory
+					FileManager.addFile(file);
+					out.println(UtilBobby.REPLICA_WRITE_OK);
 					break;
 
 				default:

@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import common.File;
+import common.UtilBobby;
 
 public class Replica {
 	
@@ -37,17 +38,17 @@ public class Replica {
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 		
-		out.println("replica:write");
+		out.println(UtilBobby.REPLICA_WRITE);
 		
 		String line = in.readLine();
 		
-		if (line.equals("replica:write:ready")){
+		if (line.equals(UtilBobby.REPLICA_WRITE_READY)){
 			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
 			outStream.writeObject(file);
 
 			// Check if write successed
 			String status = in.readLine();
-			if(status.equals("replica:write:ok"))
+			if(status.equals(UtilBobby.REPLICA_WRITE_OK))
 				System.out.println("Replication successed file: " + file);
 			else
 				throw new IOException();
@@ -63,7 +64,7 @@ public class Replica {
 		
 		// send the command
 		// a replica should answer "true" or "false"
-		out.println("replica:has:"+id);
+		out.println(UtilBobby.REPLICA_HAS + UtilBobby.SPLIT_REGEX + id);
 		
 		// test the output
 		return in.readLine().equals("true");
@@ -74,7 +75,7 @@ public class Replica {
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 		
-		out.println("replica:delete:"+id);
+		out.println(UtilBobby.REPLICA_DELETE + UtilBobby.SPLIT_REGEX + id);
 		
 		return in.readLine().equals("OK");
 	}

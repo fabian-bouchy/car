@@ -4,13 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileManager {
-	
+
 	private static Map<String, File> MapFiles;
 
-	private FileManager(){
+	static {
 		Map<String, File> mapFich = new HashMap<String, File>();
 		setMapFiles(mapFich);
 	}
+
+	private FileManager(){}
 	
 	public static Map<String, File> getMapFiles() {
 		return MapFiles;
@@ -24,11 +26,11 @@ public class FileManager {
 		return MapFiles.get(id);
 	}
 	
-	public static void addFile(String id, File file){
-		getMapFiles().put(id, file);
+	public static void addFile(File file){
+		getMapFiles().put(file.getId(), file);
 	}
 	
-	public static void replaceFile(String id, File file){
-		getMapFiles().put(id, file);
+	public static void replaceFile(File file){
+		getMapFiles().put(file.getId(), file);
 	}
 }

@@ -9,6 +9,8 @@ import java.net.Socket;
 
 import server.ReplicasManager;
 import common.File;
+import common.FileManager;
+import common.UtilBobby;
 
 public class ThreadWrite implements Runnable{
 
@@ -32,16 +34,19 @@ public class ThreadWrite implements Runnable{
 		// TODO Auto-generated method stub
 		try {
 			// send to client that the server is ready
-			out.println("server:write:ready");
+			out.println(UtilBobby.SERVER_WRITE_READY);
 			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 			File file = (File) reader.readObject();
 			System.out.println("Object received: " + file + " form client!");
+			// Persit object on hdd
 			file.writeToFile(file.getId());
+			// Persit object in memory
+			FileManager.addFile(file);
 
 			// TODO check if replication successed
 			replicasManager.replicate(file);
 			// send to client that the write successed
-			out.println("server:write:ok");
+			out.println(UtilBobby.SERVER_WRITE_OK);
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
