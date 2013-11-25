@@ -12,9 +12,14 @@ import server.Replica;
  */
 public class Client {
 	
-	public void run(String[] args){	
+	public void run(String[] args){
+		
+		// the very first version - hostname and IP in the com
+		String file = args[3];
 		String hostName = args[1];
 		int portNumber = Integer.parseInt(args[2]);
+		
+		
 		try{
 			
 			Replica replica = new Replica("bob", hostName, 1, portNumber);

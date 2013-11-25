@@ -33,24 +33,27 @@ public class Server {
 	                // create io
 	                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
 	                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-	                String inputLine = in.readLine();
+	                String command = in.readLine();
 	                
-	                System.out.println("[Server] Received a message: '" + inputLine + "' " + clientSocket.getInetAddress());
+	                System.out.println("[Server] Received a message: '" + command + "' " + clientSocket.getInetAddress());
 	                
-	                if (inputLine.contains("replica")){
+	                // the replica commands family - interactions between servers
+	                if (command.contains("replica")){
 	                	
 	                	// instantiate a replica server thread
 	                	System.out.println("[Server] Initializing a replica server thread for " + clientSocket.getInetAddress());
 	            		ThreadReplicaServer thread = new ThreadReplicaServer(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
-	            		
-	                }else if (inputLine.equals("read")){
+	            	
+	            	// a client asks to read a file
+	                }else if (command.equals("read")){
 	                	
 	                	// instantiate a read thread
 	                	System.out.println("[Server] Initializing a read thread for " + clientSocket.getInetAddress());
 	            		ThreadRead thread = new ThreadRead(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
-	            		
+	            	
+	            	// a client asks to write or delete
 	                }else{
 	                	
 	                	// instantiate a create/update/delete thread
@@ -60,13 +63,11 @@ public class Server {
 	                }
 	                
 	            } catch (IOException e) {
-	                System.out.println("Exception caught when trying to listen on port "
-	                    + port + " or listening for a connection");
+	                System.out.println("Exception caught when trying to listen on port " + port + " or listening for a connection");
 	                System.out.println(e.getMessage());
 	            }
 			}
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	}

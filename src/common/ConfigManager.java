@@ -70,12 +70,13 @@ public class ConfigManager {
 			JSONObject jsonObjReplica = jsonArrayReplicas.getJSONObject(i);
 
 			// Read data form json object
-			String 	sName 	= jsonObjReplica.getString("name");
-			String 	sIp 	= jsonObjReplica.getString("ip");
-			int 	iPort	= jsonObjReplica.getInt("port");
+			String 	sName 		= jsonObjReplica.getString("name");
+			String 	sIp 		= jsonObjReplica.getString("ip");
+			int 	iPort		= jsonObjReplica.getInt("port");
+			String	sInterface 	= jsonObjReplica.getString("interface");
 
 			// Create replica instance
-			Replica tmpReplica = new Replica(sName, sIp, i, iPort);
+			Replica tmpReplica = new Replica(sName, sIp, sInterface, i, iPort);
 			if(sIp.compareTo(currentReplicaIP) == 0)
 				sMe = tmpReplica;
 			else
