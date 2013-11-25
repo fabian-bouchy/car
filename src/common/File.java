@@ -14,17 +14,22 @@ public class File implements java.io.Serializable{
 	 */
 	private static final long serialVersionUID = -970661273181400441L;
 	
-	private String name;
 	private String id;
 	private byte[] data;
+	private long size;
+	private int[] version;
 
-	public File(String name, String id, String fileName) throws IOException {
-		// fill in fields
-		this.name = name;
-		this.id = id;
+	public File(String id, String fileName) throws IOException {
+		
 		// read the file
 		RandomAccessFile f = new RandomAccessFile(fileName, "r");
+		
+		// fill in fields
+		this.id = id;
+		this.size = f.length();
+		this.version = new int[ConfigManager.getN()];
 		this.data = new byte[(int) f.length()];
+		
 		f.read(this.data);
 		f.close();
 	}
@@ -49,6 +54,23 @@ public class File implements java.io.Serializable{
 			}
 		}
 	}
+	
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
+
+	public int[] getVersion() {
+		return version;
+	}
+
+	public void setVersion(int[] version) {
+		this.version = version;
+	}
 
 	public String getId() {
 		return id;
@@ -58,19 +80,15 @@ public class File implements java.io.Serializable{
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public byte[] getData() {
 		return data;
 	}
 
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+	
+	public String toString(){
+		return "[file] " + id + ", " + size + "B";
 	}
 }

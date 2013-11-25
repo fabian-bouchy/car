@@ -1,29 +1,26 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.net.UnknownHostException;
+
+import common.File;
+
+import server.Replica;
 
 /**
  * Main class for client side. 
  */
 public class Client {
 	
-	public void run(String[] args){
-		// initialise a config manager with default values
-		// ConfigManager.init();
-		
-		// parse values
+	public void run(String[] args){	
 		String hostName = args[1];
 		int portNumber = Integer.parseInt(args[2]);
 		try{
-			Socket echoSocket = new Socket(hostName, portNumber);
-			PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
-			BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-			out.println("bonjour!");
+			
+			Replica replica = new Replica("bob", hostName, 1, portNumber);
+			File f = new File(args[3], args[3]);
+			replica.write(f);
+			
 		} catch (UnknownHostException e) {
 			System.err.println("Don't know about host " + args[1]);
 			System.exit(1);

@@ -1,9 +1,13 @@
 package server.thread;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import common.File;
 
 public class ThreadReplicaServer implements Runnable{
 
@@ -17,11 +21,28 @@ public class ThreadReplicaServer implements Runnable{
 		this.clientSocket = clientSocket;
 		this.out = out;
 		this.in = in;
+		
+		System.out.println("[thread replica server] init");
 	}
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
+		System.out.println("[thread replica server] run");
+		
+		try {
+			out.println("OK");
+			
+			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
+			File file = (File) reader.readObject();
+			System.out.println("Object received: " + file);
+			file.writeToFile(file.getId());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

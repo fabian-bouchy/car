@@ -19,6 +19,7 @@ public class ConfigManager {
 	
 	private static final String DEFAULT_CONFIG_FILE_NAME = "config.json";
 	private static final String DEFAULT_INTERFACE_NAME   = "eth1";
+	private static final int 	N  = 3;
 	
 	private static ArrayList<Replica> sReplicas;
 	private static Replica sMe;
@@ -121,7 +122,13 @@ public class ConfigManager {
 	 * Get all replica according to the configuration file
 	 * @return List of replicas
 	 */
-	public static ArrayList<Replica> getReplicas() {
+	public static synchronized ArrayList<Replica> getReplicas() {
 		return sReplicas;
 	}
+	
+	
+	public static synchronized int getN() {
+		return N;
+	}
+
 }
