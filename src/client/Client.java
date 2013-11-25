@@ -1,37 +1,36 @@
 package client;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import common.File;
-
 import server.Replica;
+import common.ConfigManager;
 
 /**
  * Main class for client side. 
  */
 public class Client {
 	
-	public void run(String[] args){
+	public void run(String[] args) throws Exception{
 		
-		// the very first version - hostname and IP in the com
-		String file = args[3];
-		String hostName = args[1];
-		int portNumber = Integer.parseInt(args[2]);
+		// client write|get|delete file
 		
+		// initialize the configuration
+		ConfigManager.init();
 		
-		try{
+		// get the first replica on the list - for now
+		Replica replica = ConfigManager.getReplicas().get(0);
+		System.out.println("[client] Replica chosen: " + replica);
+		
+		String cmd = args[0];
+		String filename = args[1];
+		
+		if ("write".equals(cmd)){
+			System.out.println("[client] Writing "+filename);
 			
-			Replica replica = new Replica("bob", hostName, "em0", 1, portNumber);
-			File f = new File(args[3], args[3]);
-			replica.write(f);
+		}else if ("delete".equals(cmd)){
+			System.out.println("[client] Deleting "+filename);
 			
-		} catch (UnknownHostException e) {
-			System.err.println("Don't know about host " + args[1]);
-			System.exit(1);
-		} catch (IOException e) {
-			System.err.println("Couldn't get I/O for the connection to " +hostName);
-			System.exit(1);
-		} 
+		}else{
+			System.out.println("[client] Getting "+filename);
+			
+		}
 	}
 }

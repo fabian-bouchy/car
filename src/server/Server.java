@@ -2,7 +2,8 @@ package server;
 
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
+
+import common.ConfigManager;
 
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
@@ -10,19 +11,20 @@ import server.thread.ThreadWrite;
 
 public class Server {
 	
-	public void run(String[] args){
+	public void run(String[] args) throws Exception{
 		
 		// initialize the configuration
-		if (args.length == 2){
-			//ConfigManager.init(args[1]);
+		if (args.length == 3){
+			ConfigManager.init(args[1], args[2]);
 		}else{
-			//ConfigManager.init();
+			ConfigManager.init();
 		}
 		
-		// wait for new connections from clients and other replicas
 		try {
-			int port = 9999;
-			ServerSocket serverSocket = new ServerSocket(port);
+			Replica me = ConfigManager.getMe();
+			
+			// create a socket and wait for connections
+			ServerSocket serverSocket = new ServerSocket(me.getPort());
 			
 			while (true){
 		        try {
@@ -63,7 +65,7 @@ public class Server {
 	                }
 	                
 	            } catch (IOException e) {
-	                System.out.println("Exception caught when trying to listen on port " + port + " or listening for a connection");
+	                System.out.println("Exception caught when trying to listen on port " + me.getPort() + " or listening for a connection");
 	                System.out.println(e.getMessage());
 	            }
 			}
