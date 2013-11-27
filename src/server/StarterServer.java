@@ -47,7 +47,7 @@ public class StarterServer {
 	                	
 	                	// instantiate a replica server thread
 	                	System.out.println("[Server] Initializing a replica server thread for " + clientSocket.getInetAddress());
-	            		ThreadReplicaServer thread = new ThreadReplicaServer(serverSocket, clientSocket, out, in);
+	            		ThreadReplicaServer thread = new ThreadReplicaServer(serverSocket, clientSocket, out, in, command);
 	            		new Thread(thread).start();
 	            	
 	            	// a client asks to read a file

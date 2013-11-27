@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import javax.rmi.CORBA.Util;
-
 import common.File;
 import common.FileManager;
 import common.UtilBobby;
@@ -19,12 +17,14 @@ public class ThreadReplicaServer implements Runnable{
 	private ServerSocket serverSocket;
 	private PrintWriter out;
 	private BufferedReader in;
+	private String command;
 	
-	public ThreadReplicaServer(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in){
+	public ThreadReplicaServer(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in, String command){
 		this.serverSocket = serverSocket;
 		this.clientSocket = clientSocket;
 		this.out = out;
 		this.in = in;
+		this.command = command;
 		
 		System.out.println("[thread replica server] init");
 	}
@@ -33,15 +33,14 @@ public class ThreadReplicaServer implements Runnable{
 	public void run() {
 		System.out.println("[thread replica server] run");
 		try {
-			String input = in.readLine();
-			String[] cmd = input.split(UtilBobby.SPLIT_REGEX);
+			String[] cmd = command.split(UtilBobby.SPLIT_REGEX);
 			
 			/**
 			 * 0 : should be replica UtilBobby.REPLICA
 			 * 1 : action - write/has/delete
 			 * [2 : argument - id]
 			 */
-			System.out.println("[thread replica server] " + input + " [" + cmd.length + "]");
+			System.out.println("[thread replica server] " + command + " [" + cmd.length + "]");
 			if(cmd.length >= 2) {
 				// Be sure that the message is for the replica thread!
 				if(cmd[0].compareTo(UtilBobby.REPLICA) != 0)
