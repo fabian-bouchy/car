@@ -1,7 +1,7 @@
 package common;
 
-import client.Client;
-import server.StarterServer;
+import client.main.Client;
+import server.main.Server;
 
 public class Starter {
 
@@ -10,16 +10,19 @@ public class Starter {
 	 */
 	public static void main(String[] args) {
 
+		// server mode
         if ((args.length == 3 || args.length == 1) && args[0].equals("server")){
         	// server mode
-        	StarterServer server = new StarterServer();
+        	Server server = new Server();
         	try {
 				server.run(args);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-        }else if(args.length == 2 && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete"))){
+        
+        // client mode
+        }else if((args.length == 2 || args.length == 4) && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete"))){
         	// client mode
         	Client client = new Client();
         	try {
@@ -31,7 +34,7 @@ public class Starter {
         }else{
             System.err.println("Usage:");
             System.err.println("    java -jar bobby.jar server [config.json] [interface]");
-            System.err.println("    java -jar bobby.jar write|get|delete file");
+            System.err.println("    java -jar bobby.jar write|read|delete file [config.json] [interface]");
             System.exit(1);
         }
 	}

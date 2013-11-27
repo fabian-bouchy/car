@@ -1,5 +1,6 @@
-package client;
+package client.main;
 
+import client.ServerManager;
 import common.ConfigManager;
 import common.ConfigManager.ConfigType;
 import common.File;
@@ -16,7 +17,7 @@ public class Client {
 		// initialize the configuration
 		ConfigManager.init(ConfigType.CLIENT);
 		
-		// get the first replica on the list - for now
+		// arguments
 		String cmd = args[0];
 		String fileName = args[1];
 		

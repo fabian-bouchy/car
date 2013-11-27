@@ -12,8 +12,8 @@ import common.File;
 import common.RemoteNode;
 import common.UtilBobby;
 
-public class Replica extends RemoteNode{
-	public Replica(String sName, String sIpAddress, String sInterface, int iPriority, int iPort) {
+public class RemoteReplica extends RemoteNode{
+	public RemoteReplica(String sName, String sIpAddress, String sInterface, int iPriority, int iPort) {
 		super(sName, sIpAddress, sInterface, iPriority, iPort);
 	}
 	

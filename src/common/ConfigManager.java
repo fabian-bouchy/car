@@ -12,8 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import client.Server;
-import server.Replica;
+import client.RemoteServer;
+import server.RemoteReplica;
 
 public class ConfigManager {
 	
@@ -84,10 +84,10 @@ public class ConfigManager {
 			RemoteNode remoteNode;
 			switch (configType) {
 				case SERVER: 
-					remoteNode = new Replica(sName, sIp, sInterface, i, iPort);
+					remoteNode = new RemoteReplica(sName, sIp, sInterface, i, iPort);
 					break;
 				case CLIENT:
-					remoteNode = new Server(sName, sIp, sInterface, i, iPort);
+					remoteNode = new RemoteServer(sName, sIp, sInterface, i, iPort);
 					break;
 				default:
 					remoteNode = null;

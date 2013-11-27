@@ -10,7 +10,7 @@ import common.File;
  * Hide to client how to get the current server, redirection works etc...
  */
 public class ServerManager {
-	static Server currentServer;
+	static RemoteServer currentServer;
 	static int	  currentServerCount = 0;
 	
 	static {
@@ -20,9 +20,9 @@ public class ServerManager {
 	
 	private ServerManager() {}
 	
-	private static Server getNextServer() {
+	private static RemoteServer getNextServer() {
 		int nbServer = ConfigManager.getRemoteNodes().size();
-		Server tmp = (Server) ConfigManager.getRemoteNodes().get(currentServerCount);
+		RemoteServer tmp = (RemoteServer) ConfigManager.getRemoteNodes().get(currentServerCount);
 		currentServerCount = (currentServerCount + 1) % nbServer;
 		return tmp;
 	}

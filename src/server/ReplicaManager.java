@@ -8,20 +8,20 @@ import common.ConfigManager;
 import common.File;
 import common.RemoteNode;
 
-public class ReplicasManager {
+public class ReplicaManager {
 	
 	private ArrayList<RemoteNode> replicas;
 	
-	public ReplicasManager(){
+	public ReplicaManager(){
 		replicas = new ArrayList<RemoteNode>(ConfigManager.getRemoteNodes());
 	}
 
 	public void replicate(File file){
 		// TODO need to be change
 		for (int i = 0; i < replicas.size(); i++) {
-			Replica replica = (Replica)replicas.get(i);
+			RemoteReplica remoteReplica = (RemoteReplica)replicas.get(i);
 			try {
-				replica.write(file);
+				remoteReplica.write(file);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

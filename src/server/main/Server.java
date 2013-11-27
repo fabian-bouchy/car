@@ -1,4 +1,4 @@
-package server;
+package server.main;
 
 import java.net.*;
 import java.io.*;
@@ -6,11 +6,12 @@ import java.io.*;
 import common.ConfigManager;
 import common.UtilBobby;
 import common.ConfigManager.ConfigType;
+import server.RemoteReplica;
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
 import server.thread.ThreadWrite;
 
-public class StarterServer {
+public class Server {
 	
 	public void run(String[] args) throws Exception{
 		
@@ -22,7 +23,7 @@ public class StarterServer {
 		}
 		
 		try {
-			Replica me = (Replica)ConfigManager.getMe();
+			RemoteReplica me = (RemoteReplica)ConfigManager.getMe();
 			
 			// create a socket and wait for connections
 			ServerSocket serverSocket = new ServerSocket(me.getPort());

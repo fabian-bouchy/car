@@ -1,15 +1,9 @@
 package server.thread;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import common.File;
-import common.FileManager;
-import common.UtilBobby;
 
 public class ThreadDelete extends ThreadWorker{
 

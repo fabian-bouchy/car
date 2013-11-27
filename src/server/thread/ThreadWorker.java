@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import server.ReplicasManager;
+import server.ReplicaManager;
 
 public abstract class ThreadWorker implements Runnable{
 
@@ -14,14 +14,14 @@ public abstract class ThreadWorker implements Runnable{
 	protected PrintWriter out;
 	protected BufferedReader in;
 
-	protected ReplicasManager replicasManager;
+	protected ReplicaManager replicaManager;
 
 	public ThreadWorker(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in){
 		this.serverSocket = serverSocket;
 		this.clientSocket = clientSocket;
 		this.out = out;
 		this.in = in;
-		this.replicasManager = new ReplicasManager();
+		this.replicaManager = new ReplicaManager();
 	}
 
 }

@@ -33,7 +33,7 @@ public class ThreadWrite extends ThreadWorker{
 			FileManager.addFile(file);
 
 			// TODO check if replication successed
-			replicasManager.replicate(file);
+			replicaManager.replicate(file);
 			// send to client that the write successed
 			out.println(UtilBobby.SERVER_WRITE_OK);
 		} catch (IOException e )  {

@@ -11,22 +11,21 @@ public class UtilBobby {
 	/** Server */
 	public final static String CLIENT		 		= "client";
 
-	//write
+	// Write
 	public final static String CLIENT_WRITE_SYMBOL	= "write";
 	public final static String CLIENT_WRITE			= CLIENT + SPLIT_REGEX + CLIENT_WRITE_SYMBOL;
-	
 	
 	// Delete
 	public final static String CLIENT_DELETE_SYMBOL	= "delete";
 	public final static String CLIENT_DELETE		= CLIENT + SPLIT_REGEX + CLIENT_DELETE_SYMBOL;
 	
-	// Delete
+	// Read
 	public final static String CLIENT_READ_SYMBOL	= "read";
 	public final static String CLIENT_READ			= CLIENT + SPLIT_REGEX + CLIENT_READ_SYMBOL;
 	
 	/** Server */
 	public final static String SERVER		 		= "server";
-	//write
+	// Write
 	public final static String SERVER_WRITE 		= "server:write";
 	public final static String SERVER_WRITE_READY 	= "server:write:ready";
 	public final static String SERVER_WRITE_OK		= "server:write:ok";

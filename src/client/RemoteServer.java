@@ -14,9 +14,9 @@ import common.FileManager;
 import common.RemoteNode;
 import common.UtilBobby;
 
-public class Server extends RemoteNode {
+public class RemoteServer extends RemoteNode {
 
-	public Server(String sName, String sIpAddress, String sInterface,
+	public RemoteServer(String sName, String sIpAddress, String sInterface,
 			int iPriority, int iPort) {
 		super(sName, sIpAddress, sInterface, iPriority, iPort);
 	}
@@ -31,7 +31,7 @@ public class Server extends RemoteNode {
         out.println(UtilBobby.CLIENT_WRITE);
         String answer = in.readLine();
         if(answer.equals(UtilBobby.SERVER_WRITE_READY)) {
-        	// Create outputstream to send file to server
+        	// Create output stream to send file to server
         	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
 			outStream.writeObject(file);
 			answer = in.readLine();
