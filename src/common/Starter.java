@@ -1,7 +1,7 @@
 package common;
 
 import client.Client;
-import server.Server;
+import server.StarterServer;
 
 public class Starter {
 
@@ -12,7 +12,7 @@ public class Starter {
 
         if (args[0].equals("server") && (args.length == 3 || args.length == 1)){
         	// server mode
-        	Server server = new Server();
+        	StarterServer server = new StarterServer();
         	try {
 				server.run(args);
 			} catch (Exception e) {

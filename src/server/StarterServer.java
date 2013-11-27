@@ -9,7 +9,7 @@ import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
 import server.thread.ThreadWrite;
 
-public class Server {
+public class StarterServer {
 	
 	public void run(String[] args) throws Exception{
 		
