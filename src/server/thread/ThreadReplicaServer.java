@@ -41,6 +41,7 @@ public class ThreadReplicaServer implements Runnable{
 			 * 1 : action - write/has/delete
 			 * [2 : argument - id]
 			 */
+			System.out.println("[thread replica server] " + input + " [" + cmd.length + "]");
 			if(cmd.length >= 2) {
 				// Be sure that the message is for the replica thread!
 				if(cmd[0].compareTo(UtilBobby.REPLICA) != 0)
@@ -48,6 +49,8 @@ public class ThreadReplicaServer implements Runnable{
 
 				// store the file we receive
 				if(cmd[1].equals(UtilBobby.REPLICA_WRITE_SYMBOL)) {
+					
+					System.out.println("[thread replica server] write");
 					
 					// send a "ready" message
 					out.println(UtilBobby.REPLICA_WRITE_READY);
@@ -70,6 +73,8 @@ public class ThreadReplicaServer implements Runnable{
 				
 				// check if the file exists on this node
 				if(cmd[1].equals(UtilBobby.REPLICA_HAS_SYMBOL)) {
+					System.out.println("[thread replica server] has");
+					
 					if (FileManager.getFile(cmd[2]) != null){
 						out.println(UtilBobby.ANSWER_TRUE);
 					}else{
@@ -79,6 +84,8 @@ public class ThreadReplicaServer implements Runnable{
 				
 				// delete the file
 				if(cmd[1].equals(UtilBobby.REPLICA_DELETE_SYMBOL)){
+					System.out.println("[thread replica server] delete");
+					
 					if (FileManager.getFile(cmd[2]) != null){
 						FileManager.removeFile(cmd[2]);
 						out.println(UtilBobby.REPLICA_DELETE_OK);
