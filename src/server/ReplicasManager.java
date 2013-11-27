@@ -6,18 +6,20 @@ import java.util.ArrayList;
 
 import common.ConfigManager;
 import common.File;
+import common.RemoteNode;
 
 public class ReplicasManager {
 	
-	private ArrayList<Replica> replicas;
+	private ArrayList<RemoteNode> replicas;
 	
 	public ReplicasManager(){
-		replicas = new ArrayList<Replica>(ConfigManager.getReplicas());
+		replicas = new ArrayList<RemoteNode>(ConfigManager.getRemoteNodes());
 	}
 
 	public void replicate(File file){
 		// TODO need to be change
-		for (Replica replica : replicas) {
+		for (int i = 0; i < replicas.size(); i++) {
+			Replica replica = (Replica)replicas.get(i);
 			try {
 				replica.write(file);
 			} catch (UnknownHostException e) {

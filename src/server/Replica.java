@@ -9,31 +9,15 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import common.File;
+import common.RemoteNode;
 import common.UtilBobby;
 
-public class Replica {
-	
-	private String 	sName;
-	private String 	sIpAddress;
-	private String 	sInterface;
-	private int 	iPriority;
-	private int 	iPort;
-
+public class Replica extends RemoteNode{
 	public Replica(String sName, String sIpAddress, String sInterface, int iPriority, int iPort) {
-		super();
-		this.sName 		= sName;
-		this.sIpAddress = sIpAddress;
-		this.sInterface = sInterface;
-		this.iPriority 	= iPriority;
-		this.iPort 		= iPort;
+		super(sName, sIpAddress, sInterface, iPriority, iPort);
 	}
 	
-	public Socket connect() throws UnknownHostException, IOException{
-		return new Socket(sIpAddress, iPort);
-	}
-
 	public void write(File file) throws UnknownHostException, IOException{
-		
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
@@ -80,41 +64,13 @@ public class Replica {
 		return in.readLine().equals("OK");
 	}
 	
-	
-
-	public String getName() {
-		return sName;
-	}
-
-	public void setName(String sName) {
-		this.sName = sName;
-	}
-
-	public String getIpAddress() {
-		return sIpAddress;
-	}
-
-	public void setIpAddress(String sIpAddress) {
-		this.sIpAddress = sIpAddress;
-	}
-
-	public int getPriority() {
-		return iPriority;
-	}
-
-	public void setPriority(int iPriority) {
-		this.iPriority = iPriority;
-	}
-	
-	public int getPort() {
-		return iPort;
-	}
-	
-	public void setPort(int iPort) {
-		this.iPort = iPort;
-	}
-	
 	public String toString(){
-		return "[replica] ["+iPriority+"] "+sName+" - "+sIpAddress+"("+sInterface+"):"+iPort;
+		return "[replica] ["+this.getPriority()+"] "+this.getName()+" - "+this.getIpAddress()+"("+this.getPort()+"):"+this.getPort();
+	}
+
+	@Override
+	public File read(String fileId) throws UnknownHostException, IOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

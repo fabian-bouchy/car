@@ -5,6 +5,17 @@ public class UtilBobby {
 	public final static String SPLIT_REGEX			= ":";
 	
 	/** Server */
+	public final static String CLIENT		 		= "client";
+	//write
+	public final static String CLIENT_WRITE 		= "client:write";
+	
+	// Delete
+	public final static String CLIENT_DELETE 		= "client:delete";
+	
+	// Delete
+	public final static String CLIENT_READ	 		= "client:read";
+	
+	/** Server */
 	public final static String SERVER		 		= "server";
 	//write
 	public final static String SERVER_WRITE 		= "server:write";

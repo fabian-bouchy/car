@@ -4,7 +4,8 @@ import java.net.*;
 import java.io.*;
 
 import common.ConfigManager;
-
+import common.UtilBobby;
+import common.ConfigManager.ConfigType;
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
 import server.thread.ThreadWrite;
@@ -15,13 +16,13 @@ public class StarterServer {
 		
 		// initialize the configuration
 		if (args.length == 3){
-			ConfigManager.init(args[1], args[2]);
+			ConfigManager.init(args[1], args[2],ConfigType.SERVER);
 		}else{
-			ConfigManager.init();
+			ConfigManager.init(ConfigType.SERVER);
 		}
 		
 		try {
-			Replica me = ConfigManager.getMe();
+			Replica me = (Replica)ConfigManager.getMe();
 			
 			// create a socket and wait for connections
 			ServerSocket serverSocket = new ServerSocket(me.getPort());
@@ -48,7 +49,7 @@ public class StarterServer {
 	            		new Thread(thread).start();
 	            	
 	            	// a client asks to read a file
-	                }else if (command.equals("read")){
+	                }else if (command.equals(UtilBobby.CLIENT_READ)){
 	                	
 	                	// instantiate a read thread
 	                	System.out.println("[Server] Initializing a read thread for " + clientSocket.getInetAddress());

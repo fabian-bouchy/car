@@ -1,7 +1,8 @@
 package client;
 
-import server.Replica;
 import common.ConfigManager;
+import common.ConfigManager.ConfigType;
+import common.File;
 
 /**
  * Main class for client side. 
@@ -13,26 +14,25 @@ public class Client {
 		// client write|get|delete file
 		
 		// initialize the configuration
-		ConfigManager.init();
+		ConfigManager.init(ConfigType.CLIENT);
 		
 		// get the first replica on the list - for now
-		Replica replica = ConfigManager.getReplicas().get(0);
-		System.out.println("[client] Replica chosen: " + replica);
-		
 		String cmd = args[0];
-		String filename = args[1];
+		String fileName = args[1];
 		
 		if ("write".equals(cmd)){
-			System.out.println("[client] Writing "+filename);
-			ServerManager.write(filename);
+			System.out.println("[client] Writing "+fileName);
+			// TODO Generate file ID
+			File file = new File( fileName, fileName);
+			ServerManager.write(file);
 		}else if ("delete".equals(cmd)){
-			System.out.println("[client] Deleting "+filename);
-			ServerManager.delete(filename);
+			System.out.println("[client] Deleting "+fileName);
+			ServerManager.delete(fileName);
 		}else if ("read".equals(cmd)){
-			System.out.println("[client] Deleting "+filename);
-			ServerManager.read(filename);
+			System.out.println("[client] Deleting "+fileName);
+			ServerManager.read(fileName);
 		}else{
-			System.out.println("[client] Getting "+filename);
+			System.out.println("[client] Getting "+fileName);
 			
 		}
 	}

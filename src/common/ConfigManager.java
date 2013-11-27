@@ -12,20 +12,25 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-
+import client.Server;
 import server.Replica;
 
 public class ConfigManager {
+	
+	public enum ConfigType {
+		SERVER,
+		CLIENT
+	}
 	
 	private static final String DEFAULT_CONFIG_FILE_NAME = "config.json";
 	private static final String DEFAULT_INTERFACE_NAME   = "eth1";
 	private static final int 	N  = 3;
 	
-	private static ArrayList<Replica> sReplicas;
-	private static Replica sMe;
+	private static ArrayList<RemoteNode> sRemoteNodes;
+	private static RemoteNode sMe;
 	
 	static {
-		sReplicas = new ArrayList<Replica>();
+		sRemoteNodes = new ArrayList<RemoteNode>();
 	}
 
 	private ConfigManager(){}
@@ -37,8 +42,8 @@ public class ConfigManager {
 	 *
 	 * @throws Exception
 	 */
-	public static void init() throws Exception {
-		init(DEFAULT_CONFIG_FILE_NAME, DEFAULT_INTERFACE_NAME);
+	public static void init(ConfigType configType) throws Exception {
+		init(DEFAULT_CONFIG_FILE_NAME, DEFAULT_INTERFACE_NAME, configType);
 	}
 
 	/**
@@ -50,7 +55,7 @@ public class ConfigManager {
 	 * @param sInterfaceName	Interface name
 	 * @throws Exception
 	 */
-	public static void init(String sConfigFile, String sInterfaceName) throws Exception{
+	public static void init(String sConfigFile, String sInterfaceName, ConfigType configType) throws Exception{
 		// Open file as tokener
 		JSONTokener jsonTokener = new JSONTokener(new FileInputStream(sConfigFile));
 
@@ -76,11 +81,23 @@ public class ConfigManager {
 			String	sInterface 	= jsonObjReplica.getString("interface");
 
 			// Create replica instance
-			Replica tmpReplica = new Replica(sName, sIp, sInterface, i, iPort);
+			RemoteNode remoteNode;
+			switch (configType) {
+				case SERVER:
+					remoteNode = new Replica(sName, sIp, sInterface, i, iPort);
+					break;
+				case CLIENT:
+					remoteNode = new Server(sName, sIp, sInterface, i, iPort);
+	
+				default:
+					remoteNode = null;
+					break;
+			}
+			
 			if(sIp.compareTo(currentReplicaIP) == 0)
-				sMe = tmpReplica;
+				sMe = remoteNode;
 			else
-				sReplicas.add(tmpReplica);
+				sRemoteNodes.add(remoteNode);
 		}
 	}
 
@@ -115,16 +132,16 @@ public class ConfigManager {
 	 * Get the intance of the current replica
 	 * @return The current instance of the replica
 	 */
-	public static Replica getMe() {
+	public static RemoteNode getMe() {
 		return sMe;
 	}
 
 	/**
-	 * Get all replica according to the configuration file
-	 * @return List of replicas
+	 * Get all RemoteNodes according to the configuration file
+	 * @return List of RemoteNode
 	 */
-	public static synchronized ArrayList<Replica> getReplicas() {
-		return sReplicas;
+	public static synchronized ArrayList<RemoteNode> getRemoteNodes() {
+		return sRemoteNodes;
 	}
 	
 	
