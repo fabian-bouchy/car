@@ -10,7 +10,7 @@ public class Starter {
 	 */
 	public static void main(String[] args) {
 
-        if (args.length == 3 && args[0].equals("server")){
+        if (args[0].equals("server") && (args.length == 3 || args.length == 1)){
         	// server mode
         	Server server = new Server();
         	try {
