@@ -15,8 +15,11 @@ public class Client {
 		// client write|get|delete file
 		
 		// initialize the configuration
-		ConfigManager.init(ConfigType.CLIENT);
-		
+		if (args.length == 4){
+			ConfigManager.init(args[2], args[3], ConfigType.CLIENT);
+		}else{
+			ConfigManager.init(ConfigType.CLIENT);
+		}
 		// arguments
 		String cmd = args[0];
 		String fileName = args[1];
