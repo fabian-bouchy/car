@@ -44,8 +44,7 @@ public class ThreadReplicaServer implements Runnable{
 					return;
 
 				// To the job:
-				switch (cmd[1]) {
-				case "write":
+				if(cmd[1].equals("write")) {
 					out.println(UtilBobby.REPLICA_WRITE_READY);
 					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 					File file = (File) reader.readObject();
@@ -57,10 +56,6 @@ public class ThreadReplicaServer implements Runnable{
 					// Persit object in memory
 					FileManager.addFile(file);
 					out.println(UtilBobby.REPLICA_WRITE_OK);
-					break;
-
-				default:
-					break;
 				}
 			}
 		} catch (IOException e) {

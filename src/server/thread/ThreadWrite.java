@@ -47,7 +47,9 @@ public class ThreadWrite implements Runnable{
 			replicasManager.replicate(file);
 			// send to client that the write successed
 			out.println(UtilBobby.SERVER_WRITE_OK);
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException e )  {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		
