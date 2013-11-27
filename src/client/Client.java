@@ -27,13 +27,16 @@ public class Client {
 			ServerManager.write(file);
 		}else if ("delete".equals(cmd)){
 			System.out.println("[client] Deleting "+fileName);
+			
+			// TODO test delete
 			ServerManager.delete(fileName);
 		}else if ("read".equals(cmd)){
-			System.out.println("[client] Deleting "+fileName);
+			System.out.println("[client] Reading "+fileName);
+			
+			// TODO test read
 			ServerManager.read(fileName);
 		}else{
-			System.out.println("[client] Getting "+fileName);
-			
+			System.out.println("[client] Command unknown "+cmd);
 		}
 	}
 }

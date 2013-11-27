@@ -29,6 +29,7 @@ public class ServerManager {
 	
 	
 	public static void write(File file) throws UnknownHostException, IOException {
+		// TODO get the next server, if the current one is null
 		if(currentServer != null)
 			currentServer.write(file);
 	}
