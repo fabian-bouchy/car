@@ -10,8 +10,7 @@
     </target>
 
     <target name="jar" depends="compile">
-        <mkdir dir="build/jar"/>
-        <jar destfile="build/jar/Bobby.jar" basedir="build/classes">
+        <jar destfile="bobby.jar" basedir="build/classes">
             <manifest>
                 <attribute name="Main-Class" value="common.Starter"/>
             </manifest>
@@ -19,7 +18,7 @@
     </target>
 
     <target name="run">
-        <java jar="build/jar/Bobby.jar" fork="true"/>
+        <java jar="bobby.jar" fork="true"/>
     </target>
 
 </project>
