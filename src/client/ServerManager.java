@@ -14,6 +14,7 @@ public class ServerManager {
 	static int	  currentServerCount = 0;
 	
 	static {
+		System.out.println("[Init ServeurManager]");
 		currentServer = getNextServer();
 	}
 	
@@ -28,7 +29,8 @@ public class ServerManager {
 	
 	
 	public static void write(File file) throws UnknownHostException, IOException {
-		currentServer.write(file);
+		if(currentServer != null)
+			currentServer.write(file);
 	}
 	
 	public static File read(String fileName) {

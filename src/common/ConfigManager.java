@@ -67,7 +67,7 @@ public class ConfigManager {
 
 		// Get local host address to identify the current replica
 		String currentReplicaIP = getInet4Address(sInterfaceName);
-		if(currentReplicaIP == null)
+		if(currentReplicaIP == null && configType != ConfigType.CLIENT)
 			throw new Exception("Current ip address is not found. Verify network interface.");
 
 		// Extract data and create local configuration
@@ -83,21 +83,22 @@ public class ConfigManager {
 			// Create replica instance
 			RemoteNode remoteNode;
 			switch (configType) {
-				case SERVER:
+				case SERVER: 
 					remoteNode = new Replica(sName, sIp, sInterface, i, iPort);
 					break;
 				case CLIENT:
 					remoteNode = new Server(sName, sIp, sInterface, i, iPort);
-	
+					break;
 				default:
 					remoteNode = null;
 					break;
 			}
 			
-			if(sIp.compareTo(currentReplicaIP) == 0)
+			if(currentReplicaIP != null && sIp.compareTo(currentReplicaIP) == 0)
 				sMe = remoteNode;
-			else
+			else {
 				sRemoteNodes.add(remoteNode);
+			}
 		}
 	}
 
