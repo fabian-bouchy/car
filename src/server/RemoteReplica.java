@@ -33,7 +33,7 @@ public class RemoteReplica extends RemoteNode{
 			// Check if write successed
 			String status = in.readLine();
 			if(status.equals(UtilBobby.REPLICA_WRITE_OK))
-				System.out.println("Replication successed file: " + file);
+				System.out.println("[remote replica] Replication OK: " + file);
 			else
 				throw new IOException();
 		}else{

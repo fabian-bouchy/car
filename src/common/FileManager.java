@@ -42,7 +42,7 @@ public class FileManager {
 	}
 	
 	public static String represent(){
-		String out = "Current file configuration:" + System.getProperty("line.separator");
+		String out = System.getProperty("line.separator") + "Current file configuration:" + System.getProperty("line.separator");
 		for (Map.Entry<String, File> entry : MapFiles.entrySet()){
 			out += entry.getKey() + " => " + entry.getValue().toString() + System.getProperty("line.separator");
 		}
