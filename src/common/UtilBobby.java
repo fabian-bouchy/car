@@ -3,6 +3,10 @@ package common;
 public class UtilBobby {
 	
 	public final static String SPLIT_REGEX			= ":";
+	public final static String ANSWER_TRUE		 	= "true";
+	public final static String ANSWER_FALSE		 	= "false";
+	public final static String ANSWER_OK		 	= "ok";
+	
 	
 	/** Server */
 	public final static String CLIENT		 		= "client";
@@ -38,20 +42,20 @@ public class UtilBobby {
 	/** Replica */
 	public final static String REPLICA		 		= "replica";
 	// Write
-	public final static String REPLICA_WRITE		= "replica:write";
-	public final static String REPLICA_WRITE_READY  = "replica:write:ready";
-	public final static String REPLICA_WRITE_OK		= "replica:write:ok";
-	public final static String REPLICA_WRITE_KO		= "replica:write:KO";
+	public final static String REPLICA_WRITE_SYMBOL	= "write";
+	public final static String REPLICA_WRITE		= REPLICA + SPLIT_REGEX + REPLICA_WRITE_SYMBOL;
+	public final static String REPLICA_WRITE_READY  = REPLICA_WRITE + SPLIT_REGEX + "ready";
+	public final static String REPLICA_WRITE_OK		= REPLICA_WRITE + SPLIT_REGEX + "ok";
+	public final static String REPLICA_WRITE_KO		= REPLICA_WRITE + SPLIT_REGEX + "KO";
 	
 	// Has
-	public final static String REPLICA_HAS			= "replica:has";
-	public final static String REPLICA_HAS_READY	= "replica:has:ready";
-	public final static String REPLICA_HAS_OK		= "replica:has:OK";
-	public final static String REPLICA_HAS_K0		= "replica:has:KO";
+	public final static String REPLICA_HAS_SYMBOL	 = "has";
+	public final static String REPLICA_HAS			 = REPLICA + SPLIT_REGEX + REPLICA_HAS_SYMBOL;
+	public final static String REPLICA_HAS_K0		 = REPLICA_HAS + SPLIT_REGEX + "KO";
 	
 	// Delete
-	public final static String REPLICA_DELETE		= "replica:delete";
-	public final static String REPLICA_DELETE_READY = "replica:delete:ready";
-	public final static String REPLICA_DELETE_OK	= "replica:delete:ok";
-	public final static String REPLICA_DELETE_KO	= "replica:delete:KO";
+	public final static String REPLICA_DELETE_SYMBOL = "delete";
+	public final static String REPLICA_DELETE		 = REPLICA + SPLIT_REGEX + REPLICA_DELETE_SYMBOL;
+	public final static String REPLICA_DELETE_OK	 = REPLICA_DELETE + SPLIT_REGEX + "ok";
+	public final static String REPLICA_DELETE_KO	 = REPLICA_DELETE + SPLIT_REGEX + "KO";
 }

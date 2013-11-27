@@ -47,11 +47,10 @@ public class Replica extends RemoteNode{
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 		
 		// send the command
-		// a replica should answer "true" or "false"
 		out.println(UtilBobby.REPLICA_HAS + UtilBobby.SPLIT_REGEX + id);
 		
-		// test the output
-		return in.readLine().equals("true");
+		// return the answer
+		return in.readLine().equals(UtilBobby.ANSWER_TRUE);
 	}
 	
 	public boolean delete(String id)throws UnknownHostException, IOException{
@@ -61,7 +60,8 @@ public class Replica extends RemoteNode{
 		
 		out.println(UtilBobby.REPLICA_DELETE + UtilBobby.SPLIT_REGEX + id);
 		
-		return in.readLine().equals("OK");
+		// return the answer from the remote server
+		return in.readLine().equals(UtilBobby.ANSWER_OK);
 	}
 	
 	public String toString(){

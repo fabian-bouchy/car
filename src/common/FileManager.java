@@ -28,9 +28,24 @@ public class FileManager {
 	
 	public static void addFile(File file){
 		getMapFiles().put(file.getId(), file);
+		System.out.println(represent());
 	}
 	
 	public static void replaceFile(File file){
 		getMapFiles().put(file.getId(), file);
+		System.out.println(represent());
+	}
+	
+	public static void removeFile(String id){
+		MapFiles.remove(id);
+		System.out.println(represent());
+	}
+	
+	public static String represent(){
+		String out = "Current file configuration:" + System.getProperty("line.separator");
+		for (Map.Entry<String, File> entry : MapFiles.entrySet()){
+			out += entry.getKey() + " => " + entry.getValue().toString() + System.getProperty("line.separator");
+		}
+		return out;
 	}
 }
