@@ -24,10 +24,13 @@ public class Client {
 		
 		if ("write".equals(cmd)){
 			System.out.println("[client] Writing "+filename);
-			
+			ServerManager.write(filename);
 		}else if ("delete".equals(cmd)){
 			System.out.println("[client] Deleting "+filename);
-			
+			ServerManager.delete(filename);
+		}else if ("read".equals(cmd)){
+			System.out.println("[client] Deleting "+filename);
+			ServerManager.read(filename);
 		}else{
 			System.out.println("[client] Getting "+filename);
 			
