@@ -21,8 +21,9 @@ public class ServerManager {
 	
 	private static Server getNextServer() {
 		int nbServer = ConfigManager.getRemoteNodes().size();
+		Server tmp = (Server) ConfigManager.getRemoteNodes().get(currentServerCount);
 		currentServerCount = (currentServerCount + 1) % nbServer;
-		return (Server) ConfigManager.getRemoteNodes().get(currentServerCount);
+		return tmp;
 	}
 	
 	
