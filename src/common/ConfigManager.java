@@ -2,18 +2,14 @@ package common;
 
 import java.io.FileInputStream;
 import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import client.RemoteServer;
 import server.RemoteReplica;
+import client.RemoteServer;
 
 public class ConfigManager {
 	
@@ -23,7 +19,6 @@ public class ConfigManager {
 	}
 	
 	private static final String DEFAULT_CONFIG_FILE_NAME = "config.json";
-	private static final String DEFAULT_INTERFACE_NAME   = "em1";
 	private static final int 	N  = 3;
 	
 	private static ArrayList<RemoteNode> sRemoteNodes;
@@ -31,6 +26,7 @@ public class ConfigManager {
 	
 	static {
 		sRemoteNodes = new ArrayList<RemoteNode>();
+		sMe = null;
 	}
 
 	private ConfigManager(){}
@@ -43,7 +39,11 @@ public class ConfigManager {
 	 * @throws Exception
 	 */
 	public static void init(ConfigType configType) throws Exception {
-		init(DEFAULT_CONFIG_FILE_NAME, DEFAULT_INTERFACE_NAME, configType);
+		init(configType, DEFAULT_CONFIG_FILE_NAME, null);
+	}
+	
+	public static void init(ConfigType configType, String sConfigFile) throws Exception {
+		init(configType, sConfigFile, null);
 	}
 
 	/**
@@ -55,20 +55,17 @@ public class ConfigManager {
 	 * @param sInterfaceName	Interface name
 	 * @throws Exception
 	 */
-	public static void init(String sConfigFile, String sInterfaceName, ConfigType configType) throws Exception{
-		// Open file as tokener
+	public static void init(ConfigType configType, String sConfigFile, String hostname) throws Exception{
+		
+		String myIP = Inet4Address.getLocalHost().getHostAddress();
+		String myHost = Inet4Address.getLocalHost().getHostName();
+		
+		System.out.println("[config manager] init on "+myHost+" ("+myIP+")");
+
+		// prepare JSON
 		JSONTokener jsonTokener = new JSONTokener(new FileInputStream(sConfigFile));
-
-		// Get main array
-		JSONObject jsonFile = new JSONObject(jsonTokener);
-
-		// Get the list of replicas
+		JSONObject jsonFile = new JSONObject(jsonTokener); // Get main array
 		JSONArray jsonArrayReplicas = jsonFile.getJSONArray("replicas");
-
-		// Get local host address to identify the current replica
-		String currentReplicaIP = getInet4Address(sInterfaceName);
-		if(currentReplicaIP == null && configType != ConfigType.CLIENT)
-			throw new Exception("Current ip address is not found. Verify network interface.");
 
 		// Extract data and create local configuration
 		for (int i = 0; i < jsonArrayReplicas.length(); i++) {
@@ -94,39 +91,26 @@ public class ConfigManager {
 					break;
 			}
 			
-			if(currentReplicaIP != null && sIp.compareTo(currentReplicaIP) == 0)
+			if(hostname == null && (sIp.equals(myIP) || sName.equals(myHost))){
+				// when desired hostname not specified, we look by IP
 				sMe = remoteNode;
-			else {
+			}else if (hostname != null && hostname.equals(sName)){
+				// otherwise, we just pick the one with the desired hostname
+				sMe = remoteNode;
+			}else {
 				sRemoteNodes.add(remoteNode);
 			}
 		}
-	}
-
-	/**
-	 * Use to retreive the ip address of the current replica
-	 * @param sInterfaceName Network interface for which we are looking for
-	 * @return The ip address or null instead
-	 */
-	private static String getInet4Address(String sInterfaceName) {
-		try {
-			// Go through all network interfaces
-			Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-			while(networkInterfaces.hasMoreElements()) {
-				NetworkInterface ni = networkInterfaces.nextElement();
-				if(ni.getDisplayName().compareTo(sInterfaceName) == 0) {
-					Enumeration<InetAddress> inetAddresses = ni.getInetAddresses();
-					// Go through all ip address identify, find the ipv4 one
-	                while(inetAddresses.hasMoreElements()) {
-	                    InetAddress i= (InetAddress) inetAddresses.nextElement();
-	                    if(i instanceof Inet4Address)
-	                    	return i.getHostAddress();
-	                }
-				}
-			}
-		} catch (SocketException e) {
-			e.printStackTrace();
+		
+		if (configType == ConfigType.SERVER && sMe == null){
+			throw new Exception("[config manager] Error - could not establish who I am !");
 		}
-		return null;
+		
+		if (configType == ConfigType.CLIENT && sRemoteNodes.size() == 0){
+			throw new Exception("[config manager] Error - client could not find any servers");
+		}
+		
+		System.out.println("[config manager] initialized with "+sRemoteNodes.size()+" hosts");
 	}
 
 	/**

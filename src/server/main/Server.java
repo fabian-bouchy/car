@@ -17,8 +17,13 @@ public class Server {
 		
 		// initialize the configuration
 		if (args.length == 3){
-			ConfigManager.init(args[1], args[2],ConfigType.SERVER);
+			// config name and hostname
+			ConfigManager.init(ConfigType.SERVER, args[1], args[2]);
+		}else if (args.length == 2){
+			// only config name
+			ConfigManager.init(ConfigType.SERVER, args[1]);
 		}else{
+			// all default parameters
 			ConfigManager.init(ConfigType.SERVER);
 		}
 		

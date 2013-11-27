@@ -11,7 +11,7 @@ public class Starter {
 	public static void main(String[] args) {
 
 		// server mode
-        if ((args.length == 3 || args.length == 1) && args[0].equals("server")){
+        if ((args.length == 1 || args.length == 2 || args.length == 3) && args[0].equals("server")){
         	// server mode
         	Server server = new Server();
         	try {
@@ -22,7 +22,7 @@ public class Starter {
 			}
         
         // client mode
-        }else if((args.length == 2 || args.length == 4) && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete"))){
+        }else if((args.length == 2 || args.length == 3) && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete"))){
         	// client mode
         	Client client = new Client();
         	try {
@@ -33,8 +33,8 @@ public class Starter {
 			}
         }else{
             System.err.println("Usage:");
-            System.err.println("    java -jar bobby.jar server [config.json] [interface]");
-            System.err.println("    java -jar bobby.jar write|read|delete file [config.json] [interface]");
+            System.err.println("    java -jar bobby.jar server [config.json] [hostname]");
+            System.err.println("    java -jar bobby.jar write|read|delete file [config.json]");
             System.exit(1);
         }
 	}

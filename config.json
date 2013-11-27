@@ -1,18 +1,22 @@
 {
-	"replicas":[{
-		"name":"Serveur1",
-		"ip":"129.88.241.28",
-		"port":1234,
-		"interface": "em1"
-		},{
-		"name":"Serveur2",
-		"ip":"129.88.241.29",
-		"port":1234,
-		"interface": "em1"
-		},{
-		"name":"Serveur3",
-		"ip":"129.88.241.30",
-		"port":1234,
-		"interface": "em1"
-	}]
+	"replicas":[
+		{
+			"name"		:"Serveur1",
+			"ip"		:"129.88.241.28",
+			"port"		:1234,
+			"interface"	: "em1"
+		},
+		{
+			"name"		:"Serveur2",
+			"ip"		:"129.88.241.29",
+			"port"		:1234,
+			"interface"	: "em1"
+		},
+		{
+			"name"		:"Serveur3",
+			"ip"		:"129.88.241.30",
+			"port"		:1234,
+			"interface"	: "em1"
+		}
+	]
 }

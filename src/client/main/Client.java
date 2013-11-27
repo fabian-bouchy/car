@@ -15,9 +15,11 @@ public class Client {
 		// client write|get|delete file
 		
 		// initialize the configuration
-		if (args.length == 4){
-			ConfigManager.init(args[2], args[3], ConfigType.CLIENT);
+		if (args.length == 3){
+			// config name
+			ConfigManager.init(ConfigType.CLIENT, args[2]);
 		}else{
+			// all default parameters
 			ConfigManager.init(ConfigType.CLIENT);
 		}
 		// arguments
@@ -27,7 +29,7 @@ public class Client {
 		if ("write".equals(cmd)){
 			System.out.println("[client] Writing "+fileName);
 			// TODO Generate file ID
-			File file = new File( fileName, fileName);
+			File file = new File(fileName, fileName);
 			ServerManager.write(file);
 		}else if ("delete".equals(cmd)){
 			System.out.println("[client] Deleting "+fileName);

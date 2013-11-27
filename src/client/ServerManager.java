@@ -29,9 +29,26 @@ public class ServerManager {
 	
 	
 	public static void write(File file) throws UnknownHostException, IOException {
-		// TODO get the next server, if the current one is null
-		if(currentServer != null)
-			currentServer.write(file);
+		
+		// try the first servers
+		int current = currentServerCount;
+		boolean sent = false;
+		
+		while (!sent){
+			try{
+				currentServer.write(file);
+				sent = true;
+			}catch(Exception e){
+				// server doesn't respond, try another one
+				System.out.println("[server manager] Error writing to server " + currentServer);
+				System.out.println("[server manager] " + e);
+				currentServer = getNextServer();
+				if (currentServerCount == current){
+					System.out.println("[server manager] No servers available. Failed to send.");
+					break;
+				}
+			}
+		}	
 	}
 	
 	public static File read(String fileName) {

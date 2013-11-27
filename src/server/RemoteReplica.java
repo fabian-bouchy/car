@@ -65,7 +65,7 @@ public class RemoteReplica extends RemoteNode{
 	}
 	
 	public String toString(){
-		return "[replica] ["+this.getPriority()+"] "+this.getName()+" - "+this.getIpAddress()+"("+this.getPort()+"):"+this.getPort();
+		return "[remote replica] ["+this.getPriority()+"] "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
 	}
 
 	@Override

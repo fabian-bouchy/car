@@ -60,4 +60,7 @@ public class RemoteServer extends RemoteNode {
 		return null;
 	}
 
+	public String toString(){
+		return "[remote server] ["+this.getPriority()+"] "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
+	}
 }
