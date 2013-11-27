@@ -27,6 +27,8 @@ public class StarterServer {
 			// create a socket and wait for connections
 			ServerSocket serverSocket = new ServerSocket(me.getPort());
 			
+			System.out.println("[Server] Server started " + me);
+			
 			while (true){
 		        try {
 		        	// accept any new connection
