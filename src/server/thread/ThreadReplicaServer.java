@@ -11,21 +11,13 @@ import common.File;
 import common.FileManager;
 import common.UtilBobby;
 
-public class ThreadReplicaServer implements Runnable{
+public class ThreadReplicaServer extends ThreadWorker{
 
-	private Socket clientSocket;
-	private ServerSocket serverSocket;
-	private PrintWriter out;
-	private BufferedReader in;
 	private String command;
 	
 	public ThreadReplicaServer(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in, String command){
-		this.serverSocket = serverSocket;
-		this.clientSocket = clientSocket;
-		this.out = out;
-		this.in = in;
+		super(serverSocket, clientSocket, out, in);
 		this.command = command;
-		
 		System.out.println("[thread replica server] init");
 	}
 	
