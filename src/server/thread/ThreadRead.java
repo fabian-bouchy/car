@@ -5,18 +5,10 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ThreadRead implements Runnable{
-
-	private Socket clientSocket;
-	private ServerSocket serverSocket;
-	private PrintWriter out;
-	private BufferedReader in;
-	
+public class ThreadRead extends ThreadWorker{
 	public ThreadRead(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in){
-		this.serverSocket = serverSocket;
-		this.clientSocket = clientSocket;
-		this.out = out;
-		this.in = in;
+		super(serverSocket, clientSocket, out, in);
+		System.out.println("[thread server read] init");
 	}
 	
 	@Override
@@ -24,5 +16,4 @@ public class ThreadRead implements Runnable{
 		// TODO Auto-generated method stub
 		
 	}
-
 }

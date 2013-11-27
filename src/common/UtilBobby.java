@@ -10,14 +10,19 @@ public class UtilBobby {
 	
 	/** Server */
 	public final static String CLIENT		 		= "client";
+
 	//write
-	public final static String CLIENT_WRITE 		= "client:write";
+	public final static String CLIENT_WRITE_SYMBOL	= "write";
+	public final static String CLIENT_WRITE			= CLIENT + SPLIT_REGEX + CLIENT_WRITE_SYMBOL;
+	
 	
 	// Delete
-	public final static String CLIENT_DELETE 		= "client:delete";
+	public final static String CLIENT_DELETE_SYMBOL	= "delete";
+	public final static String CLIENT_DELETE		= CLIENT + SPLIT_REGEX + CLIENT_DELETE_SYMBOL;
 	
 	// Delete
-	public final static String CLIENT_READ	 		= "client:read";
+	public final static String CLIENT_READ_SYMBOL	= "read";
+	public final static String CLIENT_READ			= CLIENT + SPLIT_REGEX + CLIENT_READ_SYMBOL;
 	
 	/** Server */
 	public final static String SERVER		 		= "server";

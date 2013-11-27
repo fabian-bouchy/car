@@ -7,26 +7,15 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import server.ReplicasManager;
 import common.File;
 import common.FileManager;
 import common.UtilBobby;
 
-public class ThreadWrite implements Runnable{
-
-	private Socket clientSocket;
-	private ServerSocket serverSocket;
-	private PrintWriter out;
-	private BufferedReader in;
-
-	private ReplicasManager replicasManager;
+public class ThreadWrite extends ThreadWorker{
 
 	public ThreadWrite(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in){
-		this.serverSocket = serverSocket;
-		this.clientSocket = clientSocket;
-		this.out = out;
-		this.in = in;
-		this.replicasManager = new ReplicasManager();
+		super(serverSocket, clientSocket, out, in);
+		System.out.println("[thread server write] init");
 	}
 
 	@Override
