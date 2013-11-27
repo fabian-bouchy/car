@@ -1,5 +1,14 @@
 bin/
 build/
 .classpath
+/srv1
+/srv2
+/srv3
+
+/host1
+/host2
+/host3
+
+/test-files
 
 .settings/org.eclipse.jdt.core.prefs
