@@ -7,6 +7,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.rmi.CORBA.Util;
+
 import common.File;
 import common.FileManager;
 import common.UtilBobby;
@@ -35,27 +37,54 @@ public class ThreadReplicaServer implements Runnable{
 			String[] cmd = input.split(UtilBobby.SPLIT_REGEX);
 			
 			/**
-			 * 0 : should be replica
-			 * 1 : action write etc...
+			 * 0 : should be replica UtilBobby.REPLICA
+			 * 1 : action - write/has/delete
+			 * [2 : argument - id]
 			 */
 			if(cmd.length >= 2) {
 				// Be sure that the message is for the replica thread!
 				if(cmd[0].compareTo(UtilBobby.REPLICA) != 0)
 					return;
 
-				// To the job:
-				if(cmd[1].equals("write")) {
+				// store the file we receive
+				if(cmd[1].equals(UtilBobby.REPLICA_WRITE_SYMBOL)) {
+					
+					// send a "ready" message
 					out.println(UtilBobby.REPLICA_WRITE_READY);
+					
+					// receive the file
 					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 					File file = (File) reader.readObject();
-					System.out.println("Object received: " + file);
-					// Persit object on hdd
+					System.out.println("File received: " + file);
+					
+					
+					// TODO change later - storing the file on hdd
 					file.writeToFile(file.getId());
 
 					// TODO check support of FileManager
-					// Persit object in memory
+					// Persist object in memory
 					FileManager.addFile(file);
 					out.println(UtilBobby.REPLICA_WRITE_OK);
+				}
+				
+				
+				// check if the file exists on this node
+				if(cmd[1].equals(UtilBobby.REPLICA_HAS_SYMBOL)) {
+					if (FileManager.getFile(cmd[2]) != null){
+						out.println(UtilBobby.ANSWER_TRUE);
+					}else{
+						out.println(UtilBobby.ANSWER_FALSE);
+					}
+				}
+				
+				// delete the file
+				if(cmd[1].equals(UtilBobby.REPLICA_DELETE_SYMBOL)){
+					if (FileManager.getFile(cmd[2]) != null){
+						FileManager.removeFile(cmd[2]);
+						out.println(UtilBobby.REPLICA_DELETE_OK);
+					}else{
+						out.println(UtilBobby.REPLICA_DELETE_KO);
+					}
 				}
 			}
 		} catch (IOException e) {

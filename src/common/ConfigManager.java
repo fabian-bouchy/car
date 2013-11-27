@@ -18,7 +18,7 @@ import server.Replica;
 public class ConfigManager {
 	
 	private static final String DEFAULT_CONFIG_FILE_NAME = "config.json";
-	private static final String DEFAULT_INTERFACE_NAME   = "eth1";
+	private static final String DEFAULT_INTERFACE_NAME   = "em1";
 	private static final int 	N  = 3;
 	
 	private static ArrayList<Replica> sReplicas;
