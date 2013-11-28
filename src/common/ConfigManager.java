@@ -2,7 +2,7 @@ package common;
 
 import java.io.FileInputStream;
 import java.net.Inet4Address;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,11 +21,11 @@ public class ConfigManager {
 	private static final String DEFAULT_CONFIG_FILE_NAME = "config.json";
 	private static final int 	N  = 3;
 	
-	private static ArrayList<RemoteNode> sRemoteNodes;
+	private static HashMap<String,RemoteNode> sRemoteNodes;
 	private static RemoteNode sMe;
 	
 	static {
-		sRemoteNodes = new ArrayList<RemoteNode>();
+		sRemoteNodes = new HashMap<String,RemoteNode>();
 		sMe = null;
 	}
 
@@ -98,7 +98,7 @@ public class ConfigManager {
 				// otherwise, we just pick the one with the desired hostname
 				sMe = remoteNode;
 			}else {
-				sRemoteNodes.add(remoteNode);
+				sRemoteNodes.put(remoteNode.getName(), remoteNode);
 			}
 		}
 		
@@ -125,13 +125,17 @@ public class ConfigManager {
 	 * Get all RemoteNodes according to the configuration file
 	 * @return List of RemoteNode
 	 */
-	public static synchronized ArrayList<RemoteNode> getRemoteNodes() {
+	public static synchronized HashMap<String,RemoteNode> getRemoteNodes() {
 		return sRemoteNodes;
 	}
 	
 	
 	public static synchronized int getN() {
 		return N;
+	}
+
+	public static synchronized RemoteNode getRemoteNode(String remoteNodeName) {
+		return sRemoteNodes.get(remoteNodeName);
 	}
 
 }

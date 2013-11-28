@@ -27,7 +27,7 @@ public abstract class RemoteNode {
 
 	public abstract void 	write(File file) throws Exception;
 	
-	public abstract boolean has(String fileId) throws Exception;
+	public abstract boolean has(File fileId) throws Exception;
 	
 	public abstract File 	read(File fileId) throws Exception;
 	

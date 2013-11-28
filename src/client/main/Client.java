@@ -28,19 +28,21 @@ public class Client {
 		
 		if ("write".equals(cmd)){
 			System.out.println("[client] Writing "+fileName);
+
 			// TODO Generate file ID
 			File file = new File(fileName, fileName, true);
 			ServerManager.write(file);
 		}else if ("delete".equals(cmd)){
 			System.out.println("[client] Deleting "+fileName);
+
 			File file = new File(fileName, fileName, false);
-			// TODO test delete
 			ServerManager.delete(file);
 		}else if ("read".equals(cmd)){
-			File file = new File(fileName, fileName, false);
-			System.out.println("[client] Reading "+file.getId());
-			// TODO test read
-			ServerManager.read(file);
+			File metadata = new File(fileName, fileName, false);
+			System.out.println("[client] Reading "+metadata.getId());
+
+			File file = ServerManager.read(metadata);
+			System.out.println(file);
 		}else{
 			System.out.println("[client] Command unknown "+cmd);
 		}

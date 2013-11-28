@@ -53,6 +53,7 @@ public class UtilBobby {
 	//public final static String SERVER_READ_OK				= SERVER_READ + SPLIT_REGEX + "ok";
 	public final static String SERVER_READ_FILE_FOUND		= SERVER_READ + SPLIT_REGEX + "file_found";
 	public final static String SERVER_READ_FILE_NOT_FOUND	= SERVER_READ + SPLIT_REGEX + "file_not_found";
+	public final static String SERVER_READ_REDIRECT_TO		= SERVER_READ + SPLIT_REGEX + "redirect_to";
 	public final static String SERVER_READ_KO				= SERVER_READ + SPLIT_REGEX + "KO";
 
 	/** Replica */

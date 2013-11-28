@@ -2,39 +2,41 @@ package client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Iterator;
 
 import common.ConfigManager;
 import common.File;
+import common.RemoteNode;
 
 /**
  * Hide to client how to get the current server, redirection works etc...
  */
 public class ServerManager {
 	static RemoteServer currentServer;
-	static int	  currentServerCount = 0;
+	static Iterator<RemoteNode> currentServerIterator = null;
 	
 	static {
 		System.out.println("[Init ServeurManager]");
-		currentServer = getNextServer();
 	}
 	
 	private ServerManager() {}
 	
-	private static RemoteServer getNextServer() {
-		int nbServer = ConfigManager.getRemoteNodes().size();
-		RemoteServer tmp = (RemoteServer) ConfigManager.getRemoteNodes().get(currentServerCount);
-		currentServerCount = (currentServerCount + 1) % nbServer;
-		return tmp;
+	private static void initRemoteNodeAndIterator(){
+		currentServerIterator = ConfigManager.getRemoteNodes().values().iterator();
+		currentServer = (RemoteServer) currentServerIterator.next();
 	}
 	
+	private static RemoteServer getNextRemoteServer() {
+		return (RemoteServer) currentServerIterator.next();
+	}
 	
 	public static void write(File file) throws UnknownHostException, IOException {
-		
 		// try the first servers
-		int current = currentServerCount;
 		boolean sent = false;
-		
-		while (!sent){
+
+		initRemoteNodeAndIterator();
+
+		while (!sent && currentServerIterator.hasNext()){
 			try{
 				currentServer.write(file);
 				sent = true;
@@ -42,45 +44,40 @@ public class ServerManager {
 				// server doesn't respond, try another one
 				System.out.println("[server manager] Error writing to server " + currentServer);
 				System.out.println("[server manager] " + e);
-				currentServer = getNextServer();
-				if (currentServerCount == current){
-					System.out.println("[server manager] No servers available. Failed to send.");
-					break;
-				}
+				currentServer = getNextRemoteServer();
+				System.out.println("[server manager] Current server changed to " + currentServer);
 			}
 		}	
+		if(!sent)
+			System.out.println("[server manager] No servers available. Failed to send.");
 	}
 	
 	public static File read(File file) {
 		// try the first servers
-		int current = currentServerCount;
 		boolean read = false;
 
-		while (!read){
+		initRemoteNodeAndIterator();
+
+		while (!read && currentServerIterator.hasNext()){
 			try{
-				currentServer.read(file);
-				read = true;
+				return currentServer.read(file);
 			}catch(Exception e){
 				// server doesn't respond, try another one
 				System.out.println("[server manager] Error reading to server " + currentServer);
 				System.out.println("[server manager] " + e);
-				currentServer = getNextServer();
-				if (currentServerCount == current){
-					System.out.println("[server manager] No servers available. Failed to read.");
-					break;
-				}
+				currentServer = getNextRemoteServer();
+				System.out.println("[server manager] Current server changed to " + currentServer);
 			}
 		}
-
+		System.out.println("[server manager] No servers available. Failed to read.");
 		return null;
 	}
 	
 	public static void delete(File file) {
 		// try the first servers
-		int current = currentServerCount;
 		boolean delete = false;
 
-		while (!delete){
+		while (!delete && currentServerIterator.hasNext()){
 			try{
 				currentServer.delete(file);
 				delete = true;
@@ -88,13 +85,11 @@ public class ServerManager {
 				// server doesn't respond, try another one
 				System.out.println("[server manager] Error deleting to server " + currentServer);
 				System.out.println("[server manager] " + e);
-				currentServer = getNextServer();
-				if (currentServerCount == current){
-					System.out.println("[server manager] No servers available. Failed to delete.");
-					break;
-				}
+				currentServer = getNextRemoteServer();
+				System.out.println("[server manager] Current server changed to " + currentServer);
 			}
 		}
+		System.out.println("[server manager] No servers available. Failed to delete.");
 	}
 	
 	public static String[] listFiles() {

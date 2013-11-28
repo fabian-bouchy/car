@@ -9,8 +9,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import common.ConfigManager;
 import common.File;
-import common.FileManager;
 import common.RemoteNode;
 import common.UtilBobby;
 
@@ -24,6 +24,7 @@ public class RemoteServer extends RemoteNode {
 	@Override
 	public void write(File file) throws UnknownHostException, IOException {
 		// Init the connection:
+		System.out.println("[remote server] writing " + file);
 		Socket socketToServer = this.connect();
 		PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);                   
         BufferedReader in = new BufferedReader(new InputStreamReader(socketToServer.getInputStream()));
@@ -43,7 +44,7 @@ public class RemoteServer extends RemoteNode {
 	}
 
 	@Override
-	public boolean has(String id) throws UnknownHostException, IOException {
+	public boolean has(File id) throws UnknownHostException, IOException {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -71,7 +72,7 @@ public class RemoteServer extends RemoteNode {
 	}
 
 	@Override
-	public File read(File metadata) throws UnknownHostException, IOException, ClassNotFoundException {
+	public File read(File metadata) throws Exception {
 		// Init the connection:
 		Socket socketToServer = this.connect();
 		PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);
@@ -80,6 +81,7 @@ public class RemoteServer extends RemoteNode {
         out.println(UtilBobby.CLIENT_READ);
         String answer = in.readLine();
         if(answer.equals(UtilBobby.SERVER_READ_READY)) {
+        	System.out.println("[client] ready to read from " + this);
         	// Create output stream to send metadata to server 
         	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
         	outStream.writeObject(metadata);
@@ -89,16 +91,26 @@ public class RemoteServer extends RemoteNode {
 				ObjectInputStream reader = new ObjectInputStream(socketToServer.getInputStream());
 				File tmp = (File) reader.readObject();
 				if(tmp != null ) {
+					System.out.println("File read");
 					System.out.println(tmp);
 					tmp.writeToFile(tmp.getId() + "_read");
-					System.out.println("File read!");
-					metadata = tmp;
 					return tmp;
 				}
 			}
-			else {
-				System.out.println("Read failed!");
+			// TODO Change this stack overflow possible on read function...
+			// Internal redirection
+			else if(answer.contains(UtilBobby.SERVER_READ_REDIRECT_TO) && (answer.split(UtilBobby.SPLIT_REGEX).length == 4)){
+				String nextHopName = answer.split(UtilBobby.SPLIT_REGEX)[3];
+				RemoteNode nextHop =  ConfigManager.getRemoteNode(nextHopName);
+				socketToServer.close();
+				System.out.println("Redirected to " + nextHop);
+				return nextHop.read(metadata);
 			}
+			else {
+				System.out.println("Read failed: " + answer);
+			}
+        } else {
+        	System.out.println("Server not ready for reading..." + answer);
         }
 		return null;
 	}

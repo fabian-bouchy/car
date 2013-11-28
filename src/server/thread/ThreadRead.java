@@ -10,6 +10,7 @@ import java.net.Socket;
 
 import common.File;
 import common.FileManager;
+import common.RemoteNode;
 import common.UtilBobby;
 
 public class ThreadRead extends ThreadWorker{
@@ -38,7 +39,12 @@ public class ThreadRead extends ThreadWorker{
 	        	outStream.writeObject(fileRead);
 			} else {
 				System.out.println("[Server] reading failed: file not found locally.");
-				// TODO Found file in another server here!
+				System.out.println("[Server] looking for on replicas...");
+				RemoteNode nextHop = this.replicaManager.has(metadata);
+				if(nextHop != null)
+					out.println(UtilBobby.SERVER_READ_REDIRECT_TO + UtilBobby.SPLIT_REGEX + nextHop.getName());
+
+				// Not found
 				out.println(UtilBobby.SERVER_READ_KO);
 			}
 		} catch (IOException e )  {

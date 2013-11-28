@@ -41,13 +41,13 @@ public class RemoteReplica extends RemoteNode{
 		}
 	}
 	
-	public boolean has(String id) throws UnknownHostException, IOException{
+	public boolean has(File metadata) throws UnknownHostException, IOException{
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 		
 		// send the command
-		out.println(UtilBobby.REPLICA_HAS + UtilBobby.SPLIT_REGEX + id);
+		out.println(UtilBobby.REPLICA_HAS + UtilBobby.SPLIT_REGEX + metadata.getId());
 		
 		// return the answer
 		return in.readLine().equals(UtilBobby.ANSWER_TRUE);
