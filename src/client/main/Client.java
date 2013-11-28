@@ -29,13 +29,13 @@ public class Client {
 		if ("write".equals(cmd)){
 			System.out.println("[client] Writing "+fileName);
 			// TODO Generate file ID
-			File file = new File(fileName, fileName);
+			File file = new File(fileName, fileName, true);
 			ServerManager.write(file);
 		}else if ("delete".equals(cmd)){
 			System.out.println("[client] Deleting "+fileName);
-			
+			File file = new File(fileName, fileName, false);
 			// TODO test delete
-			ServerManager.delete(fileName);
+			ServerManager.delete(file);
 		}else if ("read".equals(cmd)){
 			System.out.println("[client] Reading "+fileName);
 			

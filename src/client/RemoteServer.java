@@ -49,13 +49,29 @@ public class RemoteServer extends RemoteNode {
 	}
 
 	@Override
-	public boolean delete(String id) throws UnknownHostException, IOException {
-		// TODO Auto-generated method stub
+	public boolean delete(File file) throws UnknownHostException, IOException {
+		// Init the connection:
+		Socket socketToServer = this.connect();
+		PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socketToServer.getInputStream()));
+
+        out.println(UtilBobby.CLIENT_DELETE);
+        String answer = in.readLine();
+        if(answer.equals(UtilBobby.SERVER_DELETE_READY)) {
+        	// Create output stream to send file to server
+        	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
+        	outStream.writeObject(file);
+			answer = in.readLine();
+			if(answer.equals(UtilBobby.SERVER_DELETE_OK))
+				System.out.println("Delete succeed!");
+			else
+				System.out.println("Delete failed!");
+        }
 		return false;
 	}
 
 	@Override
-	public File read(String fileId) throws UnknownHostException, IOException {
+	public File read(File file) throws UnknownHostException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -53,12 +53,12 @@ public class RemoteReplica extends RemoteNode{
 		return in.readLine().equals(UtilBobby.ANSWER_TRUE);
 	}
 	
-	public boolean delete(String id)throws UnknownHostException, IOException{
+	public boolean delete(File file)throws UnknownHostException, IOException{
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 		
-		out.println(UtilBobby.REPLICA_DELETE + UtilBobby.SPLIT_REGEX + id);
+		out.println(UtilBobby.REPLICA_DELETE + UtilBobby.SPLIT_REGEX + file.getId());
 		
 		// return the answer from the remote server
 		return in.readLine().equals(UtilBobby.ANSWER_OK);
@@ -69,7 +69,7 @@ public class RemoteReplica extends RemoteNode{
 	}
 
 	@Override
-	public File read(String fileId) throws UnknownHostException, IOException {
+	public File read(File file) throws UnknownHostException, IOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

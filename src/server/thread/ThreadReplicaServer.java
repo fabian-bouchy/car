@@ -79,6 +79,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 					
 					if (FileManager.getFile(cmd[2]) != null){
 						FileManager.removeFile(cmd[2]);
+						System.out.println("[thread replica server] delete succeed");
 						out.println(UtilBobby.REPLICA_DELETE_OK);
 					}else{
 						out.println(UtilBobby.REPLICA_DELETE_KO);

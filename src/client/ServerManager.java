@@ -55,7 +55,26 @@ public class ServerManager {
 		return null;
 	}
 	
-	public static void delete(String fileName) {
+	public static void delete(File file) {
+		// try the first servers
+		int current = currentServerCount;
+		boolean delete = false;
+
+		while (!delete){
+			try{
+				currentServer.delete(file);
+				delete = true;
+			}catch(Exception e){
+				// server doesn't respond, try another one
+				System.out.println("[server manager] Error deleting to server " + currentServer);
+				System.out.println("[server manager] " + e);
+				currentServer = getNextServer();
+				if (currentServerCount == current){
+					System.out.println("[server manager] No servers available. Failed to delete.");
+					break;
+				}
+			}
+		}
 	}
 	
 	public static String[] listFiles() {

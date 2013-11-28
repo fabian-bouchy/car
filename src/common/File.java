@@ -19,19 +19,21 @@ public class File implements java.io.Serializable{
 	private long size;
 	private int[] version;
 
-	public File(String id, String fileName) throws IOException {
-		
-		// read the file
-		RandomAccessFile f = new RandomAccessFile(fileName, "r");
-		
+	public File(String id, String fileName, boolean init) throws IOException {
 		// fill in fields
 		this.id = id;
-		this.size = f.length();
+		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
-		this.data = new byte[(int) f.length()];
+		this.data = null;
 		
-		f.read(this.data);
-		f.close();
+		if(init) {
+			// read the file
+			RandomAccessFile f = new RandomAccessFile(fileName, "r");
+			this.size = f.length();
+			this.data = new byte[(int) f.length()];
+			f.read(this.data);
+			f.close();
+		}
 	}
 
 	public void writeToFile(String theFile) throws IOException {

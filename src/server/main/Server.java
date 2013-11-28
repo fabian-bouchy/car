@@ -7,6 +7,7 @@ import common.ConfigManager;
 import common.UtilBobby;
 import common.ConfigManager.ConfigType;
 import server.RemoteReplica;
+import server.thread.ThreadDelete;
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
 import server.thread.ThreadWrite;
@@ -57,15 +58,23 @@ public class Server {
 	            		new Thread(thread).start();
 	            	
 	            	// a client asks to read a file
-	                }else if (command.equals(UtilBobby.CLIENT_READ)){
+	                } else if (command.equals(UtilBobby.CLIENT_READ)){
 	                	
 	                	// instantiate a read thread
 	                	System.out.println("[Server] Initializing a read thread for " + clientSocket.getInetAddress());
 	            		ThreadRead thread = new ThreadRead(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
-	            	
+
+	            	// a client asks to delete
+	                } else if (command.equals(UtilBobby.CLIENT_DELETE)){
+
+	                	// instantiate a read thread
+	                	System.out.println("[Server] Initializing a delete thread for " + clientSocket.getInetAddress());
+	            		ThreadDelete thread = new ThreadDelete(serverSocket, clientSocket, out, in);
+	            		new Thread(thread).start();
+
 	            	// a client asks to write or delete
-	                }else{
+	                } else{
 	                	
 	                	// instantiate a create/update/delete thread
 	                	System.out.println("[Server] Initializing a write thread for " + clientSocket.getInetAddress());

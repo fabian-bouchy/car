@@ -28,6 +28,19 @@ public class ReplicaManager {
 				e.printStackTrace();
 			}
 		}
-		
+	}
+
+	public void delete(File file){
+		// TODO need to be change
+		for (int i = 0; i < replicas.size(); i++) {
+			RemoteReplica remoteReplica = (RemoteReplica)replicas.get(i);
+			try {
+				remoteReplica.delete(file);
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

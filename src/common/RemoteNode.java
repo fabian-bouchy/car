@@ -29,9 +29,9 @@ public abstract class RemoteNode {
 	
 	public abstract boolean has(String fileId) throws UnknownHostException, IOException;
 	
-	public abstract File read(String fileId)throws UnknownHostException, IOException;
+	public abstract File read(File fileId)throws UnknownHostException, IOException;
 	
-	public abstract boolean delete(String id)throws UnknownHostException, IOException;
+	public abstract boolean delete(File id)throws UnknownHostException, IOException;
 	
 	public String getName() {
 		return sName;
