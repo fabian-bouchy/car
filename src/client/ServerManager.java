@@ -77,6 +77,8 @@ public class ServerManager {
 		// try the first servers
 		boolean delete = false;
 
+		initRemoteNodeAndIterator();
+
 		while (!delete && currentServerIterator.hasNext()){
 			try{
 				currentServer.delete(file);
@@ -89,7 +91,8 @@ public class ServerManager {
 				System.out.println("[server manager] Current server changed to " + currentServer);
 			}
 		}
-		System.out.println("[server manager] No servers available. Failed to delete.");
+		if(!delete)
+			System.out.println("[server manager] No servers available. Failed to delete.");
 	}
 	
 	public static String[] listFiles() {
