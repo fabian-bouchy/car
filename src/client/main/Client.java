@@ -37,10 +37,10 @@ public class Client {
 			// TODO test delete
 			ServerManager.delete(file);
 		}else if ("read".equals(cmd)){
-			System.out.println("[client] Reading "+fileName);
-			
+			File file = new File(fileName, fileName, false);
+			System.out.println("[client] Reading "+file.getId());
 			// TODO test read
-			ServerManager.read(fileName);
+			ServerManager.read(file);
 		}else{
 			System.out.println("[client] Command unknown "+cmd);
 		}

@@ -25,13 +25,13 @@ public abstract class RemoteNode {
 		return new Socket(sIpAddress, iPort);
 	}
 
-	public abstract void 	write(File file) throws UnknownHostException, IOException;
+	public abstract void 	write(File file) throws Exception;
 	
-	public abstract boolean has(String fileId) throws UnknownHostException, IOException;
+	public abstract boolean has(String fileId) throws Exception;
 	
-	public abstract File read(File fileId)throws UnknownHostException, IOException;
+	public abstract File 	read(File fileId) throws Exception;
 	
-	public abstract boolean delete(File id)throws UnknownHostException, IOException;
+	public abstract boolean delete(File id) throws Exception;
 	
 	public String getName() {
 		return sName;

@@ -22,7 +22,7 @@ public class Starter {
 			}
         
         // client mode
-        }else if((args.length == 2 || args.length == 3) && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete"))){
+        }else if((args.length == 2 || args.length == 3) && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete")  || args[0].equals("read"))){
         	// client mode
         	Client client = new Client();
         	try {

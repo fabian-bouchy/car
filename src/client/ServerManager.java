@@ -51,7 +51,27 @@ public class ServerManager {
 		}	
 	}
 	
-	public static File read(String fileName) {
+	public static File read(File file) {
+		// try the first servers
+		int current = currentServerCount;
+		boolean read = false;
+
+		while (!read){
+			try{
+				currentServer.read(file);
+				read = true;
+			}catch(Exception e){
+				// server doesn't respond, try another one
+				System.out.println("[server manager] Error reading to server " + currentServer);
+				System.out.println("[server manager] " + e);
+				currentServer = getNextServer();
+				if (currentServerCount == current){
+					System.out.println("[server manager] No servers available. Failed to read.");
+					break;
+				}
+			}
+		}
+
 		return null;
 	}
 	

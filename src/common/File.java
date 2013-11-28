@@ -42,7 +42,8 @@ public class File implements java.io.Serializable{
 		try {
 			FileOutputStream fos = new FileOutputStream(theFile);
 			bos = new BufferedOutputStream(fos);
-			bos.write(this.data);
+			if(this.data != null)
+				bos.write(this.data);
 		} catch (Exception e) {
 			System.out.println("Error writing to a file " + e);
 		} finally {

@@ -71,8 +71,35 @@ public class RemoteServer extends RemoteNode {
 	}
 
 	@Override
-	public File read(File file) throws UnknownHostException, IOException {
-		// TODO Auto-generated method stub
+	public File read(File metadata) throws UnknownHostException, IOException, ClassNotFoundException {
+		// Init the connection:
+		Socket socketToServer = this.connect();
+		PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socketToServer.getInputStream()));
+
+        out.println(UtilBobby.CLIENT_READ);
+        String answer = in.readLine();
+        if(answer.equals(UtilBobby.SERVER_READ_READY)) {
+        	// Create output stream to send metadata to server 
+        	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
+        	outStream.writeObject(metadata);
+			answer = in.readLine();
+			if(answer.equals(UtilBobby.SERVER_READ_FILE_FOUND)){
+				// Read file from server
+				ObjectInputStream reader = new ObjectInputStream(socketToServer.getInputStream());
+				File tmp = (File) reader.readObject();
+				if(tmp != null ) {
+					System.out.println(tmp);
+					tmp.writeToFile(tmp.getId() + "_read");
+					System.out.println("File read!");
+					metadata = tmp;
+					return tmp;
+				}
+			}
+			else {
+				System.out.println("Read failed!");
+			}
+        }
 		return null;
 	}
 
