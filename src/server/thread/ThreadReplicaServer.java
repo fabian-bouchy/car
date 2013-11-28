@@ -82,6 +82,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 						System.out.println("[thread replica server] delete succeed");
 						out.println(UtilBobby.REPLICA_DELETE_OK);
 					}else{
+						System.out.println("[thread replica server] delete failed: file not found.");
 						out.println(UtilBobby.REPLICA_DELETE_KO);
 					}
 				}

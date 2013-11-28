@@ -25,11 +25,15 @@ public class ThreadDelete extends ThreadWorker{
 			out.println(UtilBobby.SERVER_DELETE_READY);
 			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 			File file = (File) reader.readObject();
-			System.out.println("[Server] Deleting: " + file);
+			System.out.println("[Server] deleting: " + file);
 
 			// Remove file form our list
-			if(FileManager.getFile(file.getId()) != null)
+			if(FileManager.getFile(file.getId()) != null) {
 				FileManager.removeFile(file.getId());
+				System.out.println("[Server] delete succeed");
+			} else {
+				System.out.println("[Server] delete failed: file not found.");
+			}
 
 			// TODO Check if delete succeed
 			// Broadcast delete to replicas
