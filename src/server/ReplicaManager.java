@@ -11,38 +11,56 @@ import common.RemoteNode;
 public class ReplicaManager {
 	
 	private HashMap<String, RemoteNode> replicas;
-	
+
 	public ReplicaManager(){
 		replicas = new HashMap<String, RemoteNode>(ConfigManager.getRemoteNodes());
 	}
 
-	public void replicate(File file){
-		// TODO need to be change
-		for (RemoteNode remoteReplica : replicas.values()) {
+	/**
+	 * Thread use to write or delete in //
+	 *
+	 * Delete file if size = 0.
+	 */
+	private class ThreadReplicaWriteOrDelete implements Runnable {
+		private File file;
+		private RemoteNode remoteReplica;
+
+		public ThreadReplicaWriteOrDelete(RemoteNode remoteReplica, File file) {
+			super();
+			this.remoteReplica = remoteReplica;
+			this.file = file;
+		}
+
+		@Override
+		public void run() {
 			try {
-				remoteReplica.write(file);
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+				if(this.file.getData() != null)
+					this.remoteReplica.write(this.file);
+				else
+					this.remoteReplica.delete(this.file);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public void delete(File file){
-		// TODO need to be change
+	/**
+	 * Start threads to write file on replicas
+	 */
+	public void replicate(File file){
 		for (RemoteNode remoteReplica : replicas.values()) {
-			try {
-				remoteReplica.delete(file);
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			Thread writeThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
+			writeThread.run();
+		}
+	}
+
+	/**
+	 * Start threads to delete file on replicas
+	 */
+	public void delete(File file){
+		for (RemoteNode remoteReplica : replicas.values()) {
+			Thread deleteThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
+			deleteThread.run();
 		}
 	}
 
