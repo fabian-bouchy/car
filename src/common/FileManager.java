@@ -14,6 +14,16 @@ public class FileManager {
 
 	private FileManager(){}
 	
+	public static Map<String, File> getMetadata() {
+		HashMap<String, File> metadata = new HashMap<String, File>(MapFiles);
+		for (File file : metadata.values()) {
+			file.setData(null);
+			file.setSize(0);
+			metadata.put(file.getId(), file);
+		}
+		return metadata;
+	}
+
 	public static Map<String, File> getMapFiles() {
 		return MapFiles;
 	}

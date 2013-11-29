@@ -65,6 +65,13 @@ public class UtilBobby {
 	public final static String REPLICA_WRITE_OK		= REPLICA_WRITE + SPLIT_REGEX + "ok";
 	public final static String REPLICA_WRITE_KO		= REPLICA_WRITE + SPLIT_REGEX + "KO";
 
+	// getMetadata
+	public final static String REPLICA_METADATA_SYMBOL	= "metadata";
+	public final static String REPLICA_METADATA			= REPLICA + SPLIT_REGEX + REPLICA_METADATA_SYMBOL;
+	public final static String REPLICA_METADATA_READY  	= REPLICA_METADATA + SPLIT_REGEX + "ready";
+	public final static String REPLICA_METADATA_OK		= REPLICA_METADATA + SPLIT_REGEX + "ok";
+	public final static String REPLICA_METADATA_KO		= REPLICA_METADATA + SPLIT_REGEX + "KO";
+
 	// Has
 	public final static String REPLICA_HAS_SYMBOL	 = "has";
 	public final static String REPLICA_HAS			 = REPLICA + SPLIT_REGEX + REPLICA_HAS_SYMBOL;

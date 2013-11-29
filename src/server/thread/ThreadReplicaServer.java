@@ -3,6 +3,7 @@ package server.thread;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -37,6 +38,20 @@ public class ThreadReplicaServer extends ThreadWorker{
 				// Be sure that the message is for the replica thread!
 				if(cmd[0].compareTo(UtilBobby.REPLICA) != 0)
 					return;
+				
+				// check if the file exists on this node
+				if(cmd[1].equals(UtilBobby.REPLICA_METADATA_SYMBOL)) {
+					System.out.println("[thread replica server] get metadata");
+					
+					out.println(UtilBobby.REPLICA_METADATA_READY);
+					System.out.println("[thread replica server] metadata ready send");
+					ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
+		        	outStream.writeObject(FileManager.getMetadata());
+		        	if(in.readLine().equals(UtilBobby.REPLICA_METADATA_OK))
+		        		System.out.println("[thread replica server] metadata send!");
+		        	else
+		        		System.out.println("[thread replica server] metadata not send!");
+				}
 
 				// store the file we receive
 				if(cmd[1].equals(UtilBobby.REPLICA_WRITE_SYMBOL)) {
@@ -51,10 +66,15 @@ public class ThreadReplicaServer extends ThreadWorker{
 					File file = (File) reader.readObject();
 					System.out.println("File received: " + file);
 					
+					File oldFile = FileManager.getFile(file.getId());
+					// Update issue?
+					if(oldFile == null) {
+						// TODO change later - storing the file on hdd
+						file.writeToFile(file.getId());
+					} else if(oldFile != null && oldFile.getGlobalVersion() == file.getGlobalVersion() && !file.equals(oldFile)) {
+						// TODO Manage Conflict on update!!!!
+					}
 					
-					// TODO change later - storing the file on hdd
-					file.writeToFile(file.getId());
-
 					// TODO check support of FileManager
 					// Persist object in memory
 					FileManager.addFile(file);

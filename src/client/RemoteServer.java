@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import common.ConfigManager;
 import common.File;
@@ -117,5 +118,11 @@ public class RemoteServer extends RemoteNode {
 
 	public String toString(){
 		return "[remote server] ["+this.getPriority()+"] "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
+	}
+
+	@Override
+	public HashMap<String, File> getMetadata() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

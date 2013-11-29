@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Iterator;
 
 public class File implements java.io.Serializable{
 	
@@ -13,11 +14,13 @@ public class File implements java.io.Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -970661273181400441L;
-	
+
 	private String id;
 	private byte[] data;
 	private long size;
 	private int[] version;
+
+	private int globalVersion = 0;
 
 	public File(String id, String fileName, boolean init) throws IOException {
 		// fill in fields
@@ -67,12 +70,24 @@ public class File implements java.io.Serializable{
 		this.size = size;
 	}
 
+	public int getGlobalVersion() {
+		return globalVersion;
+	}
+	
 	public int[] getVersion() {
 		return version;
 	}
 
 	public void setVersion(int[] version) {
 		this.version = version;
+		computeGlobalVersion();
+	}
+
+	private void computeGlobalVersion() {
+		globalVersion = 0;
+		for(int i = 0; i < version.length; i++) {
+			globalVersion += version[i];
+		}
 	}
 
 	public String getId() {
@@ -92,6 +107,30 @@ public class File implements java.io.Serializable{
 	}
 	
 	public String toString(){
-		return "[file] " + id + ", " + size + "B";
+		return "[file] " + id + ", " + size + "B" + " version:" + getVersionToString();
+	}
+	
+	private String getVersionToString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for(int i = 0; i < this.version.length; i++ ) {
+			sb.append(this.version[i] + " ");
+		}
+		sb.append("]");
+		return sb.toString();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		
+		File other = (File)obj;
+		for(int i = 0; i < this.version.length; i++ ) {
+			if(this.version[i] != other.version[i])
+				return false;
+		}
+			
+		return true;
 	}
 }

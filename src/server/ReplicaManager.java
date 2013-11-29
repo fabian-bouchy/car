@@ -3,6 +3,7 @@ package server;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import common.ConfigManager;
 import common.File;
@@ -48,9 +49,21 @@ public class ReplicaManager {
 	 * Start threads to write file on replicas
 	 */
 	public void replicate(File file){
-		for (RemoteNode remoteReplica : replicas.values()) {
-			Thread writeThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
-			writeThread.run();
+		// Check global version file
+		// if == 1 => write only on K+1 server
+		// else broadcast update to all servers
+		if(file.getGlobalVersion() == 1) {
+			// Need to select K+1 server
+			for (RemoteNode remoteReplica : replicas.values()) {
+				Thread writeThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
+				writeThread.run();
+			}
+		} else {
+			// Need to propagate broadcast update
+			for (RemoteNode remoteReplica : replicas.values()) {
+				Thread writeThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
+				writeThread.run();
+			}
 		}
 	}
 
@@ -79,5 +92,33 @@ public class ReplicaManager {
 			}
 		}
 		return null;
+	}
+
+	public HashMap<String, File> getMetadata() {
+		HashMap<String, File> metadataOut = new HashMap<String, File>(); 
+		for (RemoteNode remoteReplica : replicas.values()) {
+			try {
+				HashMap<String, File> metadataTmp = remoteReplica.getMetadata(); 
+				if(metadataTmp != null) {
+					metadataOut = mergeMetadata(metadataOut, metadataTmp);
+				}
+			} catch (UnknownHostException e) {
+			} catch (IOException e) {
+			} catch (Exception e) {
+			}
+		}
+		return metadataOut;
+	}
+
+	private HashMap<String, File> mergeMetadata(HashMap<String, File> base, HashMap<String, File> other) {
+		for(Entry<String, File> metadata : other.entrySet()) {
+			File current = base.get(metadata.getKey());
+			if(current == null) {
+				base.put(metadata.getKey(), metadata.getValue());
+			} else {
+				// TODO Check conflict on metadata version !!!
+			}
+		}
+		return base;
 	}
 }

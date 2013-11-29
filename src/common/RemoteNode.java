@@ -3,6 +3,7 @@ package common;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 public abstract class RemoteNode {
 
@@ -32,6 +33,8 @@ public abstract class RemoteNode {
 	public abstract File 	read(File fileId) throws Exception;
 	
 	public abstract boolean delete(File id) throws Exception;
+	
+	public abstract HashMap<String, File> getMetadata() throws Exception;
 	
 	public String getName() {
 		return sName;

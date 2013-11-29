@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import common.ConfigManager;
 import common.File;
 import common.FileManager;
 import common.UtilBobby;
@@ -27,11 +28,25 @@ public class ThreadWrite extends ThreadWorker{
 			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 			File file = (File) reader.readObject();
 			System.out.println("Object received: " + file + " form client!");
-			// Persit object on hdd
-			file.writeToFile(file.getId());
-			// Persit object in memory
+			
+			// Manager version :
+			int[] tmpVersion = file.getVersion(); // Should be 0.0.0.0 etc...
+			int currentRemoteNodeId = ConfigManager.getMe().getPriority();
+			
+			// Exists => Update
+			File oldFile = FileManager.getFile(file.getId());
+			if(oldFile != null) {
+				// Set old version
+				tmpVersion[currentRemoteNodeId] = oldFile.getVersion()[currentRemoteNodeId]; 
+			}
+			
+			// Update version
+			tmpVersion[currentRemoteNodeId] += 1;
+			file.setVersion(tmpVersion);
+			
+			// Replace current version of file or metadata
 			FileManager.addFile(file);
-
+			
 			// TODO check if replication successed
 			replicaManager.replicate(file);
 			// send to client that the write successed

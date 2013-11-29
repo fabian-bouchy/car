@@ -4,9 +4,11 @@ import java.net.*;
 import java.io.*;
 
 import common.ConfigManager;
+import common.FileManager;
 import common.UtilBobby;
 import common.ConfigManager.ConfigType;
 import server.RemoteReplica;
+import server.ReplicaManager;
 import server.thread.ThreadDelete;
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
@@ -14,6 +16,13 @@ import server.thread.ThreadWrite;
 
 public class Server {
 	
+	public void restoreMetaData() {
+		System.out.println("[Server] Updating metadata...");
+		ReplicaManager replicaManager = new ReplicaManager();
+		FileManager.setMapFiles(replicaManager.getMetadata());
+		System.out.println(FileManager.represent());
+	}
+
 	public void run(String[] args) throws Exception{
 		
 		// initialize the configuration
@@ -27,13 +36,17 @@ public class Server {
 			// all default parameters
 			ConfigManager.init(ConfigType.SERVER);
 		}
-		
+
+
 		try {
 			RemoteReplica me = (RemoteReplica)ConfigManager.getMe();
 			
 			// create a socket and wait for connections
 			ServerSocket serverSocket = new ServerSocket(me.getPort());
-			
+//			try {
+//				restoreMetaData();
+//			} catch (Exception e) {
+//			}
 			System.out.println("[Server] Server started " + me);
 			
 			while (true){
