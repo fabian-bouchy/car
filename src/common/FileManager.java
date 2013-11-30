@@ -30,32 +30,30 @@ public class FileManager {
 	}
 	
 	public static synchronized File getFile(String id){
-		System.out.println("[FileManager getFile] Thread id: " + Thread.currentThread().getId());
-		System.out.println("[FileManager getFile] Looking for " + id);
-		return getFiles().get(id);
+		return files.get(id);
 	}
 	
 	public static synchronized void addFile(File file){
-		System.out.println("[FileManager addFile] Thread id: " + Thread.currentThread().getId());
-		getFiles().put(file.getId(), file);
+		files.put(file.getId(), file);
 		addOrUpdateMetadata(file);
 		System.out.println(represent());
 	}
 	
 	public static synchronized void replaceFile(File file){
-		System.out.println("[FileManager replaceFile] Thread id: " + Thread.currentThread().getId());
-		getFiles().put(file.getId(), file);
+		files.put(file.getId(), file);
 		addOrUpdateMetadata(file);
 		System.out.println(represent());
 	}
 	
 	public static synchronized void removeFile(String id){
-		getFiles().remove(id);
+		files.remove(id);
+		metadata.remove(id);
 		System.out.println(represent());
 	}
 	
 	private static synchronized void addOrUpdateMetadata(File file) {
-		metadata.put(file.getId(),file);
+		File metadataTmp = new File(file);
+		metadata.put(metadataTmp.getId(),metadataTmp);
 	}
 	
 	public static synchronized void mergeMetadata(HashMap<String, File> others) {
@@ -65,8 +63,7 @@ public class FileManager {
 	}
 
 	public static synchronized String represent(){
-		System.out.println("[FileManager represent] Thread id: " + Thread.currentThread().getId());
-		if(FileManager.files == null)
+		if(FileManager.files.isEmpty())
 			return "List of file is empty";
 		
 		String out = System.getProperty("line.separator") + "Current file configuration:" + System.getProperty("line.separator");
@@ -77,11 +74,10 @@ public class FileManager {
 	}
 	
 	public static synchronized String representMetadata(){
-		System.out.println("[FileManager representMetadata] Thread id: " + Thread.currentThread().getId());
-		if(FileManager.metadata == null)
+		if(FileManager.metadata.isEmpty())
 			return "List of metadata is empty";
 		
-		String out = System.getProperty("line.separator") + "Current file configuration:" + System.getProperty("line.separator");
+		String out = System.getProperty("line.separator") + "Current metadata configuration:" + System.getProperty("line.separator");
 		for (Map.Entry<String, File> entry : FileManager.metadata.entrySet()){
 			out += entry.getKey() + " => " + entry.getValue().toString() + System.getProperty("line.separator");
 		}

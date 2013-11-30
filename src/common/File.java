@@ -39,6 +39,17 @@ public class File implements java.io.Serializable{
 		}
 	}
 
+	public File(File file) {
+		// fill in fields
+		this.id = file.getId();
+		this.size = 0;
+		this.version = new int[ConfigManager.getN()];
+		for (int i = 0; i < ConfigManager.getN(); i++) {
+			this.version[i] = file.getVersion()[i];
+		}
+		this.data = null;
+	}
+
 	public void writeToFile(String theFile) throws IOException {
 		BufferedOutputStream bos = null;
 
