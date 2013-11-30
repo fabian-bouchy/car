@@ -5,55 +5,84 @@ import java.util.Map;
 
 public class FileManager {
 
-	private static Map<String, File> MapFiles;
+	private static HashMap<String, File> files = new HashMap<String, File>();
+	private static HashMap<String, File> metadata = new HashMap<String, File>();
 
 	static {
-		Map<String, File> mapFich = new HashMap<String, File>();
-		setMapFiles(mapFich);
 	}
-
+	
 	private FileManager(){}
 	
-	public static Map<String, File> getMetadata() {
-		HashMap<String, File> metadata = new HashMap<String, File>(MapFiles);
-		for (File file : metadata.values()) {
-			file.setData(null);
-			file.setSize(0);
-			metadata.put(file.getId(), file);
-		}
+	public static synchronized HashMap<String, File> getMetadata() {
 		return metadata;
 	}
 
-	public static Map<String, File> getMapFiles() {
-		return MapFiles;
+	public static synchronized HashMap<String, File> getFiles() {
+		return files;
 	}
 
-	public static void setMapFiles(Map<String, File> mapFiles) {
-		MapFiles = mapFiles;
+	public static synchronized void setMapFiles(HashMap<String, File> mapFiles) {
+		files = mapFiles;
 	}
 	
-	public static File getFile(String id){
-		return MapFiles.get(id);
+	public static synchronized void setMetadata(HashMap<String, File> otherMetadata) {
+		metadata = otherMetadata;
 	}
 	
-	public static void addFile(File file){
-		getMapFiles().put(file.getId(), file);
+	public static synchronized File getFile(String id){
+		System.out.println("[FileManager getFile] Thread id: " + Thread.currentThread().getId());
+		System.out.println("[FileManager getFile] Looking for " + id);
+		return getFiles().get(id);
+	}
+	
+	public static synchronized void addFile(File file){
+		System.out.println("[FileManager addFile] Thread id: " + Thread.currentThread().getId());
+		getFiles().put(file.getId(), file);
+		addOrUpdateMetadata(file);
 		System.out.println(represent());
 	}
 	
-	public static void replaceFile(File file){
-		getMapFiles().put(file.getId(), file);
+	public static synchronized void replaceFile(File file){
+		System.out.println("[FileManager replaceFile] Thread id: " + Thread.currentThread().getId());
+		getFiles().put(file.getId(), file);
+		addOrUpdateMetadata(file);
 		System.out.println(represent());
 	}
 	
-	public static void removeFile(String id){
-		MapFiles.remove(id);
+	public static synchronized void removeFile(String id){
+		getFiles().remove(id);
 		System.out.println(represent());
 	}
 	
-	public static String represent(){
+	private static synchronized void addOrUpdateMetadata(File file) {
+		metadata.put(file.getId(),file);
+	}
+	
+	public static synchronized void mergeMetadata(HashMap<String, File> others) {
+		for (File file : others.values()) {
+			addOrUpdateMetadata(file);
+		}
+	}
+
+	public static synchronized String represent(){
+		System.out.println("[FileManager represent] Thread id: " + Thread.currentThread().getId());
+		if(FileManager.files == null)
+			return "List of file is empty";
+		
 		String out = System.getProperty("line.separator") + "Current file configuration:" + System.getProperty("line.separator");
-		for (Map.Entry<String, File> entry : MapFiles.entrySet()){
+		for (Map.Entry<String, File> entry : FileManager.files.entrySet()){
+			out += entry.getKey() + " => " + entry.getValue().toString() + System.getProperty("line.separator");
+		}
+		return out;
+	}
+	
+	public static synchronized String representMetadata(){
+		System.out.println("[FileManager representMetadata] Thread id: " + Thread.currentThread().getId());
+		if(FileManager.metadata == null)
+			return "List of metadata is empty";
+		
+		String out = System.getProperty("line.separator") + "Current file configuration:" + System.getProperty("line.separator");
+		for (Map.Entry<String, File> entry : FileManager.metadata.entrySet()){
 			out += entry.getKey() + " => " + entry.getValue().toString() + System.getProperty("line.separator");
 		}
 		return out;

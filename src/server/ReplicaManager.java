@@ -95,30 +95,21 @@ public class ReplicaManager {
 	}
 
 	public HashMap<String, File> getMetadata() {
-		HashMap<String, File> metadataOut = new HashMap<String, File>(); 
 		for (RemoteNode remoteReplica : replicas.values()) {
 			try {
+				// Return first metadata found!
 				HashMap<String, File> metadataTmp = remoteReplica.getMetadata(); 
 				if(metadataTmp != null) {
-					metadataOut = mergeMetadata(metadataOut, metadataTmp);
+					return metadataTmp;
 				}
 			} catch (UnknownHostException e) {
+				System.out.println("[server - metadata] Unable to connect to :" + remoteReplica + " " + e.getLocalizedMessage());
 			} catch (IOException e) {
+				System.out.println("[server - metadata] Unable to connect to :" + remoteReplica + " " + e.getLocalizedMessage());
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-		return metadataOut;
-	}
-
-	private HashMap<String, File> mergeMetadata(HashMap<String, File> base, HashMap<String, File> other) {
-		for(Entry<String, File> metadata : other.entrySet()) {
-			File current = base.get(metadata.getKey());
-			if(current == null) {
-				base.put(metadata.getKey(), metadata.getValue());
-			} else {
-				// TODO Check conflict on metadata version !!!
-			}
-		}
-		return base;
+		return null;
 	}
 }

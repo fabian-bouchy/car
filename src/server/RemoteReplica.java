@@ -67,29 +67,38 @@ public class RemoteReplica extends RemoteNode{
 	}
 
 	public HashMap<String, File> getMetadata() throws UnknownHostException, IOException, ClassNotFoundException {
+		System.out.println("[remote replica] getMetadata start");
 		Socket echoSocket = connect();
+		System.out.println("[remote replica] getMetadata connect");
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-
+		System.out.println("[remote replica] getMetadata stream created");
 		out.println(UtilBobby.REPLICA_METADATA);
 
 		System.out.println("[remote replica] waiting metadata!");
-		ObjectInputStream reader = new ObjectInputStream(echoSocket.getInputStream());
-		String line = in.readLine();
-		if (line.equals(UtilBobby.REPLICA_METADATA_READY)){
-			try{
-				HashMap<String, File> metadata = (HashMap<String, File>) reader.readObject();
-				out.println(UtilBobby.REPLICA_METADATA_OK);
-				System.out.println("[remote replica] metadata read!: size "+ metadata.size());
-				return metadata;
-			} catch (Exception e){
-				System.out.println("[remote replica] error readObject!");
-				e.printStackTrace();
-				return null;
+		try {
+			String line = in.readLine();
+		
+			if (line.equals(UtilBobby.REPLICA_METADATA_READY)){
+				try{
+					ObjectInputStream reader = new ObjectInputStream(echoSocket.getInputStream());
+					HashMap<String, File> metadata = (HashMap<String, File>) reader.readObject();
+					out.println(UtilBobby.REPLICA_METADATA_OK);
+					System.out.println("[remote replica] metadata read!: size "+ metadata.size());
+					return metadata;
+				} catch (Exception e){
+					System.out.println("[remote replica] error readObject!");
+					out.println(UtilBobby.REPLICA_METADATA_KO);
+					e.printStackTrace();
+					return null;
+				}
+			}else{
+				System.out.println("[remote replica] replica not ready to metadata!");
+				throw new IOException();
 			}
-		}else{
-			System.out.println("[remote replica] replica not ready to metadata!");
-			throw new IOException();
+		} catch(Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 

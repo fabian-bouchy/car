@@ -1,9 +1,14 @@
 package server.main;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.*;
-import java.io.*;
+import java.util.HashMap;
 
 import common.ConfigManager;
+import common.File;
 import common.FileManager;
 import common.UtilBobby;
 import common.ConfigManager.ConfigType;
@@ -19,7 +24,10 @@ public class Server {
 	public void restoreMetaData() {
 		System.out.println("[Server] Updating metadata...");
 		ReplicaManager replicaManager = new ReplicaManager();
-		FileManager.setMapFiles(replicaManager.getMetadata());
+		HashMap<String, File> metadata = replicaManager.getMetadata();
+		if(metadata != null)
+			FileManager.setMetadata(metadata);
+		System.out.println("[Server] Metadata updated...");
 		System.out.println(FileManager.represent());
 	}
 
@@ -37,16 +45,18 @@ public class Server {
 			ConfigManager.init(ConfigType.SERVER);
 		}
 
+		try {
+			restoreMetaData();
+			System.out.println("[Server -metadata] " + FileManager.representMetadata());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		try {
 			RemoteReplica me = (RemoteReplica)ConfigManager.getMe();
 			
 			// create a socket and wait for connections
 			ServerSocket serverSocket = new ServerSocket(me.getPort());
-//			try {
-//				restoreMetaData();
-//			} catch (Exception e) {
-//			}
 			System.out.println("[Server] Server started " + me);
 			
 			while (true){
