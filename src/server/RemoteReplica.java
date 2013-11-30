@@ -67,15 +67,13 @@ public class RemoteReplica extends RemoteNode{
 	}
 
 	public HashMap<String, File> getMetadata() throws UnknownHostException, IOException, ClassNotFoundException {
-		System.out.println("[remote replica] getMetadata start");
 		Socket echoSocket = connect();
-		System.out.println("[remote replica] getMetadata connect");
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-		System.out.println("[remote replica] getMetadata stream created");
+
 		out.println(UtilBobby.REPLICA_METADATA);
 
-		System.out.println("[remote replica] waiting metadata!");
+		System.out.println("[remote replica] waiting metadata...");
 		try {
 			String line = in.readLine();
 		
@@ -84,7 +82,7 @@ public class RemoteReplica extends RemoteNode{
 					ObjectInputStream reader = new ObjectInputStream(echoSocket.getInputStream());
 					HashMap<String, File> metadata = (HashMap<String, File>) reader.readObject();
 					out.println(UtilBobby.REPLICA_METADATA_OK);
-					System.out.println("[remote replica] metadata read!: size "+ metadata.size());
+					System.out.println("[remote replica] metadata read!");
 					return metadata;
 				} catch (Exception e){
 					System.out.println("[remote replica] error readObject!");
