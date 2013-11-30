@@ -47,6 +47,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 					System.out.println("[thread replica server] metadata ready send");
 					ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 		        	outStream.writeObject(FileManager.getMetadata());
+					// FIXME Sometimes block here
 		        	if(in.readLine().equals(UtilBobby.REPLICA_METADATA_OK))
 		        		System.out.println("[thread replica server] metadata send!");
 		        	else

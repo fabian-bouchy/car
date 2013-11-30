@@ -44,9 +44,7 @@ public class File implements java.io.Serializable{
 		this.id = file.getId();
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
-		for (int i = 0; i < ConfigManager.getN(); i++) {
-			this.version[i] = file.getVersion()[i];
-		}
+		this.setVersion(file.getVersion());
 		this.data = null;
 	}
 

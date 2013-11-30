@@ -39,11 +39,15 @@ public class ThreadRead extends ThreadWorker{
 	        	outStream.writeObject(fileRead);
 			} else {
 				System.out.println("[Server] reading failed: file not found locally.");
-				System.out.println("[Server] looking for on replicas...");
-				RemoteNode nextHop = this.replicaManager.has(metadata);
-				if(nextHop != null)
-					out.println(UtilBobby.SERVER_READ_REDIRECT_TO + UtilBobby.SPLIT_REGEX + nextHop.getName());
+				System.out.println("[Server] reading failed: reading metadata...");
 
+				File fileMetadata = FileManager.getMetadata(metadata.getId());
+				if(fileMetadata != null) {
+					System.out.println("[Server] looking for on replicas...");
+					RemoteNode nextHop = this.replicaManager.has(metadata);
+					if(nextHop != null)
+						out.println(UtilBobby.SERVER_READ_REDIRECT_TO + UtilBobby.SPLIT_REGEX + nextHop.getName());
+				}
 				// Not found
 				out.println(UtilBobby.SERVER_READ_KO);
 			}

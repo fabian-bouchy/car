@@ -34,17 +34,19 @@ public class ThreadWrite extends ThreadWorker{
 			int currentRemoteNodeId = ConfigManager.getMe().getPriority();
 			
 			// Exists => Update
-			File oldFile = FileManager.getFile(file.getId());
-			if(oldFile != null) {
+			File metadataFile = FileManager.getMetadata(file.getId());
+			if(metadataFile != null) {
+				System.out.println("[server thread write] Metadata found!");
 				// Set old version
-				tmpVersion[currentRemoteNodeId] = oldFile.getVersion()[currentRemoteNodeId]; 
+				tmpVersion = metadataFile.getVersion();
+				tmpVersion[currentRemoteNodeId] = metadataFile.getVersion()[currentRemoteNodeId]; 
 			}
 			
 			// Update version
 			tmpVersion[currentRemoteNodeId] += 1;
 			file.setVersion(tmpVersion);
 			
-			// Replace current version of file or metadata
+			// Replace current version of file
 			FileManager.addFile(file);
 			
 			// TODO check if replication successed

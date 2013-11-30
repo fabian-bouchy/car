@@ -80,6 +80,7 @@ public class RemoteReplica extends RemoteNode{
 			if (line.equals(UtilBobby.REPLICA_METADATA_READY)){
 				try{
 					ObjectInputStream reader = new ObjectInputStream(echoSocket.getInputStream());
+					// FIXME Sometimes block here
 					HashMap<String, File> metadata = (HashMap<String, File>) reader.readObject();
 					out.println(UtilBobby.REPLICA_METADATA_OK);
 					System.out.println("[remote replica] metadata read!");

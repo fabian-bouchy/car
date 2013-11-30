@@ -5,7 +5,9 @@ import java.util.Map;
 
 public class FileManager {
 
+	// Files contain in memory
 	private static HashMap<String, File> files = new HashMap<String, File>();
+	// Metadata of network
 	private static HashMap<String, File> metadata = new HashMap<String, File>();
 
 	static {
@@ -32,19 +34,23 @@ public class FileManager {
 	public static synchronized File getFile(String id){
 		return files.get(id);
 	}
-	
+
+	public static synchronized File getMetadata(String id){
+		return metadata.get(id);
+	}
+
 	public static synchronized void addFile(File file){
 		files.put(file.getId(), file);
 		addOrUpdateMetadata(file);
 		System.out.println(represent());
 	}
-	
+
 	public static synchronized void replaceFile(File file){
 		files.put(file.getId(), file);
 		addOrUpdateMetadata(file);
 		System.out.println(represent());
 	}
-	
+
 	public static synchronized void removeFile(String id){
 		files.remove(id);
 		metadata.remove(id);
@@ -52,8 +58,10 @@ public class FileManager {
 	}
 	
 	private static synchronized void addOrUpdateMetadata(File file) {
+		System.out.println("[FileManager] add or update metadata for " + file);
 		File metadataTmp = new File(file);
 		metadata.put(metadataTmp.getId(),metadataTmp);
+		System.out.println(representMetadata());
 	}
 	
 	public static synchronized void mergeMetadata(HashMap<String, File> others) {
