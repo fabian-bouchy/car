@@ -7,6 +7,7 @@ import java.util.HashMap;
 import common.ConfigManager;
 import common.File;
 import common.RemoteNode;
+import common.Syncer;
 
 public class ReplicaManager {
 	
@@ -24,22 +25,31 @@ public class ReplicaManager {
 	private class ThreadReplicaWriteOrDelete implements Runnable {
 		private File file;
 		private RemoteNode remoteReplica;
+		private Syncer syncer;
 
-		public ThreadReplicaWriteOrDelete(RemoteNode remoteReplica, File file) {
+		public ThreadReplicaWriteOrDelete(RemoteNode remoteReplica, File file, Syncer syncer) {
 			super();
 			this.remoteReplica = remoteReplica;
 			this.file = file;
+			this.syncer = syncer;
 		}
 
 		@Override
 		public void run() {
 			try {
-				if(this.file.getData() != null)
+				if(this.file.getData() != null){
 					this.remoteReplica.write(this.file);
-				else
+				}else{
 					this.remoteReplica.delete(this.file);
+				}
+				
+				// callback
+				this.syncer.callback(this, 1);
 			} catch (Exception e) {
 				e.printStackTrace();
+				
+				// callback
+				this.syncer.callback(this, 0);
 			}
 		}
 	}
@@ -48,21 +58,29 @@ public class ReplicaManager {
 	 * Start threads to write file on replicas
 	 */
 	public void replicate(File file){
+		
+		Syncer syncer = new Syncer();
+		
 		// Check global version file
 		// if == 1 => write only on K+1 server
 		// else broadcast update to all servers
 		if(file.getGlobalVersion() == 1) {
-			// Need to select K+1 server
+			// TODO Need to select K+1 server
 			for (RemoteNode remoteReplica : replicas.values()) {
-				Thread writeThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
-				writeThread.run();
+				syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
 			}
 		} else {
 			// Need to propagate broadcast update
 			for (RemoteNode remoteReplica : replicas.values()) {
-				Thread writeThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
-				writeThread.run();
+				syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
 			}
+		}
+		
+		try {
+			syncer.waitForAll();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -70,9 +88,19 @@ public class ReplicaManager {
 	 * Start threads to delete file on replicas
 	 */
 	public void delete(File file){
+		
+		Syncer syncer = new Syncer();
+		
 		for (RemoteNode remoteReplica : replicas.values()) {
-			Thread deleteThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
-			deleteThread.run();
+			syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
+		}
+		
+		// wait for everybody
+		try {
+			syncer.waitForAll();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
