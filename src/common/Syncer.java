@@ -46,7 +46,7 @@ public class Syncer {
 		latch.await();
 		System.out.print("[syncer] finished: [");
 		for (int i : results){
-			System.out.print(i + ", ");
+			System.out.print(i + " ");
 		}
 		System.out.println("]");
 	}
