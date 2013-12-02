@@ -16,6 +16,7 @@ public class File implements java.io.Serializable{
 	private static final long serialVersionUID = -970661273181400441L;
 
 	private String id;
+	private String fileName;
 	private byte[] data;
 	private long size;
 	private int[] version;
@@ -25,6 +26,7 @@ public class File implements java.io.Serializable{
 	public File(String id, String fileName, boolean init) throws IOException {
 		// fill in fields
 		this.id = id;
+		this.fileName = fileName;
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
 		this.data = null;
@@ -39,6 +41,10 @@ public class File implements java.io.Serializable{
 		}
 	}
 
+	/**
+	 * Create metadata for the file gives in parameters
+	 * @param file 
+	 */
 	public File(File file) {
 		// fill in fields
 		this.id = file.getId();
@@ -128,7 +134,15 @@ public class File implements java.io.Serializable{
 		sb.append("]");
 		return sb.toString();
 	}
-	
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null)
@@ -141,5 +155,10 @@ public class File implements java.io.Serializable{
 		}
 			
 		return true;
+	}
+	
+	public File getMetadata() {
+		File metadata = new File(this);
+		return metadata;
 	}
 }

@@ -53,7 +53,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 		        	else
 		        		System.out.println("[thread replica server] metadata not send!");
 				}
-
+				
 				// store the file we receive
 				if(cmd[1].equals(UtilBobby.REPLICA_WRITE_SYMBOL)) {
 					

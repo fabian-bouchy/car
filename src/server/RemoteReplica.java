@@ -20,10 +20,16 @@ public class RemoteReplica extends RemoteNode{
 	}
 
 	public void write(File file) throws UnknownHostException, IOException{
+		// Checking if update was needed :
+		if(file.getGlobalVersion() != 1 && !has(file))
+			return;
+
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-		
+
+
+		// Write or override file on replica.
 		out.println(UtilBobby.REPLICA_WRITE);
 		
 		String line = in.readLine();
