@@ -32,12 +32,13 @@ public class RemoteReplica extends RemoteNode{
 			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
 			outStream.writeObject(file);
 
-			// Check if write successed
+			// Check if write OK
 			String status = in.readLine();
-			if(status.equals(UtilBobby.REPLICA_WRITE_OK))
+			if(status.equals(UtilBobby.REPLICA_WRITE_OK)){
 				System.out.println("[remote replica] Replication OK: " + file);
-			else
+			}else{
 				throw new IOException();
+			}
 		}else{
 			throw new IOException();
 		}
