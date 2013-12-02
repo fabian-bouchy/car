@@ -10,10 +10,11 @@ import common.RemoteNode;
 
 public class ReplicaManager {
 	
-	private HashMap<String, RemoteNode> replicas;
+	private HashMap<String, RemoteNode> replicas, replicasK;
 
 	public ReplicaManager(){
 		replicas = new HashMap<String, RemoteNode>(ConfigManager.getRemoteNodes());
+                replicasK = new HashMap<String, RemoteNode>(ConfigManager.getRemoteReplicas());
 	}
 
 	/**
@@ -53,7 +54,8 @@ public class ReplicaManager {
 		// else broadcast update to all servers
 		if(file.getGlobalVersion() == 1) {
 			// Need to select K+1 server
-			for (RemoteNode remoteReplica : replicas.values()) {
+			for (RemoteNode remoteReplica : replicasK.values()) {
+                                /*TODO: si l'un des serveurs tombe, récupérer un autre réplica via ConfigManager.getOtherRemoteReplica*/
 				Thread writeThread = new Thread(new ThreadReplicaWriteOrDelete(remoteReplica, file));
 				writeThread.run();
 			}
