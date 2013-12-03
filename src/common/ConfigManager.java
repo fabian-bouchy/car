@@ -29,6 +29,7 @@ public class ConfigManager {
 	
 	private static HashMap<String,RemoteNode> sRemoteNodes;
 	private static RemoteNode sMe;
+        private static String sHostName;
 	
 	static {
 		sRemoteNodes = new HashMap<String,RemoteNode>();
@@ -64,8 +65,10 @@ public class ConfigManager {
 	public static void init(ConfigType configType, String sConfigFile, String hostname) throws Exception{
 		
 		String myIP = Inet4Address.getLocalHost().getHostAddress();
+                
 		String myHost = Inet4Address.getLocalHost().getHostName();
-		
+		sHostName = myHost;
+                
 		System.out.println("[config manager] init on "+myHost+" ("+myIP+")");
 
 		// prepare JSON
@@ -78,7 +81,7 @@ public class ConfigManager {
 			JSONObject jsonObjReplica = jsonArrayReplicas.getJSONObject(i);
 
 			// Read data form json object
-			String 	sName 		= jsonObjReplica.getString("name");
+			String  sName           = jsonObjReplica.getString("name");
 			String 	sIp 		= jsonObjReplica.getString("ip");
 			int 	iPort		= jsonObjReplica.getInt("port");
 			String	sInterface 	= jsonObjReplica.getString("interface");
@@ -118,10 +121,13 @@ public class ConfigManager {
 		
 		System.out.println("[config manager] initialized with "+sRemoteNodes.size()+" hosts");
                 
-                generatePriorityServers(configType);
+                generatePriorityServers();
 	}
 
-        private static void generatePriorityServers(ConfigType configType) {
+        /**
+         * serversPriority contains all the servers in random order
+         */
+        private static void generatePriorityServers() {
 
             for(RemoteNode node : getRemoteNodes().values()) {
                     serversPriority.add(node.getName());
@@ -137,6 +143,10 @@ public class ConfigManager {
 	 */
 	public static RemoteNode getMe() {
 		return sMe;
+	}
+        
+        public static String getHostName() {
+		return sHostName;
 	}
 
 	/**
@@ -197,7 +207,7 @@ public class ConfigManager {
         public static synchronized int getK() {
 		return K;
 	}
-
+        
 	public static synchronized RemoteNode getRemoteNode(String remoteNodeName) {
 		return sRemoteNodes.get(remoteNodeName);
 	}

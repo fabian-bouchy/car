@@ -30,15 +30,15 @@ public class Client {
 			System.out.println("[client] Writing "+fileName);
 
 			// TODO Generate file ID
-			File file = new File(fileName, fileName, true);
+			File file = new File(ConfigManager.getHostName(), fileName, true);
 			ServerManager.write(file);
 		}else if ("delete".equals(cmd)){
 			System.out.println("[client] Deleting "+fileName);
 
-			File file = new File(fileName, fileName, false);
+			File file = new File(ConfigManager.getHostName(), fileName, false);
 			ServerManager.delete(file);
 		}else if ("read".equals(cmd)){
-			File metadata = new File(fileName, fileName, false);
+			File metadata = new File(ConfigManager.getHostName(), fileName, false);
 			System.out.println("[client] Reading "+metadata.getId());
 
 			File file = ServerManager.read(metadata);
