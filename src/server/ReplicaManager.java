@@ -11,10 +11,11 @@ import common.Syncer;
 
 public class ReplicaManager {
 	
-	private HashMap<String, RemoteNode> replicas;
+	private HashMap<String, RemoteNode> replicas, replicasK;
 
 	public ReplicaManager(){
 		replicas = new HashMap<String, RemoteNode>(ConfigManager.getRemoteNodes());
+                replicasK = new HashMap<String, RemoteNode>(ConfigManager.getRemoteReplicas());
 	}
 
 	/**
@@ -65,9 +66,12 @@ public class ReplicaManager {
 		// if == 1 => write only on K+1 server
 		// else broadcast update to all servers
 		if(file.getGlobalVersion() == 1) {
-			// TODO Need to select K+1 server
-			for (RemoteNode remoteReplica : replicas.values()) {
+
+			// Need to select K+1 server
+                        /*TODO: si l'un des serveurs tombe, récupérer un autre réplica via ConfigManager.getOtherRemoteReplica*/
+			for (RemoteNode remoteReplica : replicasK.values()) {
 				syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
+
 			}
 		} else {
 			// Need to propagate broadcast update

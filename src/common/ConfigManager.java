@@ -10,6 +10,9 @@ import org.json.JSONTokener;
 
 import server.RemoteReplica;
 import client.RemoteServer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Collections;
 
 public class ConfigManager {
 	
@@ -20,6 +23,9 @@ public class ConfigManager {
 	
 	private static final String DEFAULT_CONFIG_FILE_NAME = "config.json";
 	private static final int 	N  = 3;
+        private static final int        K  = 1;
+        
+        private static String[] serversPriority = new String[N];  
 	
 	private static HashMap<String,RemoteNode> sRemoteNodes;
 	private static RemoteNode sMe;
@@ -111,8 +117,36 @@ public class ConfigManager {
 		}
 		
 		System.out.println("[config manager] initialized with "+sRemoteNodes.size()+" hosts");
+                
+                generatePriorityServers(configType);
 	}
 
+        private static void generatePriorityServers(ConfigType configType) {
+                           
+                ArrayList list = new ArrayList(N);
+                for(int i=0; i<N; i++) {
+                    list.add(i);
+                }
+                Collections.shuffle(list);
+                
+                //Iterator<RemoteNode> it = ConfigManager.getRemoteNodes().values().iterator();
+                int i = 0;
+                int ind;
+              
+                for(RemoteNode node : getRemoteNodes().values()) {
+                    //RemoteNode node = (RemoteNode) it.next();
+                    ind = (int) list.get(i);
+                    serversPriority[ind] = node.getName();
+                    i++;
+                }
+                
+                if (configType != ConfigType.CLIENT) {
+                    ind = (int) list.get(i);
+                    serversPriority[ind] = sMe.getName();
+                }
+                
+        }
+        
 	/**
 	 * Get the intance of the current replica
 	 * @return The current instance of the replica
@@ -128,10 +162,56 @@ public class ConfigManager {
 	public static synchronized HashMap<String,RemoteNode> getRemoteNodes() {
 		return sRemoteNodes;
 	}
+        
+        
+        public static HashMap<String,RemoteNode> getRemoteReplicas() {
+                HashMap<String,RemoteNode> map = new HashMap<String,RemoteNode>();
+                int k = K;
+                for(int i=0; i<k; i++) {
+                   String nameServer = serversPriority[i];
+                   RemoteNode server = getRemoteNodes().get(nameServer);
+                 
+                   if(server != null)
+                        map.put(nameServer, server);
+                   else
+                       k++;
+                   
+                }
+                return map;               
+        }
+        
+        public static RemoteNode getOtherRemoteReplica(HashMap<String,RemoteNode> map) {
+            if(map.size() >= getRemoteNodes().size()) {
+                return null;
+            } else {
+                Iterator<RemoteNode> it = getRemoteNodes().values().iterator();
+                
+                while(it.hasNext()) {
+                    Iterator<RemoteNode> itMap = map.values().iterator();
+                    boolean found = false;
+                    RemoteNode node = (RemoteNode) it.next();
+                    
+                    while(itMap.hasNext() && !found) {
+                        
+                        RemoteNode nodeMap = (RemoteNode) itMap.next();
+                        if(node.equals(nodeMap))
+                            found = true;
+                    }
+                    if(!found)
+                        return node;
+                }
+                    
+            }
+            return null;
+        }
 	
 	
 	public static synchronized int getN() {
 		return N;
+	}
+        
+        public static synchronized int getK() {
+		return K;
 	}
 
 	public static synchronized RemoteNode getRemoteNode(String remoteNodeName) {
