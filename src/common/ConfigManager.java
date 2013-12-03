@@ -25,10 +25,11 @@ public class ConfigManager {
 	private static final int 	N  = 3;
         private static final int        K  = 1;
         
-        private static String[] serversPriority = new String[N];  
+        private static ArrayList<String> serversPriority = new ArrayList<String>(N);  
 	
 	private static HashMap<String,RemoteNode> sRemoteNodes;
 	private static RemoteNode sMe;
+        private static String sHostName;
 	
 	static {
 		sRemoteNodes = new HashMap<String,RemoteNode>();
@@ -64,8 +65,10 @@ public class ConfigManager {
 	public static void init(ConfigType configType, String sConfigFile, String hostname) throws Exception{
 		
 		String myIP = Inet4Address.getLocalHost().getHostAddress();
+                
 		String myHost = Inet4Address.getLocalHost().getHostName();
-		
+		sHostName = myHost;
+                
 		System.out.println("[config manager] init on "+myHost+" ("+myIP+")");
 
 		// prepare JSON
@@ -78,7 +81,7 @@ public class ConfigManager {
 			JSONObject jsonObjReplica = jsonArrayReplicas.getJSONObject(i);
 
 			// Read data form json object
-			String 	sName 		= jsonObjReplica.getString("name");
+			String  sName           = jsonObjReplica.getString("name");
 			String 	sIp 		= jsonObjReplica.getString("ip");
 			int 	iPort		= jsonObjReplica.getInt("port");
 			String	sInterface 	= jsonObjReplica.getString("interface");
@@ -118,32 +121,19 @@ public class ConfigManager {
 		
 		System.out.println("[config manager] initialized with "+sRemoteNodes.size()+" hosts");
                 
-                generatePriorityServers(configType);
+                generatePriorityServers();
 	}
 
-        private static void generatePriorityServers(ConfigType configType) {
-                           
-                ArrayList list = new ArrayList(N);
-                for(int i=0; i<N; i++) {
-                    list.add(i);
-                }
-                Collections.shuffle(list);
-                
-                //Iterator<RemoteNode> it = ConfigManager.getRemoteNodes().values().iterator();
-                int i = 0;
-                int ind;
-              
-                for(RemoteNode node : getRemoteNodes().values()) {
-                    //RemoteNode node = (RemoteNode) it.next();
-                    ind = (int) list.get(i);
-                    serversPriority[ind] = node.getName();
-                    i++;
-                }
-                
-                if (configType != ConfigType.CLIENT) {
-                    ind = (int) list.get(i);
-                    serversPriority[ind] = sMe.getName();
-                }
+        /**
+         * serversPriority contains all the servers in random order
+         */
+        private static void generatePriorityServers() {
+
+            for(RemoteNode node : getRemoteNodes().values()) {
+                    serversPriority.add(node.getName());
+            }
+  
+            Collections.shuffle(serversPriority);
                 
         }
         
@@ -153,6 +143,10 @@ public class ConfigManager {
 	 */
 	public static RemoteNode getMe() {
 		return sMe;
+	}
+        
+        public static String getHostName() {
+		return sHostName;
 	}
 
 	/**
@@ -168,7 +162,7 @@ public class ConfigManager {
                 HashMap<String,RemoteNode> map = new HashMap<String,RemoteNode>();
                 int k = K;
                 for(int i=0; i<k; i++) {
-                   String nameServer = serversPriority[i];
+                   String nameServer = serversPriority.get(i);
                    RemoteNode server = getRemoteNodes().get(nameServer);
                  
                    if(server != null)
@@ -213,7 +207,7 @@ public class ConfigManager {
         public static synchronized int getK() {
 		return K;
 	}
-
+        
 	public static synchronized RemoteNode getRemoteNode(String remoteNodeName) {
 		return sRemoteNodes.get(remoteNodeName);
 	}

@@ -23,10 +23,10 @@ public class File implements java.io.Serializable{
 
 	private int globalVersion = 0;
 
-	public File(String id, String fileName, boolean init) throws IOException {
+	public File(String sName, String fileName, boolean init) throws IOException {
 		// fill in fields
-		this.id = id;
 		this.fileName = fileName;
+		this.id = sName+"_"+fileName;
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
 		this.data = null;
