@@ -110,14 +110,17 @@ public class ThreadReplicaServer extends ThreadWorker{
 
 				// delete the file
 				if(cmd[1].equals(UtilBobby.REPLICA_DELETE_SYMBOL)){
-					System.out.println("[thread replica server] delete");
-
-					if (FileManager.getFile(cmd[2]) != null){
-						FileManager.removeFile(cmd[2]);
-						System.out.println("[thread replica server] delete succeed");
-						out.println(UtilBobby.REPLICA_DELETE_OK);
-					}else{
-						System.out.println("[thread replica server] delete failed: file not found.");
+					try {
+						System.out.println("[thread replica server] delete");
+						if (FileManager.getFile(cmd[2]) != null){
+							FileManager.removeFile(cmd[2]);
+							System.out.println("[thread replica server] delete succeed");
+							out.println(UtilBobby.REPLICA_DELETE_OK);
+						}else{
+							System.out.println("[thread replica server] delete failed: file not found.");
+							out.println(UtilBobby.REPLICA_DELETE_NOT_FOUND);
+						}
+					} catch (Exception e) {
 						out.println(UtilBobby.REPLICA_DELETE_KO);
 					}
 				}

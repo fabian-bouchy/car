@@ -52,28 +52,28 @@ public class ReplicaManager {
 			try {
 				if(this.file.getData() != null){
 					this.remoteReplica.write(this.file);
+					// callback
+					this.syncer.callback(this, ThreadResult.SUCCEED);
+					System.out.println("[ReplicaManager - threadwritedel] waiting...");
+					// Waiting all others threads.
+					synchronized (this) {
+						this.wait();
+					}
+					System.out.println("[ReplicaManager - threadwritedel] Restarting!!!!");
+					if(nextStep == NextStep.ABORT) {
+						System.out.println("[ReplicaManager] abort" + this.file);
+						this.remoteReplica.abortWrite(this.file);
+					} else if(nextStep == NextStep.COMMIT) {
+						System.out.println("[ReplicaManager] commit " + this.file);
+						this.remoteReplica.commitWrite(this.file);
+					}
 				}else{
 					this.remoteReplica.delete(this.file);
+					this.syncer.callback(this, ThreadResult.SUCCEED);
 				}
 				
-				// callback
-				this.syncer.callback(this, ThreadResult.SUCCEED);
-				System.out.println("[ReplicaManager - threadwritedel] waiting...");
-				// Waiting all others threads.
-				synchronized (this) {
-					this.wait();
-				}
-				System.out.println("[ReplicaManager - threadwritedel] Restarting!!!!");
-				if(nextStep == NextStep.ABORT) {
-					System.out.println("[ReplicaManager] abort" + this.file);
-					this.remoteReplica.abortWrite(this.file);
-				} else if(nextStep == NextStep.COMMIT) {
-					System.out.println("[ReplicaManager] commit " + this.file);
-					this.remoteReplica.commitWrite(this.file);
-				}
 			} catch (Exception e) {
 				e.printStackTrace();
-				
 				// callback
 				this.syncer.callback(this, ThreadResult.FAILED);
 			}
@@ -141,7 +141,7 @@ public class ReplicaManager {
 	/**
 	 * Start threads to delete file on replicas
 	 */
-	public void delete(File file){
+	public boolean delete(File file){
 		
 		Syncer syncer = new Syncer();
 		
@@ -152,10 +152,14 @@ public class ReplicaManager {
 		// wait for everybody
 		try {
 			syncer.waitForAll();
+			if(syncer.isAllSucceed()) {
+				return true;
+			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return false;
 	}
 
 	public RemoteNode has(File file){

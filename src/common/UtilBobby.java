@@ -86,10 +86,11 @@ public class UtilBobby {
 	public final static String REPLICA_HAS_K0		 = REPLICA_HAS + SPLIT_REGEX + "KO";
 
 	// Delete
-	public final static String REPLICA_DELETE_SYMBOL = "delete";
-	public final static String REPLICA_DELETE		 = REPLICA + SPLIT_REGEX + REPLICA_DELETE_SYMBOL;
-	public final static String REPLICA_DELETE_OK	 = REPLICA_DELETE + SPLIT_REGEX + "ok";
-	public final static String REPLICA_DELETE_KO	 = REPLICA_DELETE + SPLIT_REGEX + "KO";
+	public final static String REPLICA_DELETE_SYMBOL 	= "delete";
+	public final static String REPLICA_DELETE		 	= REPLICA + SPLIT_REGEX + REPLICA_DELETE_SYMBOL;
+	public final static String REPLICA_DELETE_OK	 	= REPLICA_DELETE + SPLIT_REGEX + "ok";
+	public final static String REPLICA_DELETE_NOT_FOUND	= REPLICA_DELETE + SPLIT_REGEX + "file_not_found";
+	public final static String REPLICA_DELETE_KO	 	= REPLICA_DELETE + SPLIT_REGEX + "KO";
 
 	// Read
 	public final static String REPLICA_READ_SYMBOL	= "read";

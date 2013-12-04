@@ -95,7 +95,8 @@ public class RemoteReplica extends RemoteNode{
 		out.println(UtilBobby.REPLICA_DELETE + UtilBobby.SPLIT_REGEX + file.getId());
 		
 		// return the answer from the remote server
-		return in.readLine().equals(UtilBobby.ANSWER_OK);
+		String line = in.readLine();
+		return line.equals(UtilBobby.REPLICA_DELETE_OK) || line.equals(UtilBobby.REPLICA_DELETE_NOT_FOUND) ;
 	}
 
 	public HashMap<String, File> getMetadata() throws UnknownHostException, IOException, ClassNotFoundException {

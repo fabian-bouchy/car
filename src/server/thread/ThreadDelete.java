@@ -35,15 +35,18 @@ public class ThreadDelete extends ThreadWorker{
 				System.out.println("[Server] delete failed: file not found.");
 			}
 
-			// TODO Check if delete succeed
 			// Broadcast delete to replicas
-			replicaManager.delete(file);
-			// send to client that the write successed
-			out.println(UtilBobby.SERVER_DELETE_OK);
+			// Succeed = DELETE or file not found on replica
+			if(replicaManager.delete(file)) {
+				// send to client that the write successed
+				out.println(UtilBobby.SERVER_DELETE_OK);
+				return;
+			}
 		} catch (IOException e )  {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		out.println(UtilBobby.SERVER_DELETE_KO);
 	}
 }
