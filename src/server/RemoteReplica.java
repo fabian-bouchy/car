@@ -51,6 +51,7 @@ public class RemoteReplica extends RemoteNode{
 	}
 
 	public boolean has(File metadata) throws UnknownHostException, IOException{
+		System.out.println("[RemoteReplica - has] " + metadata + "?");
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
@@ -59,7 +60,9 @@ public class RemoteReplica extends RemoteNode{
 		out.println(UtilBobby.REPLICA_HAS + UtilBobby.SPLIT_REGEX + metadata.getId());
 
 		// return the answer
-		return in.readLine().equals(UtilBobby.ANSWER_TRUE);
+		boolean answer = in.readLine().equals(UtilBobby.ANSWER_TRUE);
+		System.out.println("[RemoteReplica - has] " + answer );
+		return answer;
 	}
 
 	@Override
@@ -68,9 +71,9 @@ public class RemoteReplica extends RemoteNode{
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 
-		out.println(UtilBobby.REPLICA_WRITE_COMMIT + UtilBobby.SPLIT_REGEX + file.getId());
+		out.println(UtilBobby.REPLICA_TRANSACTION_COMMIT + UtilBobby.SPLIT_REGEX + file.getId());
 
-		return in.readLine().equals(UtilBobby.REPLICA_WRITE_COMMITED);
+		return in.readLine().equals(UtilBobby.REPLICA_TRANSACTION_COMMITED);
 	}
 
 	@Override
@@ -79,9 +82,9 @@ public class RemoteReplica extends RemoteNode{
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 
-		out.println(UtilBobby.REPLICA_WRITE_ABORT + UtilBobby.SPLIT_REGEX + file.getId());
+		out.println(UtilBobby.REPLICA_TRANSACTION_ABORT + UtilBobby.SPLIT_REGEX + file.getId());
 
-		return in.readLine().equals(UtilBobby.REPLICA_WRITE_ABORTED);
+		return in.readLine().equals(UtilBobby.REPLICA_TRANSACTION_ABORTED);
 	}
 
 	public boolean delete(File file)throws UnknownHostException, IOException{

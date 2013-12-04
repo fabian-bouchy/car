@@ -64,10 +64,14 @@ public class UtilBobby {
 	public final static String REPLICA_WRITE_READY  = REPLICA_WRITE + SPLIT_REGEX + "ready";
 	public final static String REPLICA_WRITE_OK		= REPLICA_WRITE + SPLIT_REGEX + "ok";
 	public final static String REPLICA_WRITE_KO		= REPLICA_WRITE + SPLIT_REGEX + "KO";
-	public final static String REPLICA_WRITE_COMMIT   	= REPLICA_WRITE + SPLIT_REGEX + "commit";
-	public final static String REPLICA_WRITE_COMMITED 	= REPLICA_WRITE + SPLIT_REGEX + "commited";
-	public final static String REPLICA_WRITE_ABORT   	= REPLICA_WRITE + SPLIT_REGEX + "abort";
-	public final static String REPLICA_WRITE_ABORTED 	= REPLICA_WRITE + SPLIT_REGEX + "aborted";
+
+	// TRANSACTION
+	public final static String REPLICA_TRANSACTION_SYMBOL	= "transaction";
+	public final static String REPLICA_TRANSACTION          = REPLICA + SPLIT_REGEX + REPLICA_TRANSACTION_SYMBOL;
+	public final static String REPLICA_TRANSACTION_COMMIT   = REPLICA_TRANSACTION + SPLIT_REGEX + "commit";
+	public final static String REPLICA_TRANSACTION_COMMITED = REPLICA_TRANSACTION + SPLIT_REGEX + "commited";
+	public final static String REPLICA_TRANSACTION_ABORT   	= REPLICA_TRANSACTION + SPLIT_REGEX + "abort";
+	public final static String REPLICA_TRANSACTION_ABORTED 	= REPLICA_TRANSACTION + SPLIT_REGEX + "aborted";
 
 	// getMetadata
 	public final static String REPLICA_METADATA_SYMBOL	= "metadata";

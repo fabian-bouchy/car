@@ -77,18 +77,9 @@ public class ThreadReplicaServer extends ThreadWorker{
 					}
 					
 					// TODO check support of FileManager
-					// Persist object in memory
+					// Add file in temp state
+					FileManager.addFile(file);
 					out.println(UtilBobby.REPLICA_WRITE_OK);
-
-					String command = in.readLine();
-					if(command.equals(UtilBobby.REPLICA_WRITE_COMMIT)) {
-						System.out.println("[thread replica server] commit");
-						FileManager.addFile(file);
-						out.println(UtilBobby.REPLICA_WRITE_COMMITED);
-					} else if(command.equals(UtilBobby.REPLICA_WRITE_ABORT)) {
-						System.out.println("[thread replica server] abort");
-						out.println(UtilBobby.REPLICA_WRITE_COMMITED);
-					}
 				}
 				
 				// check if the file exists on this node
@@ -101,7 +92,22 @@ public class ThreadReplicaServer extends ThreadWorker{
 						out.println(UtilBobby.ANSWER_FALSE);
 					}
 				}
-				
+
+				// commit file
+				if(cmd[1].equals(UtilBobby.REPLICA_TRANSACTION_SYMBOL)){
+					System.out.println("[thread replica server] commit");
+
+					if(command.contains(UtilBobby.REPLICA_TRANSACTION_COMMIT)) {
+						System.out.println("[thread replica server] commit for " + cmd[2]);
+						FileManager.commit(cmd[3]);
+						out.println(UtilBobby.REPLICA_TRANSACTION_COMMITED);
+					} else {
+						System.out.println("[thread replica server] abort");
+						FileManager.abord(cmd[3]);
+						out.println(UtilBobby.REPLICA_TRANSACTION_ABORTED);
+					}
+				}
+
 				// delete the file
 				if(cmd[1].equals(UtilBobby.REPLICA_DELETE_SYMBOL)){
 					System.out.println("[thread replica server] delete");

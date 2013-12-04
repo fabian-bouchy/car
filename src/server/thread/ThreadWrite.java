@@ -48,17 +48,21 @@ public class ThreadWrite extends ThreadWorker{
 			
 			// Replace current version of file
 			FileManager.addFile(file);
-			
+
 			// TODO check if replication successed
-			replicaManager.replicate(file);
-			// send to client that the write successed
-			out.println(UtilBobby.SERVER_WRITE_OK);
+			if(replicaManager.replicate(file)) {
+				FileManager.commit(file.getId());
+				// send to client that the write succeed
+				out.println(UtilBobby.SERVER_WRITE_OK);
+			} else {
+				FileManager.abord(file.getId());
+				// send to client that the write failed
+				out.println(UtilBobby.SERVER_WRITE_KO);
+			}
 		} catch (IOException e )  {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		
 	}
-
 }

@@ -7,6 +7,10 @@ public class FileManager {
 
 	// Files contain in memory
 	private static HashMap<String, File> files = new HashMap<String, File>();
+
+	// Files waiting commit
+	private static HashMap<String, File> tmpFiles = new HashMap<String, File>();
+
 	// Metadata of network
 	private static HashMap<String, File> metadata = new HashMap<String, File>();
 
@@ -39,16 +43,29 @@ public class FileManager {
 		return metadata.get(id);
 	}
 
+	public static synchronized void commit(String fileId) {
+		File file = tmpFiles.get(fileId);
+		if(file != null) {
+			System.out.println("[FileManager] commit for " + file);
+			tmpFiles.remove(fileId);
+			files.put(file.getId(), file);
+			addOrUpdateMetadata(file.getMetadata());
+			System.out.println(represent());
+		} else {
+			System.out.println("[FileManager] nothing to commit for " + fileId);
+		}
+	}
+
+	public static synchronized void abord(String fileId) {
+		tmpFiles.remove(fileId);
+	}
+
 	public static synchronized void addFile(File file){
-		files.put(file.getId(), file);
-		addOrUpdateMetadata(file);
-		System.out.println(represent());
+		tmpFiles.put(file.getId(), file);
 	}
 
 	public static synchronized void replaceFile(File file){
-		files.put(file.getId(), file);
-		addOrUpdateMetadata(file);
-		System.out.println(represent());
+		tmpFiles.put(file.getId(), file);
 	}
 
 	public static synchronized void removeFile(String id){

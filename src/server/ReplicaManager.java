@@ -17,14 +17,13 @@ public class ReplicaManager {
 
 	public ReplicaManager(){
 		replicas = new HashMap<String, RemoteNode>(ConfigManager.getRemoteNodes());
-                replicasK = new HashMap<String, RemoteNode>(ConfigManager.getRemoteReplicas());
+        replicasK = new HashMap<String, RemoteNode>(ConfigManager.getRemoteReplicas());
 	}
 
 	public enum NextStep {
 		COMMIT,
 		ABORT
 	}
-
 
 	/**
 	 * Thread use to write or delete in //
@@ -59,13 +58,17 @@ public class ReplicaManager {
 				
 				// callback
 				this.syncer.callback(this, ThreadResult.SUCCEED);
-
+				System.out.println("[ReplicaManager - threadwritedel] waiting...");
 				// Waiting all others threads.
-				this.wait();
-
+				synchronized (this) {
+					this.wait();
+				}
+				System.out.println("[ReplicaManager - threadwritedel] Restarting!!!!");
 				if(nextStep == NextStep.ABORT) {
+					System.out.println("[ReplicaManager] abort" + this.file);
 					this.remoteReplica.abortWrite(this.file);
 				} else if(nextStep == NextStep.COMMIT) {
+					System.out.println("[ReplicaManager] commit " + this.file);
 					this.remoteReplica.commitWrite(this.file);
 				}
 			} catch (Exception e) {
@@ -80,7 +83,7 @@ public class ReplicaManager {
 	/**
 	 * Start threads to write file on replicas
 	 */
-	public void replicate(File file){
+	public boolean replicate(File file){
 		
 		Syncer syncer = new Syncer();
 		ArrayList<ThreadReplicaWriteOrDelete> threads = new ArrayList<ReplicaManager.ThreadReplicaWriteOrDelete>();
@@ -107,23 +110,32 @@ public class ReplicaManager {
 		
 		try {
 			syncer.waitForAll();
+			System.out.println("[ReplicaManager replicate] after waitForAll");
 			if(syncer.isAllSucceed()) {
+				System.out.println("[ReplicaManager replicate] syncer all succeed");
 				// BROADCAST commit
 				for(ThreadReplicaWriteOrDelete thread: threads) {
-					thread.setNextStep(NextStep.COMMIT);
-					thread.notify();
+					synchronized (thread) {
+						thread.setNextStep(NextStep.COMMIT);
+						thread.notify();
+					}
 				}
+				return true;
 			} else {
+				System.out.println("[ReplicaManager replicate] syncer one or many failed");
 				// BROADCAST abort
 				for(ThreadReplicaWriteOrDelete thread: threads) {
-					thread.setNextStep(NextStep.ABORT);
-					thread.notify();
+					synchronized (thread) {
+						thread.setNextStep(NextStep.ABORT);
+						thread.notify();
+					}
 				}
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return false;
 	}
 
 	/**

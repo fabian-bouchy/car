@@ -26,7 +26,7 @@ public class Syncer {
 	
 	public synchronized void callback(Runnable runnable, ThreadResult value){
 		System.out.println("[syncer] thread finished: " + runnable);
-		
+
 		// store the value form callback
 		int position = threads.indexOf(runnable);
 		if (position != -1){
@@ -38,14 +38,14 @@ public class Syncer {
 	public void waitForAll() throws InterruptedException{
 		latch = new CountDownLatch(N);
 		results = new ThreadResult[N];
-		
+
 		// start all threads
 		for(Runnable runnable : threads){
 			System.out.println("[syncer] running " + runnable);
 			Thread thread = new Thread(runnable);
-			thread.run();
+			thread.start();
 		}
-		
+
 		// wait for them to finish
 		System.out.println("[syncer] waiting for everybody");
 		latch.await();
@@ -64,5 +64,4 @@ public class Syncer {
 		}
 		return true;
 	}
-
 }

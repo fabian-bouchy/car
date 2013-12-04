@@ -2,7 +2,6 @@ package client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Iterator;
 
 import common.ConfigManager;
 import common.File;
