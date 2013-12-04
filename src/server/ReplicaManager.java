@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import common.ConfigManager;
@@ -19,6 +20,12 @@ public class ReplicaManager {
                 replicasK = new HashMap<String, RemoteNode>(ConfigManager.getRemoteReplicas());
 	}
 
+	public enum NextStep {
+		COMMIT,
+		ABORT
+	}
+
+
 	/**
 	 * Thread use to write or delete in //
 	 *
@@ -29,6 +36,8 @@ public class ReplicaManager {
 		private RemoteNode remoteReplica;
 		private Syncer syncer;
 
+		private NextStep nextStep = NextStep.ABORT;
+
 		public ThreadReplicaWriteOrDelete(RemoteNode remoteReplica, File file, Syncer syncer) {
 			super();
 			this.remoteReplica = remoteReplica;
@@ -36,6 +45,9 @@ public class ReplicaManager {
 			this.syncer = syncer;
 		}
 
+		public void setNextStep(NextStep next) {
+			this.nextStep = next;
+		}
 		@Override
 		public void run() {
 			try {
@@ -47,6 +59,15 @@ public class ReplicaManager {
 				
 				// callback
 				this.syncer.callback(this, ThreadResult.SUCCEED);
+
+				// Waiting all others threads.
+				this.wait();
+
+				if(nextStep == NextStep.ABORT) {
+					this.remoteReplica.abortWrite(this.file);
+				} else if(nextStep == NextStep.COMMIT) {
+					this.remoteReplica.commitWrite(this.file);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				
@@ -62,6 +83,7 @@ public class ReplicaManager {
 	public void replicate(File file){
 		
 		Syncer syncer = new Syncer();
+		ArrayList<ThreadReplicaWriteOrDelete> threads = new ArrayList<ReplicaManager.ThreadReplicaWriteOrDelete>();
 		
 		// Check global version file
 		// if == 1 => write only on K+1 server
@@ -69,15 +91,18 @@ public class ReplicaManager {
 		if(file.getGlobalVersion() == 1) {
 
 			// Need to select K+1 server
-                        /*TODO: si l'un des serveurs tombe, récupérer un autre réplica via ConfigManager.getOtherRemoteReplica*/
+            /*TODO: si l'un des serveurs tombe, recup un autre replica via ConfigManager.getOtherRemoteReplica*/
 			for (RemoteNode remoteReplica : replicasK.values()) {
-				syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
-
+				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer);
+				threads.add(thread);
+				syncer.addThread(thread);
 			}
 		} else {
 			// Need to propagate broadcast update
 			for (RemoteNode remoteReplica : replicas.values()) {
-				syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
+				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer);
+				threads.add(thread);
+				syncer.addThread(thread);
 			}
 		}
 		
@@ -85,8 +110,16 @@ public class ReplicaManager {
 			syncer.waitForAll();
 			if(syncer.isAllSucceed()) {
 				// BROADCAST commit
+				for(ThreadReplicaWriteOrDelete thread: threads) {
+					thread.setNextStep(NextStep.COMMIT);
+					thread.notify();
+				}
 			} else {
 				// BROADCAST abort
+				for(ThreadReplicaWriteOrDelete thread: threads) {
+					thread.setNextStep(NextStep.ABORT);
+					thread.notify();
+				}
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

@@ -9,6 +9,7 @@ public abstract class RemoteNode {
 
 	private String 	sName;
 	private String 	sIpAddress;
+	@SuppressWarnings("unused")
 	private String 	sInterface;
 	private int 	iPriority;
 	private int 	iPort;
@@ -28,11 +29,15 @@ public abstract class RemoteNode {
 
 	public abstract void 	write(File file) throws Exception;
 	
-	public abstract boolean has(File fileId) throws Exception;
+	public abstract boolean	commitWrite(File file) throws Exception;
 	
-	public abstract File 	read(File fileId) throws Exception;
+	public abstract boolean	abortWrite(File file) throws Exception;
 	
-	public abstract boolean delete(File id) throws Exception;
+	public abstract boolean has(File file) throws Exception;
+	
+	public abstract File 	read(File file) throws Exception;
+	
+	public abstract boolean delete(File file) throws Exception;
 	
 	public abstract HashMap<String, File> getMetadata() throws Exception;
 	

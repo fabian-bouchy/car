@@ -49,19 +49,41 @@ public class RemoteReplica extends RemoteNode{
 			throw new IOException();
 		}
 	}
-	
+
 	public boolean has(File metadata) throws UnknownHostException, IOException{
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-		
+
 		// send the command
 		out.println(UtilBobby.REPLICA_HAS + UtilBobby.SPLIT_REGEX + metadata.getId());
-		
+
 		// return the answer
 		return in.readLine().equals(UtilBobby.ANSWER_TRUE);
 	}
-	
+
+	@Override
+	public boolean commitWrite(File file) throws UnknownHostException, IOException{
+		Socket echoSocket = connect();
+		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+
+		out.println(UtilBobby.REPLICA_WRITE_COMMIT + UtilBobby.SPLIT_REGEX + file.getId());
+
+		return in.readLine().equals(UtilBobby.REPLICA_WRITE_COMMITED);
+	}
+
+	@Override
+	public boolean abortWrite(File file) throws Exception {
+		Socket echoSocket = connect();
+		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+
+		out.println(UtilBobby.REPLICA_WRITE_ABORT + UtilBobby.SPLIT_REGEX + file.getId());
+
+		return in.readLine().equals(UtilBobby.REPLICA_WRITE_ABORTED);
+	}
+
 	public boolean delete(File file)throws UnknownHostException, IOException{
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
@@ -114,7 +136,6 @@ public class RemoteReplica extends RemoteNode{
 
 	@Override
 	public File read(File file) throws UnknownHostException, IOException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

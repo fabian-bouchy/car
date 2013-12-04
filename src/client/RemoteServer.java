@@ -125,4 +125,16 @@ public class RemoteServer extends RemoteNode {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public boolean commitWrite(File file) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean abortWrite(File file) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

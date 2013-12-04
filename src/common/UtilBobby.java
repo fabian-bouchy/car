@@ -29,8 +29,6 @@ public class UtilBobby {
 	public final static String SERVER_WRITE_SYMBOL	= "write";
 	public final static String SERVER_WRITE 		= SERVER + SPLIT_REGEX + SERVER_WRITE_SYMBOL;
 	public final static String SERVER_WRITE_READY 	= SERVER_WRITE + SPLIT_REGEX + "ready";
-	public final static String SERVER_WRITE_COMMIT 	= SERVER_WRITE + SPLIT_REGEX + "commit";
-	public final static String SERVER_WRITE_COMMITED = SERVER_WRITE + SPLIT_REGEX + "commited";
 	public final static String SERVER_WRITE_OK		= SERVER_WRITE + SPLIT_REGEX + "ok";
 	public final static String SERVER_WRITE_KO		= SERVER_WRITE + SPLIT_REGEX + "KO";
 
@@ -66,6 +64,10 @@ public class UtilBobby {
 	public final static String REPLICA_WRITE_READY  = REPLICA_WRITE + SPLIT_REGEX + "ready";
 	public final static String REPLICA_WRITE_OK		= REPLICA_WRITE + SPLIT_REGEX + "ok";
 	public final static String REPLICA_WRITE_KO		= REPLICA_WRITE + SPLIT_REGEX + "KO";
+	public final static String REPLICA_WRITE_COMMIT   	= REPLICA_WRITE + SPLIT_REGEX + "commit";
+	public final static String REPLICA_WRITE_COMMITED 	= REPLICA_WRITE + SPLIT_REGEX + "commited";
+	public final static String REPLICA_WRITE_ABORT   	= REPLICA_WRITE + SPLIT_REGEX + "abort";
+	public final static String REPLICA_WRITE_ABORTED 	= REPLICA_WRITE + SPLIT_REGEX + "aborted";
 
 	// getMetadata
 	public final static String REPLICA_METADATA_SYMBOL	= "metadata";
