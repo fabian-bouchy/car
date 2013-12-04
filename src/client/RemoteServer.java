@@ -38,9 +38,9 @@ public class RemoteServer extends RemoteNode {
 			outStream.writeObject(file);
 			answer = in.readLine();
 			if(answer.equals(UtilBobby.SERVER_WRITE_OK))
-				System.out.println("Send succeed!");
+				System.out.println("[remote server] Write done!");
 			else
-				System.out.println("Send failed!");
+				System.out.println("[remote server] Write failed!");
         }
 	}
 
@@ -65,9 +65,9 @@ public class RemoteServer extends RemoteNode {
         	outStream.writeObject(file);
 			answer = in.readLine();
 			if(answer.equals(UtilBobby.SERVER_DELETE_OK))
-				System.out.println("Delete succeed!");
+				System.out.println("[remote server] Delete done!");
 			else
-				System.out.println("Delete failed!");
+				System.out.println("[remote server] Delete failed!");
         }
 		return false;
 	}
@@ -82,7 +82,7 @@ public class RemoteServer extends RemoteNode {
         out.println(UtilBobby.CLIENT_READ);
         String answer = in.readLine();
         if(answer.equals(UtilBobby.SERVER_READ_READY)) {
-        	System.out.println("[client] ready to read from " + this);
+        	System.out.println("[remote server] ready to read from " + this);
         	// Create output stream to send metadata to server 
         	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
         	outStream.writeObject(metadata);
@@ -103,14 +103,17 @@ public class RemoteServer extends RemoteNode {
 				String nextHopName = answer.split(UtilBobby.SPLIT_REGEX)[3];
 				RemoteNode nextHop =  ConfigManager.getRemoteNode(nextHopName);
 				socketToServer.close();
-				System.out.println("Redirected to " + nextHop);
+				System.out.println("[remote server]Redirected to " + nextHop);
 				return nextHop.read(metadata);
 			}
+			else if(answer.equals(UtilBobby.SERVER_READ_FILE_NOT_FOUND)){
+				System.out.println("[remote server] File doesn't exist");
+			}
 			else {
-				System.out.println("Read failed: " + answer);
+				System.out.println("[remote server]Read failed: " + answer);
 			}
         } else {
-        	System.out.println("Server not ready for reading..." + answer);
+        	System.out.println("[remote server]Server not ready for reading..." + answer);
         }
 		return null;
 	}

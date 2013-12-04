@@ -48,7 +48,6 @@ public class Client {
 			
 			System.out.println("[client] Reading "+fileName);
 			File file = ServerManager.read(new File(fileName, false));
-			System.out.println(file);
 			
 		}else{
 			
