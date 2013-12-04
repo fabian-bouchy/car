@@ -92,9 +92,8 @@ public class RemoteServer extends RemoteNode {
 				ObjectInputStream reader = new ObjectInputStream(socketToServer.getInputStream());
 				File tmp = (File) reader.readObject();
 				if(tmp != null ) {
-					System.out.println("File read");
-					System.out.println(tmp);
-					tmp.writeToFile(tmp.getId() + "_read");
+					System.out.println("[remote server] File read "+tmp);
+					tmp.writeToFile("read_"+ tmp.getFileName());
 					return tmp;
 				}
 			}
@@ -117,7 +116,7 @@ public class RemoteServer extends RemoteNode {
 	}
 
 	public String toString(){
-		return "[remote server] ["+this.getPriority()+"] "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
+		return "[remote server] "+this.getName()+" ("+this.getPriority()+") @ "+this.getIpAddress()+":"+this.getPort();
 	}
 
 	@Override

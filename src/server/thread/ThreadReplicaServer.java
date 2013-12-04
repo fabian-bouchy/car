@@ -71,7 +71,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 					// Update issue?
 					if(oldFile == null) {
 						// TODO change later - storing the file on hdd
-						file.writeToFile(file.getId());
+						// file.writeToFile(file.getId());
 					} else if(oldFile != null && oldFile.getGlobalVersion() == file.getGlobalVersion() && !file.equals(oldFile)) {
 						// TODO Manage Conflict on update!!!!
 					}

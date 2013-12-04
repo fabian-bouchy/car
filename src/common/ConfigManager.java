@@ -176,10 +176,11 @@ public class ConfigManager {
 			String nameServer = serversPriority.get(i);
 			RemoteNode server = getRemoteNodes().get(nameServer);
 
-			if (server != null)
+			if (server != null){
 				map.put(nameServer, server);
-			else
+			}else{
 				k++;
+			}
 
 		}
 		return map;
