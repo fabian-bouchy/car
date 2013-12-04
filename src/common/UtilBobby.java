@@ -29,6 +29,8 @@ public class UtilBobby {
 	public final static String SERVER_WRITE_SYMBOL	= "write";
 	public final static String SERVER_WRITE 		= SERVER + SPLIT_REGEX + SERVER_WRITE_SYMBOL;
 	public final static String SERVER_WRITE_READY 	= SERVER_WRITE + SPLIT_REGEX + "ready";
+	public final static String SERVER_WRITE_COMMIT 	= SERVER_WRITE + SPLIT_REGEX + "commit";
+	public final static String SERVER_WRITE_COMMITED = SERVER_WRITE + SPLIT_REGEX + "commited";
 	public final static String SERVER_WRITE_OK		= SERVER_WRITE + SPLIT_REGEX + "ok";
 	public final static String SERVER_WRITE_KO		= SERVER_WRITE + SPLIT_REGEX + "KO";
 

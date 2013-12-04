@@ -5,10 +5,15 @@ import java.util.concurrent.CountDownLatch;
 
 public class Syncer {
 	
+	public enum ThreadResult {
+		SUCCEED,
+		FAILED
+	}
+
 	private CountDownLatch latch;
 	private ArrayList<Runnable> threads;
 	private int N = 0;
-	private int[] results;
+	private ThreadResult[] results;
 	
 	public Syncer(){
 		threads = new ArrayList<Runnable>();
@@ -19,7 +24,7 @@ public class Syncer {
 		threads.add(thread);
 	}
 	
-	public synchronized void callback(Runnable runnable, int value){
+	public synchronized void callback(Runnable runnable, ThreadResult value){
 		System.out.println("[syncer] thread finished: " + runnable);
 		
 		// store the value form callback
@@ -32,7 +37,7 @@ public class Syncer {
 	
 	public void waitForAll() throws InterruptedException{
 		latch = new CountDownLatch(N);
-		results = new int[N];
+		results = new ThreadResult[N];
 		
 		// start all threads
 		for(Runnable runnable : threads){
@@ -45,10 +50,19 @@ public class Syncer {
 		System.out.println("[syncer] waiting for everybody");
 		latch.await();
 		System.out.print("[syncer] finished: [");
-		for (int i : results){
+		for (ThreadResult i : results){
 			System.out.print(i + " ");
 		}
 		System.out.println("]");
+	}
+
+	public boolean isAllSucceed() {
+		for(ThreadResult result : results) {
+			if(result != ThreadResult.SUCCEED) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

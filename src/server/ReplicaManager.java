@@ -8,6 +8,7 @@ import common.ConfigManager;
 import common.File;
 import common.RemoteNode;
 import common.Syncer;
+import common.Syncer.ThreadResult;
 
 public class ReplicaManager {
 	
@@ -45,12 +46,12 @@ public class ReplicaManager {
 				}
 				
 				// callback
-				this.syncer.callback(this, 1);
+				this.syncer.callback(this, ThreadResult.SUCCEED);
 			} catch (Exception e) {
 				e.printStackTrace();
 				
 				// callback
-				this.syncer.callback(this, 0);
+				this.syncer.callback(this, ThreadResult.FAILED);
 			}
 		}
 	}
@@ -82,6 +83,11 @@ public class ReplicaManager {
 		
 		try {
 			syncer.waitForAll();
+			if(syncer.isAllSucceed()) {
+				// BROADCAST commit
+			} else {
+				// BROADCAST abort
+			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
