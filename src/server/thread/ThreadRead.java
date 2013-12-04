@@ -21,35 +21,38 @@ public class ThreadRead extends ThreadWorker{
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		try {
 			// send to client that the server is ready
 			out.println(UtilBobby.SERVER_READ_READY);
 			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 			File metadata = (File) reader.readObject();
-			System.out.println("[Server] reading: " + metadata);
+			System.out.println("[thread read] reading: " + metadata);
 
 			// Get file form our list
 			File fileRead = FileManager.getFile(metadata.getId());
 			if( fileRead != null) {
-				System.out.println("[Server] file found");
+				System.out.println("[thread read] file found");
 				// send to client that the file is found
 				out.println(UtilBobby.SERVER_READ_FILE_FOUND);
 				ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 	        	outStream.writeObject(fileRead);
 			} else {
-				System.out.println("[Server] reading failed: file not found locally.");
-				System.out.println("[Server] reading failed: reading metadata...");
+				System.out.println("[thread read] reading failed: file not found locally");
+				System.out.println("[thread read] reading failed: reading metadata...");
 
 				File fileMetadata = FileManager.getMetadata(metadata.getId());
 				if(fileMetadata != null) {
-					System.out.println("[Server] looking for on replicas...");
+					System.out.println("[Server] looking for the file on replicas...");
 					RemoteNode nextHop = this.replicaManager.has(metadata);
-					if(nextHop != null)
+					if(nextHop != null){
+						System.out.println("[thread read] redirecting to " + nextHop);
 						out.println(UtilBobby.SERVER_READ_REDIRECT_TO + UtilBobby.SPLIT_REGEX + nextHop.getName());
+						return;
+					}
 				}
 				// Not found
-				out.println(UtilBobby.SERVER_READ_KO);
+				System.out.println("[thread read] file not found anywhere");
+				out.println(UtilBobby.SERVER_READ_FILE_NOT_FOUND);
 			}
 		} catch (IOException e )  {
 			e.printStackTrace();
