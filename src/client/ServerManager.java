@@ -25,13 +25,13 @@ public class ServerManager {
 		for(RemoteNode server : ConfigManager.getRemoteNodes().values()){
 			
 			currentServer = (RemoteServer) server;
-			System.out.println("[server manager] Trying " + currentServer);
+			System.out.print("[server manager] Trying " + currentServer + " ... ");
 			try{
 				currentServer.write(file);
 				return;
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("[server manager] Error connecting to server " + currentServer + " : " + e);
+				System.out.println("Error connecting to server: " + e);
 			}
 		}
 		
@@ -43,12 +43,12 @@ public class ServerManager {
 		for(RemoteNode server : ConfigManager.getRemoteNodes().values()){
 			
 			currentServer = (RemoteServer) server;
-			System.out.println("[server manager] Trying " + currentServer);
+			System.out.print("[server manager] Trying " + currentServer + " ... ");
 			try{
 				return currentServer.read(file);
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("[server manager] Error connecting to server " + currentServer + " : " + e);
+				System.out.println("Error connecting to server: " + e);
 			}
 		}
 		
@@ -61,13 +61,13 @@ public class ServerManager {
 		for(RemoteNode server : ConfigManager.getRemoteNodes().values()){
 			
 			currentServer = (RemoteServer) server;
-			System.out.println("[server manager] Trying " + currentServer);
+			System.out.print("[server manager] Trying " + currentServer + " ... ");
 			try{
 				currentServer.delete(file);
 				return;
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("[server manager] Error connecting to server " + currentServer + " : " + e);
+				System.out.println("Error connecting to server: " + e);
 			}
 		}
 		

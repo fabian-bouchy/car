@@ -58,6 +58,8 @@ public class File implements java.io.Serializable{
 
 	public void writeToFile(String theFile) throws IOException {
 		BufferedOutputStream bos = null;
+		
+		System.out.println("[file] Writing " + this.fileName + " => " + theFile);
 
 		try {
 			FileOutputStream fos = new FileOutputStream(theFile);
