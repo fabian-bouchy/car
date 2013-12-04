@@ -69,7 +69,6 @@ public class ReplicaManager {
 		if(file.getGlobalVersion() == 1) {
 
 			// Need to select K+1 server
-                        /*TODO: si l'un des serveurs tombe, récupérer un autre réplica via ConfigManager.getOtherRemoteReplica*/
 			for (RemoteNode remoteReplica : replicasK.values()) {
 				syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
 

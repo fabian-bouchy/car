@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Iterator;
 
+import server.UserManager;
+
 public class File implements java.io.Serializable{
 	
 	// http://www.java2s.com/Code/Java/File-Input-Output/Readfiletobytearrayandsavebytearraytofile.htm
@@ -23,10 +25,10 @@ public class File implements java.io.Serializable{
 
 	private int globalVersion = 0;
 
-	public File(String sName, String fileName, boolean init) throws IOException {
+	public File(String fileName, boolean init) throws IOException {
 		// fill in fields
 		this.fileName = fileName;
-		this.id = sName+"_"+fileName;
+		this.id = UserManager.getUsername()+"_"+fileName;
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
 		this.data = null;
@@ -60,17 +62,18 @@ public class File implements java.io.Serializable{
 		try {
 			FileOutputStream fos = new FileOutputStream(theFile);
 			bos = new BufferedOutputStream(fos);
-			if(this.data != null)
+			if(this.data != null){
 				bos.write(this.data);
+			}
 		} catch (Exception e) {
-			System.out.println("Error writing to a file " + e);
+			System.out.println("[file] Error writing to a file " + e);
 		} finally {
 			if (bos != null) {
 				try {
 					bos.flush();
 					bos.close();
 				} catch (Exception e) {
-					System.out.println("Error closing file " + e);
+					System.out.println("[file] Error closing file " + e);
 				}
 			}
 		}
@@ -122,7 +125,7 @@ public class File implements java.io.Serializable{
 	}
 	
 	public String toString(){
-		return "[file] " + id + ", " + size + "B" + " version:" + getVersionToString();
+		return "[file] " + id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
 	}
 	
 	private String getVersionToString() {

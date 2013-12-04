@@ -1,5 +1,6 @@
 package client.main;
 
+import server.UserManager;
 import client.ServerManager;
 import common.ConfigManager;
 import common.ConfigManager.ConfigType;
@@ -12,39 +13,48 @@ public class Client {
 	
 	public void run(String[] args) throws Exception{
 		
+		// arguments
+		String cmd = args[0];
+		String fileName = args[1];
+		String username = args[2];
+		
 		// client write|get|delete file
 		
 		// initialize the configuration
-		if (args.length == 3){
-			// config name
-			ConfigManager.init(ConfigType.CLIENT, args[2]);
+		if (args.length == 4){
+			// config name specified
+			ConfigManager.init(ConfigType.CLIENT, args[3]);
 		}else{
 			// all default parameters
 			ConfigManager.init(ConfigType.CLIENT);
 		}
-		// arguments
-		String cmd = args[0];
-		String fileName = args[1];
+		
+		// init the user manager
+		UserManager.init(username);
+		
+		long startTime = System.nanoTime();
 		
 		if ("write".equals(cmd)){
+			
 			System.out.println("[client] Writing "+fileName);
-
-			// TODO Generate file ID
-			File file = new File(ConfigManager.getHostName(), fileName, true);
-			ServerManager.write(file);
+			ServerManager.write(new File(fileName, true));
+			
 		}else if ("delete".equals(cmd)){
+			
 			System.out.println("[client] Deleting "+fileName);
-
-			File file = new File(ConfigManager.getHostName(), fileName, false);
-			ServerManager.delete(file);
+			ServerManager.delete(new File(fileName, false));
+			
 		}else if ("read".equals(cmd)){
-			File metadata = new File(ConfigManager.getHostName(), fileName, false);
-			System.out.println("[client] Reading "+metadata.getId());
-
-			File file = ServerManager.read(metadata);
+			
+			System.out.println("[client] Reading "+fileName);
+			File file = ServerManager.read(new File(fileName, false));
 			System.out.println(file);
+			
 		}else{
+			
 			System.out.println("[client] Command unknown "+cmd);
 		}
+		long elapsedTime = System.nanoTime();
+		System.out.println("[client] Done in "+ ((double)elapsedTime / 1000000000.0) + " seconds");
 	}
 }
