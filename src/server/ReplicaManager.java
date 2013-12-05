@@ -153,12 +153,14 @@ public class ReplicaManager {
 		try {
 			syncer.waitForAll();
 			if(syncer.isAllSucceed()) {
+				System.out.println("[ReplicaManager - delete] all succeed!");
 				return true;
 			}
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("[ReplicaManager - delete] delete failed!");
 		return false;
 	}
 
@@ -196,5 +198,47 @@ public class ReplicaManager {
 			}
 		}
 		return null;
+	}
+
+	public enum ActionThreadMetadata {
+		ADD,
+		DELETE
+	}
+
+	private class ThreadMetadata implements Runnable{
+		private File metadata;
+		private RemoteNode remoteReplica;
+		private ActionThreadMetadata actionThreadMetadata;
+
+		public ThreadMetadata(File metadata, RemoteNode remoteReplica, ActionThreadMetadata action) {
+			this.metadata = metadata;
+			this.remoteReplica = remoteReplica;
+			this.actionThreadMetadata = action;
+		}
+
+		@Override
+		public void run() {
+			try {
+				if(actionThreadMetadata == ActionThreadMetadata.ADD) {
+					remoteReplica.addMetadata(metadata);
+				} else if(actionThreadMetadata == ActionThreadMetadata.DELETE) {
+					remoteReplica.deleteMetadata(metadata);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void propagateMetadataAdd(File metadata) {
+		for(RemoteNode remoteReplica : replicas.values()) {
+			new Thread(new ThreadMetadata(metadata, remoteReplica, ActionThreadMetadata.ADD)).start();
+		}
+	}
+
+	public void propagateMetadataDelete(File metadata) {
+		for(RemoteNode remoteReplica : replicas.values()) {
+			new Thread(new ThreadMetadata(metadata, remoteReplica, ActionThreadMetadata.DELETE)).start();
+		}
 	}
 }

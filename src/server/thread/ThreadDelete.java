@@ -38,6 +38,7 @@ public class ThreadDelete extends ThreadWorker{
 			// Broadcast delete to replicas
 			// Succeed = DELETE or file not found on replica
 			if(replicaManager.delete(file)) {
+				replicaManager.propagateMetadataDelete(file.getMetadata());
 				// send to client that the write successed
 				out.println(UtilBobby.SERVER_DELETE_OK);
 				return;

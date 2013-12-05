@@ -39,6 +39,9 @@ public abstract class RemoteNode {
 	
 	public abstract boolean delete(File file) throws Exception;
 	
+	public abstract boolean addMetadata(File metadata) throws Exception;
+	public abstract boolean deleteMetadata(File metadata) throws Exception;
+
 	public abstract HashMap<String, File> getMetadata() throws Exception;
 	
 	public String getName() {

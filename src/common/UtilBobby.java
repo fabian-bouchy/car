@@ -74,11 +74,21 @@ public class UtilBobby {
 	public final static String REPLICA_TRANSACTION_ABORTED 	= REPLICA_TRANSACTION + SPLIT_REGEX + "aborted";
 
 	// getMetadata
-	public final static String REPLICA_METADATA_SYMBOL	= "metadata";
+	public final static String REPLICA_METADATA_SYMBOL			= "metadata";
+	public final static String REPLICA_METADATA_GET_SYMBOL		= "get";
+	public final static String REPLICA_METADATA_ADD_SYMBOL		= "add";
+	public final static String REPLICA_METADATA_DELETE_SYMBOL	= "delete";
 	public final static String REPLICA_METADATA			= REPLICA + SPLIT_REGEX + REPLICA_METADATA_SYMBOL;
+	public final static String REPLICA_METADATA_GET		= REPLICA_METADATA + SPLIT_REGEX + REPLICA_METADATA_GET_SYMBOL;
 	public final static String REPLICA_METADATA_READY  	= REPLICA_METADATA + SPLIT_REGEX + "ready";
 	public final static String REPLICA_METADATA_OK		= REPLICA_METADATA + SPLIT_REGEX + "ok";
 	public final static String REPLICA_METADATA_KO		= REPLICA_METADATA + SPLIT_REGEX + "KO";
+	public final static String REPLICA_METADATA_ADD		= REPLICA_METADATA + SPLIT_REGEX + REPLICA_METADATA_ADD_SYMBOL;
+	public final static String REPLICA_METADATA_DELETE	= REPLICA_METADATA + SPLIT_REGEX + REPLICA_METADATA_DELETE_SYMBOL;
+	public final static String REPLICA_METADATA_ADDED		= REPLICA_METADATA + SPLIT_REGEX + "added";
+	public final static String REPLICA_METADATA_DELETED		= REPLICA_METADATA + SPLIT_REGEX + "deleted";
+	public final static String REPLICA_METADATA_ADD_READY		= REPLICA_METADATA_ADD + SPLIT_REGEX + "ready";
+	public final static String REPLICA_METADATA_DELETE_READY	= REPLICA_METADATA_DELETE + SPLIT_REGEX + "ready";
 
 	// Has
 	public final static String REPLICA_HAS_SYMBOL	 = "has";

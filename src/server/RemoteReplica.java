@@ -96,7 +96,7 @@ public class RemoteReplica extends RemoteNode{
 		
 		// return the answer from the remote server
 		String line = in.readLine();
-		return line.equals(UtilBobby.REPLICA_DELETE_OK) || line.equals(UtilBobby.REPLICA_DELETE_NOT_FOUND) ;
+		return line.equals(UtilBobby.REPLICA_DELETE_OK) || line.equals(UtilBobby.REPLICA_DELETE_NOT_FOUND);
 	}
 
 	public HashMap<String, File> getMetadata() throws UnknownHostException, IOException, ClassNotFoundException {
@@ -104,7 +104,7 @@ public class RemoteReplica extends RemoteNode{
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
 
-		out.println(UtilBobby.REPLICA_METADATA);
+		out.println(UtilBobby.REPLICA_METADATA_GET);
 
 		System.out.println("[remote replica] waiting metadata...");
 		try {
@@ -141,5 +141,43 @@ public class RemoteReplica extends RemoteNode{
 	@Override
 	public File read(File file) throws UnknownHostException, IOException {
 		return null;
+	}
+
+	@Override
+	public boolean addMetadata(File metadata) throws Exception {
+		Socket echoSocket = connect();
+		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+
+		out.println(UtilBobby.REPLICA_METADATA_ADD);
+		String line = in.readLine();
+		if (line.equals(UtilBobby.REPLICA_METADATA_ADD_READY)){
+			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
+			outStream.writeObject(metadata);
+		}else{
+			throw new IOException();
+		}
+		// return the answer from the remote server
+		line = in.readLine();
+		return line.equals(UtilBobby.REPLICA_METADATA_ADDED);
+	}
+
+	@Override
+	public boolean deleteMetadata(File metadata) throws Exception {
+		Socket echoSocket = connect();
+		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
+		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
+
+		out.println(UtilBobby.REPLICA_METADATA_DELETE);
+		String line = in.readLine();
+		if (line.equals(UtilBobby.REPLICA_METADATA_DELETE_READY)){
+			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
+			outStream.writeObject(metadata);
+		}else{
+			throw new IOException();
+		}
+		// return the answer from the remote server
+		line = in.readLine();
+		return line.equals(UtilBobby.REPLICA_METADATA_DELETED);
 	}
 }

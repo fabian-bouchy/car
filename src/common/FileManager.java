@@ -74,10 +74,15 @@ public class FileManager {
 		System.out.println(represent());
 	}
 	
-	private static synchronized void addOrUpdateMetadata(File file) {
-		System.out.println("[FileManager] add or update metadata for " + file);
-		File metadataTmp = new File(file);
-		metadata.put(metadataTmp.getId(),metadataTmp);
+	public static synchronized void addOrUpdateMetadata(File metadataIn) {
+		System.out.println("[FileManager] add or update metadata for " + metadataIn);
+		metadata.put(metadataIn.getId(),metadataIn);
+		System.out.println(representMetadata());
+	}
+
+	public static synchronized void deleteMetadata(File metadataIn) {
+		System.out.println("[FileManager] delete metadata for " + metadataIn);
+		metadata.remove(metadataIn.getId());
 		System.out.println(representMetadata());
 	}
 	

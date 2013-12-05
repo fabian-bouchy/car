@@ -139,4 +139,16 @@ public class RemoteServer extends RemoteNode {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public boolean addMetadata(File metadata) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean deleteMetadata(File metadata) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -39,19 +39,40 @@ public class ThreadReplicaServer extends ThreadWorker{
 				if(cmd[0].compareTo(UtilBobby.REPLICA) != 0)
 					return;
 				
-				// check if the file exists on this node
 				if(cmd[1].equals(UtilBobby.REPLICA_METADATA_SYMBOL)) {
-					System.out.println("[thread replica server] get metadata");
-					
-					out.println(UtilBobby.REPLICA_METADATA_READY);
-					System.out.println("[thread replica server] metadata ready send");
-					ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-		        	outStream.writeObject(FileManager.getMetadata());
-					// FIXME Sometimes block here
-		        	if(in.readLine().equals(UtilBobby.REPLICA_METADATA_OK))
-		        		System.out.println("[thread replica server] metadata send!");
-		        	else
-		        		System.out.println("[thread replica server] metadata not send!");
+					if(cmd[2].equals(UtilBobby.REPLICA_METADATA_GET_SYMBOL)) {
+						System.out.println("[thread replica server] get metadata");
+
+						out.println(UtilBobby.REPLICA_METADATA_READY);
+						System.out.println("[thread replica server] metadata ready send");
+						ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
+						outStream.writeObject(FileManager.getMetadata());
+						// FIXME Sometimes block here
+						if(in.readLine().equals(UtilBobby.REPLICA_METADATA_OK))
+							System.out.println("[thread replica server] metadata send!");
+						else
+							System.out.println("[thread replica server] metadata not send!");
+					} else if(cmd[2].equals(UtilBobby.REPLICA_METADATA_ADD_SYMBOL)) {
+						System.out.println("[thread replica server] add metadata");
+						// send a "ready" message
+						out.println(UtilBobby.REPLICA_METADATA_ADD_READY);
+
+						// receive the file
+						ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
+						File metadata = (File) reader.readObject();
+						FileManager.addOrUpdateMetadata(metadata);
+						out.println(UtilBobby.REPLICA_METADATA_ADDED);
+					} else if(cmd[2].equals(UtilBobby.REPLICA_METADATA_DELETE_SYMBOL)) {
+						System.out.println("[thread replica server] delete metadata");
+						// send a "ready" message
+						out.println(UtilBobby.REPLICA_METADATA_DELETE_READY);
+
+						// receive the file
+						ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
+						File metadata = (File) reader.readObject();
+						FileManager.deleteMetadata(metadata);
+						out.println(UtilBobby.REPLICA_METADATA_DELETED);
+					}
 				}
 				
 				// store the file we receive

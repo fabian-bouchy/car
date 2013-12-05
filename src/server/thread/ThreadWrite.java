@@ -52,6 +52,7 @@ public class ThreadWrite extends ThreadWorker{
 			// TODO check if replication successed
 			if(replicaManager.replicate(file)) {
 				FileManager.commit(file.getId());
+				replicaManager.propagateMetadataAdd(file.getMetadata());
 				// send to client that the write succeed
 				out.println(UtilBobby.SERVER_WRITE_OK);
 			} else {
