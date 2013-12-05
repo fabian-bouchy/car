@@ -32,7 +32,7 @@ public class ReplicaManager {
 	 */
 	public boolean replicate(File file){
 		Syncer syncer = new Syncer();
-		ArrayList<ThreadReplicaWriteOrDelete> threads = new ArrayList<ThreadReplicaWriteOrDelete>();
+		//ArrayList<ThreadReplicaWriteOrDelete> threads = new ArrayList<ThreadReplicaWriteOrDelete>();
 
 		// Check global version file
 		// if == 1 => write only on K+1 server
@@ -42,14 +42,14 @@ public class ReplicaManager {
 			// Need to select K+1 server
 			for (RemoteNode remoteReplica : replicasK.values()) {
 				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer);
-				threads.add(thread);
+				//threads.add(thread);
 				syncer.addThread(thread);
 			}
 		} else {
 			// Need to propagate broadcast update
 			for (RemoteNode remoteReplica : replicas.values()) {
 				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer);
-				threads.add(thread);
+				//threads.add(thread);
 				syncer.addThread(thread);
 			}
 		}
@@ -57,26 +57,45 @@ public class ReplicaManager {
 		try {
 			syncer.waitForAll();
 			System.out.println("[ReplicaManager replicate] after waitForAll");
-			if(syncer.isAllSucceed()) {
+			
+			int i = 0, nbRetry = ConfigManager.getN() - ConfigManager.getK();
+			while(!syncer.isAllSucceed() && i < nbRetry) {
+				System.out.println("[ReplicaManager replicate] syncer one or many failed, retrying...");
+				for (Runnable runnable : syncer.getFailedThreads()) {
+					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
+					synchronized (thread) {
+						thread.setNextStep(NextStep.ABORT);
+						RemoteNode newRemoteNode = ConfigManager.getOtherRemoteReplica(replicasK);
+						syncer.addThread(new ThreadReplicaWriteOrDelete(newRemoteNode, thread.getFile(), syncer));
+						thread.notify();
+					}
+				}
+				syncer.waitForAll();
+				System.out.println("[ReplicaManager replicate] syncer one or many failed");
+				i++;
+			}
+			// Need to abort all succeed thread.
+			if(!syncer.isAllSucceed()) {
+				System.out.println("[ReplicaManager replicate] syncer abort all succeed threads");
+				// BROADCAST abort
+				for(Runnable runnable: syncer.getSucceedThreads()) {
+					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
+					synchronized (thread) {
+						thread.setNextStep(NextStep.ABORT);
+						thread.notify();
+					}
+				}
+			}
+			else {
 				System.out.println("[ReplicaManager replicate] syncer all succeed");
-				// BROADCAST commit
-				for(ThreadReplicaWriteOrDelete thread: threads) {
+				for(Runnable runnable: syncer.getSucceedThreads()) {
+					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
 					synchronized (thread) {
 						thread.setNextStep(NextStep.COMMIT);
 						thread.notify();
 					}
 				}
 				return true;
-			} else {
-				// TODO manage failure on writing or when server is unreachable.
-				System.out.println("[ReplicaManager replicate] syncer one or many failed");
-				// BROADCAST abort
-				for(ThreadReplicaWriteOrDelete thread: threads) {
-					synchronized (thread) {
-						thread.setNextStep(NextStep.ABORT);
-						thread.notify();
-					}
-				}
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

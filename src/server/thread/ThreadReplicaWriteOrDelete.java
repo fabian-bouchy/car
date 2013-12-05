@@ -1,7 +1,6 @@
 package server.thread;
 
 import server.ReplicaManager.NextStep;
-
 import common.File;
 import common.RemoteNode;
 import common.Syncer;
@@ -36,12 +35,12 @@ public class ThreadReplicaWriteOrDelete implements Runnable {
 				this.remoteReplica.write(this.file);
 				// callback
 				this.syncer.callback(this, ThreadResult.SUCCEED);
-				System.out.println("[ReplicaManager - threadwritedel] waiting...");
+				System.out.println("[ReplicaManager - Thread replica WorD] waiting...");
 				// Waiting all others threads.
 				synchronized (this) {
 					this.wait();
 				}
-				System.out.println("[ReplicaManager - threadwritedel] Restarting!!!!");
+				System.out.println("[ReplicaManager - Thread replica WorD] Restarting!!!!");
 				if(nextStep == NextStep.ABORT) {
 					System.out.println("[ReplicaManager] abort" + this.file);
 					this.remoteReplica.abortWrite(this.file);
@@ -55,9 +54,17 @@ public class ThreadReplicaWriteOrDelete implements Runnable {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("[server - Thread replica WorD] failed: " + e.getLocalizedMessage());
 			// callback
 			this.syncer.callback(this, ThreadResult.FAILED);
 		}
+	}
+
+	public RemoteNode getRemoteNode() {
+		return remoteReplica;
+	}
+
+	public File getFile() {
+		return file;
 	}
 }

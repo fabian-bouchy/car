@@ -11,36 +11,48 @@ public class Syncer {
 	}
 
 	private CountDownLatch latch;
-	private ArrayList<Runnable> threads;
-	private int N = 0;
+	private ArrayList<Runnable> waitingthreads;
+	private ArrayList<Runnable> failedThreads;
+	private ArrayList<Runnable> succeedThreads;
+	//private int N = 0;
 	private ThreadResult[] results;
 	
+	
 	public Syncer(){
-		threads = new ArrayList<Runnable>();
+		waitingthreads = new ArrayList<Runnable>();
+		failedThreads = new ArrayList<Runnable>();
+		succeedThreads  = new ArrayList<Runnable>();
 	}
 	
 	public synchronized void addThread(Runnable thread){
-		N++;
-		threads.add(thread);
+		waitingthreads.add(thread);
 	}
 	
 	public synchronized void callback(Runnable runnable, ThreadResult value){
 		System.out.println("[syncer] thread finished: " + runnable);
 
 		// store the value form callback
-		int position = threads.indexOf(runnable);
+		int position = waitingthreads.indexOf(runnable);
 		if (position != -1){
 			results[position] = value;
+			if(value == ThreadResult.FAILED) {
+				failedThreads.add(runnable);
+			} else {
+				succeedThreads.add(runnable);
+			}
+			waitingthreads.remove(runnable);
 		}
 		latch.countDown();
 	}
 	
 	public void waitForAll() throws InterruptedException{
-		latch = new CountDownLatch(N);
-		results = new ThreadResult[N];
+		failedThreads.clear();
+		succeedThreads.clear();
+		latch = new CountDownLatch(waitingthreads.size());
+		results = new ThreadResult[waitingthreads.size()];
 
 		// start all threads
-		for(Runnable runnable : threads){
+		for(Runnable runnable : waitingthreads){
 			System.out.println("[syncer] running " + runnable);
 			Thread thread = new Thread(runnable);
 			thread.start();
@@ -57,11 +69,14 @@ public class Syncer {
 	}
 
 	public boolean isAllSucceed() {
-		for(ThreadResult result : results) {
-			if(result != ThreadResult.SUCCEED) {
-				return false;
-			}
-		}
-		return true;
+		return failedThreads.size() == 0;
+	}
+	
+	public ArrayList<Runnable> getFailedThreads() {
+		return failedThreads;
+	}
+	
+	public ArrayList<Runnable> getSucceedThreads() {
+		return succeedThreads;
 	}
 }
