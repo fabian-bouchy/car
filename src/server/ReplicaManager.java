@@ -31,10 +31,9 @@ public class ReplicaManager {
 	 * Start threads to write file on replicas
 	 */
 	public boolean replicate(File file){
-		
 		Syncer syncer = new Syncer();
 		ArrayList<ThreadReplicaWriteOrDelete> threads = new ArrayList<ThreadReplicaWriteOrDelete>();
-		
+
 		// Check global version file
 		// if == 1 => write only on K+1 server
 		// else broadcast update to all servers
@@ -54,7 +53,7 @@ public class ReplicaManager {
 				syncer.addThread(thread);
 			}
 		}
-		
+
 		try {
 			syncer.waitForAll();
 			System.out.println("[ReplicaManager replicate] after waitForAll");
@@ -69,6 +68,7 @@ public class ReplicaManager {
 				}
 				return true;
 			} else {
+				// TODO manage failure on writing or when server is unreachable.
 				System.out.println("[ReplicaManager replicate] syncer one or many failed");
 				// BROADCAST abort
 				for(ThreadReplicaWriteOrDelete thread: threads) {
