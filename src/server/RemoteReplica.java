@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 
 import common.File;
@@ -43,7 +44,7 @@ public class RemoteReplica extends RemoteNode{
 			if(status.equals(UtilBobby.REPLICA_WRITE_OK)){
 				System.out.println("[remote replica] Replication OK: " + file);
 			}else{
-				throw new IOException();
+				throw new InvalidParameterException();
 			}
 		}else{
 			throw new IOException();
@@ -77,7 +78,7 @@ public class RemoteReplica extends RemoteNode{
 	}
 
 	@Override
-	public boolean abortWrite(File file) throws Exception {
+	public boolean abortWrite(File file) throws UnknownHostException, IOException {
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
@@ -128,14 +129,14 @@ public class RemoteReplica extends RemoteNode{
 				System.out.println("[remote replica] replica not ready to metadata!");
 				throw new IOException();
 			}
-		} catch(Exception e) {
+		} catch(IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	public String toString(){
-		return "[remote replica] ["+this.getPriority()+"] "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
+		return "[remote replica] ("+this.getPriority()+") "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
 	}
 
 	@Override
@@ -155,7 +156,7 @@ public class RemoteReplica extends RemoteNode{
 			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
 			outStream.writeObject(metadata);
 		}else{
-			throw new IOException();
+			throw new InvalidParameterException();
 		}
 		// return the answer from the remote server
 		line = in.readLine();
@@ -174,7 +175,7 @@ public class RemoteReplica extends RemoteNode{
 			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
 			outStream.writeObject(metadata);
 		}else{
-			throw new IOException();
+			throw new InvalidParameterException();
 		}
 		// return the answer from the remote server
 		line = in.readLine();

@@ -103,20 +103,23 @@ public class ReplicaManager {
 			if(syncer.allSucceeded()) {
 				System.out.println("[ReplicaManager - delete] all succeeded!");
 				return true;
+			}else{
+				System.out.println("[ReplicaManager - delete] some servers unavailable");
+				return true;
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			System.out.println("[ReplicaManager - delete] delete failed!");
 			e.printStackTrace();
 		}
-		System.out.println("[ReplicaManager - delete] delete failed!");
 		return false;
 	}
 
 	public RemoteNode has(File file){
 		for (RemoteNode remoteReplica : replicas) {
 			try {
-				if(remoteReplica.has(file))
+				if(remoteReplica.has(file)){
 					return remoteReplica;
+				}
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

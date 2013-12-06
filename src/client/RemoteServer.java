@@ -37,10 +37,11 @@ public class RemoteServer extends RemoteNode {
         	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
 			outStream.writeObject(file);
 			answer = in.readLine();
-			if(answer.equals(UtilBobby.SERVER_WRITE_OK))
+			if(answer.equals(UtilBobby.SERVER_WRITE_OK)){
 				System.out.println("[remote server] Write done!");
-			else
+			}else{
 				System.out.println("[remote server] Write failed!");
+			}
         }
 	}
 
@@ -102,17 +103,17 @@ public class RemoteServer extends RemoteNode {
 				String nextHopName = answer.split(UtilBobby.SPLIT_REGEX)[3];
 				RemoteNode nextHop =  ConfigManager.getRemoteNode(nextHopName);
 				socketToServer.close();
-				System.out.println("[remote server]Redirected to " + nextHop);
+				System.out.println("[remote server] Redirected to " + nextHop);
 				return nextHop.read(metadata);
 			}
 			else if(answer.equals(UtilBobby.SERVER_READ_FILE_NOT_FOUND)){
 				System.out.println("[remote server] File doesn't exist");
 			}
 			else {
-				System.out.println("[remote server]Read failed: " + answer);
+				System.out.println("[remote server] Read failed: " + answer);
 			}
         } else {
-        	System.out.println("[remote server]Server not ready for reading..." + answer);
+        	System.out.println("[remote server] Server not ready for reading..." + answer);
         }
 		return null;
 	}
