@@ -66,21 +66,18 @@ public class ConfigManager {
 	 *            Interface name
 	 * @throws Exception
 	 */
-	public static void init(ConfigType configType, String sConfigFile,
-			String hostname) throws Exception {
+	public static void init(ConfigType configType, String sConfigFile, String hostname) throws Exception {
 
 		String myIP = Inet4Address.getLocalHost().getHostAddress();
 
 		String myHost = Inet4Address.getLocalHost().getHostName();
 		sHostName = myHost;
 
-		System.out.println("[config manager] init on " + myHost + " (" + myIP
-				+ ")");
+		System.out.println("[config manager] init on " + myHost + " (" + myIP + ")");
 
 		// prepare JSON
-		JSONTokener jsonTokener = new JSONTokener(new FileInputStream(
-				sConfigFile));
-		JSONObject jsonFile = new JSONObject(jsonTokener); // Get main array
+		JSONTokener jsonTokener = new JSONTokener(new FileInputStream(sConfigFile));
+		JSONObject jsonFile = new JSONObject(jsonTokener);
 		JSONArray jsonArrayReplicas = jsonFile.getJSONArray("replicas");
 
 		// Extract data and create local configuration
@@ -148,7 +145,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * Get the intance of the current replica
+	 * Get the instance of the current replica
 	 * 
 	 * @return The current instance of the replica
 	 */
@@ -186,8 +183,7 @@ public class ConfigManager {
 		return map;
 	}
 
-	public static RemoteNode getOtherRemoteReplica(
-			HashMap<String, RemoteNode> map) {
+	public static RemoteNode getOtherRemoteReplica(HashMap<String, RemoteNode> map) {
 		if (map.size() >= getRemoteNodes().size()) {
 			return null;
 		} else {
