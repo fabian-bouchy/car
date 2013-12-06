@@ -1,0 +1,22 @@
+{
+	"replicas":[
+		{
+			"name"		: "host1",
+			"ip"		: "127.0.0.1",
+			"port"		: 7771,
+			"interface"	: "lo0"
+		},
+		{
+			"name"		: "host2",
+			"ip"		: "127.0.0.1",
+			"port"		: 7772,
+			"interface"	: "lo0"
+		},
+		{
+			"name"		: "host3",
+			"ip"		: "127.0.0.1",
+			"port"		: 7773,
+			"interface"	: "lo0"
+		}
+	]
+}

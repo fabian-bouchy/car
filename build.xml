@@ -1,0 +1,24 @@
+<project>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac debug="on" srcdir="src" destdir="build/classes"/>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="bobby.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="common.Starter"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run">
+        <java jar="bobby.jar" fork="true"/>
+    </target>
+
+</project>

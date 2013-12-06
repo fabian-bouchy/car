@@ -1,7 +1,7 @@
 package common;
 
-import client.Client;
-import server.Server;
+import client.main.Client;
+import server.main.Server;
 
 public class Starter {
 
@@ -9,23 +9,33 @@ public class Starter {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
-        if (args.length < 2 && !(args.length == 1 && args[0].equals("server"))) {
-            System.err.println("Usage:");
-            System.err.println("    bobby server [config.json] [interface]");
-            System.err.println("    bobby create|update|get|delete file");
-            System.exit(1);
-        }
-        
-        
-        if (args[0].equals("server")){
+
+		// server mode
+        if ((args.length == 1 || args.length == 2 || args.length == 3) && args[0].equals("server")){
         	// server mode
         	Server server = new Server();
-        	server.run(args);
-        }else{
+        	try {
+				server.run(args);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        
+        // client mode
+        }else if((args.length == 3 || args.length == 4) && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete")  || args[0].equals("read"))){
         	// client mode
         	Client client = new Client();
-        	client.run(args);
+        	try {
+				client.run(args);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }else{
+            System.err.println("Usage:");
+            System.err.println("    java -jar bobby.jar server [config.json] [hostname]");
+            System.err.println("    java -jar bobby.jar write|read|delete file username [config.json]");
+            System.exit(1);
         }
 	}
 
