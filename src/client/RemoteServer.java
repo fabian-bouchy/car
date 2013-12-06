@@ -101,19 +101,19 @@ public class RemoteServer extends RemoteNode {
 			// Internal redirection
 			else if(answer.contains(UtilBobby.SERVER_READ_REDIRECT_TO) && (answer.split(UtilBobby.SPLIT_REGEX).length == 4)){
 				String nextHopName = answer.split(UtilBobby.SPLIT_REGEX)[3];
-				RemoteNode nextHop =  ConfigManager.getRemoteNode(nextHopName);
+				RemoteNode nextHop = ConfigManager.getRemoteNode(nextHopName);
 				socketToServer.close();
-				System.out.println("[remote server]Redirected to " + nextHop);
+				System.out.println("[remote server] Redirected to " + nextHop);
 				return nextHop.read(metadata);
 			}
 			else if(answer.equals(UtilBobby.SERVER_READ_FILE_NOT_FOUND)){
 				System.out.println("[remote server] File doesn't exist");
 			}
 			else {
-				System.out.println("[remote server]Read failed: " + answer);
+				System.out.println("[remote server] Read failed: " + answer);
 			}
         } else {
-        	System.out.println("[remote server]Server not ready for reading..." + answer);
+        	System.out.println("[remote server ]Server not ready for reading..." + answer);
         }
 		return null;
 	}
