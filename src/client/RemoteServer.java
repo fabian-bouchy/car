@@ -82,12 +82,14 @@ public class RemoteServer extends RemoteNode {
 
         out.println(UtilBobby.CLIENT_READ);
         String answer = in.readLine();
+        
         if(answer.equals(UtilBobby.SERVER_READ_READY)) {
         	System.out.println("[remote server] ready to read from " + this);
         	// Create output stream to send metadata to server 
         	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
         	outStream.writeObject(metadata);
 			answer = in.readLine();
+			
 			if(answer.equals(UtilBobby.SERVER_READ_FILE_FOUND)){
 				// Read file from server
 				ObjectInputStream reader = new ObjectInputStream(socketToServer.getInputStream());

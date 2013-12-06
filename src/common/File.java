@@ -4,7 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.Iterator;
 
 import server.UserManager;
 
@@ -22,8 +21,7 @@ public class File implements java.io.Serializable{
 	private byte[] data;
 	private long size;
 	private int[] version;
-
-	private int globalVersion = 0;
+	private boolean isFile;
 
 	public File(String fileName, boolean init) throws IOException {
 		// fill in fields
@@ -32,6 +30,7 @@ public class File implements java.io.Serializable{
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
 		this.data = null;
+		this.isFile = false;
 		
 		if(init) {
 			// read the file
@@ -40,6 +39,7 @@ public class File implements java.io.Serializable{
 			this.data = new byte[(int) f.length()];
 			f.read(this.data);
 			f.close();
+			this.isFile = true;
 		}
 	}
 
@@ -47,13 +47,21 @@ public class File implements java.io.Serializable{
 	 * Create metadata for the file gives in parameters
 	 * @param file 
 	 */
-	public File(File file) {
+	private File(File file) {
 		// fill in fields
 		this.id = file.getId();
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
 		this.setVersion(file.getVersion());
 		this.data = null;
+		this.isFile = false;
+	}
+	public boolean isFile() {
+		return isFile;
+	}
+
+	public File generateMetadata(){
+		return new File(this);
 	}
 
 	public void writeToFile(String theFile) throws IOException {
@@ -85,49 +93,33 @@ public class File implements java.io.Serializable{
 	public long getSize() {
 		return size;
 	}
-
-	public void setSize(long size) {
-		this.size = size;
-	}
-
-	public int getGlobalVersion() {
-		return globalVersion;
-	}
 	
 	public int[] getVersion() {
 		return version;
 	}
-
+	
 	public void setVersion(int[] version) {
 		this.version = version;
-		computeGlobalVersion();
+	}
+	
+	public void incrementVersion(int index){
+		this.version[index]++;
 	}
 
-	private void computeGlobalVersion() {
-		globalVersion = 0;
+	public int getGlobalVersion() {
+		int globalVersion = 0;
 		for(int i = 0; i < version.length; i++) {
 			globalVersion += version[i];
 		}
+		return globalVersion;
 	}
 
 	public String getId() {
 		return id;
 	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
+	
 	public byte[] getData() {
 		return data;
-	}
-
-	public void setData(byte[] data) {
-		this.data = data;
-	}
-	
-	public String toString(){
-		return "[file] " + id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
 	}
 	
 	private String getVersionToString() {
@@ -144,8 +136,9 @@ public class File implements java.io.Serializable{
 		return fileName;
 	}
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
+	public File getMetadata() {
+		File metadata = new File(this);
+		return metadata;
 	}
 
 	@Override
@@ -162,8 +155,11 @@ public class File implements java.io.Serializable{
 		return true;
 	}
 	
-	public File getMetadata() {
-		File metadata = new File(this);
-		return metadata;
+	public String toString(){
+		String txt = id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
+		if(isFile){
+			return "[file] " + txt;
+		}
+		return "[metadata] " + txt;
 	}
 }
