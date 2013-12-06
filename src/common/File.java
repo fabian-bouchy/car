@@ -143,8 +143,9 @@ public class File implements java.io.Serializable{
 
 	@Override
 	public boolean equals(Object obj) {
-		if(obj == null)
+		if(obj == null){
 			return false;
+		}
 		
 		File other = (File)obj;
 		for(int i = 0; i < this.version.length; i++ ) {
