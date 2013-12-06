@@ -48,12 +48,13 @@ public class Client {
 			
 			System.out.println("[client] Reading "+fileName);
 			File file = ServerManager.read(new File(fileName, false));
+			file.writeToFile("read_"+ file.getFileName());
 			
 		}else{
 			
 			System.out.println("[client] Command unknown "+cmd);
 		}
-		long elapsedTime = System.nanoTime();
+		long elapsedTime = System.nanoTime() - startTime;
 		System.out.println("[client] Done in "+ ((double)elapsedTime / 1000000000.0) + " seconds");
 	}
 }

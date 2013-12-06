@@ -45,7 +45,7 @@ public class Syncer {
 		latch.countDown();
 	}
 	
-	public void waitForAll() throws InterruptedException{
+	public synchronized void waitForAll() throws InterruptedException{
 		failedThreads.clear();
 		succeedThreads.clear();
 		latch = new CountDownLatch(waitingthreads.size());
@@ -68,15 +68,15 @@ public class Syncer {
 		System.out.println("]");
 	}
 
-	public boolean isAllSucceed() {
+	public synchronized boolean isAllSucceed() {
 		return failedThreads.size() == 0;
 	}
 	
-	public ArrayList<Runnable> getFailedThreads() {
+	public synchronized ArrayList<Runnable> getFailedThreads() {
 		return failedThreads;
 	}
 	
-	public ArrayList<Runnable> getSucceedThreads() {
+	public synchronized ArrayList<Runnable> getSucceedThreads() {
 		return succeedThreads;
 	}
 }

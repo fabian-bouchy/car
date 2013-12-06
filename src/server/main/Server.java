@@ -99,7 +99,7 @@ public class Server {
 	            	// a client asks to write or delete
 	                } else{
 	                	
-	                	// instantiate a create/update/delete thread
+	                	// instantiate a create/update thread
 	                	System.out.println("[Server] Initializing a write thread for " + clientSocket.getInetAddress());
 	            		ThreadWrite thread = new ThreadWrite(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();

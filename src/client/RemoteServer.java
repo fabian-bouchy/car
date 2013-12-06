@@ -93,7 +93,6 @@ public class RemoteServer extends RemoteNode {
 				File tmp = (File) reader.readObject();
 				if(tmp != null ) {
 					System.out.println("[remote server] File read "+tmp);
-					tmp.writeToFile("read_"+ tmp.getFileName());
 					return tmp;
 				}
 			}
