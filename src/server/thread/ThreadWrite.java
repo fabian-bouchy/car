@@ -46,7 +46,7 @@ public class ThreadWrite extends ThreadWorker{
 			file.incrementVersion(currentRemoteNodeId);
 			
 			// Replace current version of file
-			FileManager.addFile(file);
+			FileManager.addOrReplaceFile(file);
 
 			// TODO check if replication successed
 			if(replicaManager.replicate(file)) {
@@ -55,7 +55,7 @@ public class ThreadWrite extends ThreadWorker{
 				// send to client that the write succeed
 				out.println(UtilBobby.SERVER_WRITE_OK);
 			} else {
-				FileManager.abord(file.getId());
+				FileManager.abort(file.getId());
 				// send to client that the write failed
 				out.println(UtilBobby.SERVER_WRITE_KO);
 			}

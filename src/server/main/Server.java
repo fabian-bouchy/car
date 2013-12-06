@@ -4,21 +4,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.*;
-import java.util.HashMap;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-import common.ConfigManager;
-import common.File;
-import common.FileManager;
-import common.UtilBobby;
-import common.ConfigManager.ConfigType;
 import server.RemoteReplica;
-import server.ReplicaManager;
 import server.thread.ThreadDelete;
 import server.thread.ThreadDiscovery;
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
 import server.thread.ThreadWrite;
+
+import common.ConfigManager;
+import common.ConfigManager.ConfigType;
+import common.UtilBobby;
 
 public class Server {
 	

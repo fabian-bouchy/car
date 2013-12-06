@@ -4,14 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FileManager {
-
+	
 	// Files contain in memory
 	private static HashMap<String, File> files = new HashMap<String, File>();
-
 	// Files waiting commit
 	private static HashMap<String, File> tmpFiles = new HashMap<String, File>();
-
-	// Metadata of network
+	// Meta-data of network
 	private static HashMap<String, File> metadata = new HashMap<String, File>();
 
 	static {
@@ -19,6 +17,8 @@ public class FileManager {
 	
 	private FileManager(){}
 	
+	
+	// GETTERS
 	public static synchronized HashMap<String, File> getMetadata() {
 		return metadata;
 	}
@@ -26,13 +26,13 @@ public class FileManager {
 	public static synchronized HashMap<String, File> getFiles() {
 		return files;
 	}
-
-	public static synchronized void setMapFiles(HashMap<String, File> mapFiles) {
-		files = mapFiles;
-	}
 	
-	public static synchronized void setMetadata(HashMap<String, File> otherMetadata) {
-		metadata = otherMetadata;
+	public static synchronized File getFileOrMetadata(String id){
+		if (files.get(id) != null){
+			return files.get(id);
+		}else{
+			return metadata.get(id);
+		}
 	}
 	
 	public static synchronized File getFile(String id){
@@ -42,30 +42,16 @@ public class FileManager {
 	public static synchronized File getMetadata(String id){
 		return metadata.get(id);
 	}
-
-	public static synchronized void commit(String fileId) {
-		File file = tmpFiles.get(fileId);
-		if(file != null) {
-			System.out.println("[FileManager] commit for " + file);
-			tmpFiles.remove(fileId);
+	
+	// ADD AND REMOVE
+	public static synchronized void addOrReplaceFile(File file){
+		if (file.isFile()){
 			files.put(file.getId(), file);
-			addOrUpdateMetadata(file.getMetadata());
 			System.out.println(represent());
-		} else {
-			System.out.println("[FileManager] nothing to commit for " + fileId);
+		}else{
+			metadata.put(file.getId(), file);
+			System.out.println(representMetadata());
 		}
-	}
-
-	public static synchronized void abord(String fileId) {
-		tmpFiles.remove(fileId);
-	}
-
-	public static synchronized void addFile(File file){
-		tmpFiles.put(file.getId(), file);
-	}
-
-	public static synchronized void replaceFile(File file){
-		tmpFiles.put(file.getId(), file);
 	}
 
 	public static synchronized void removeFile(String id){
@@ -73,25 +59,29 @@ public class FileManager {
 		metadata.remove(id);
 		System.out.println(represent());
 	}
-	
-	public static synchronized void addOrUpdateMetadata(File metadataIn) {
-		System.out.println("[FileManager] add or update metadata for " + metadataIn);
-		metadata.put(metadataIn.getId(),metadataIn);
-		System.out.println(representMetadata());
+
+	// TRANSACTIONS
+	public static synchronized void prepare(File file){
+		tmpFiles.put(file.getId(), file);
 	}
 
-	public static synchronized void deleteMetadata(File metadataIn) {
-		System.out.println("[FileManager] delete metadata for " + metadataIn);
-		metadata.remove(metadataIn.getId());
-		System.out.println(representMetadata());
-	}
-	
-	public static synchronized void mergeMetadata(HashMap<String, File> others) {
-		for (File file : others.values()) {
-			addOrUpdateMetadata(file);
+	public static synchronized void commit(String fileId) {
+		File file = tmpFiles.get(fileId);
+		if(file != null) {
+			System.out.println("[FileManager] commit for " + file);
+			tmpFiles.remove(fileId);
+			addOrReplaceFile(file);
+		} else {
+			System.out.println("[FileManager] nothing to commit for " + fileId);
 		}
 	}
 
+	public static synchronized void abort(String fileId) {
+		tmpFiles.remove(fileId);
+	}
+	
+	
+	// DISPLAYING
 	public static synchronized String represent(){
 		if(FileManager.files.isEmpty())
 			return "List of file is empty";

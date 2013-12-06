@@ -69,11 +69,7 @@ public class ReplicaManager {
 				// Remove failed replication
 				for (Runnable runnable : syncer.getFailedThreads()) {
 					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
-					synchronized (thread) {
-						replicas.remove(thread.getRemoteNode());
-						thread.setNextStep(NextStep.COMMIT);
-						thread.notify();
-					}
+					replicas.remove(thread.getRemoteNode());
 				}
 				done += syncer.getSucceedThreads().size();
 				replicasRemaining = replicasNeeded - done - syncer.getFailedThreads().size();
@@ -153,12 +149,6 @@ public class ReplicaManager {
 	public void propagateMetadataAdd(File metadata) {
 		for(RemoteNode remoteReplica : replicas) {
 			new Thread(new ThreadReplicaMetadataUpdate(metadata, remoteReplica, ActionThreadMetadata.ADD)).start();
-		}
-	}
-
-	public void propagateMetadataDelete(File metadata) {
-		for(RemoteNode remoteReplica : replicas) {
-			new Thread(new ThreadReplicaMetadataUpdate(metadata, remoteReplica, ActionThreadMetadata.DELETE)).start();
 		}
 	}
 }
