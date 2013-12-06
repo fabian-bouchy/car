@@ -17,11 +17,10 @@ import common.Syncer;
 
 public class ReplicaManager {
 	
-	private HashMap<String, RemoteNode> replicas, replicasK;
+	private ArrayList<RemoteNode> replicas;
 
 	public ReplicaManager(){
-		replicas = new HashMap<String, RemoteNode>(ConfigManager.getRemoteNodes());
-        replicasK = new HashMap<String, RemoteNode>(ConfigManager.getRemoteReplicas());
+		replicas = new ArrayList<RemoteNode>(ConfigManager.getRemoteNodesList());
 	}
 
 	public enum NextStep {
@@ -94,14 +93,14 @@ public class ReplicaManager {
 	public boolean delete(File file){
 		Syncer syncer = new Syncer();
 
-		for (RemoteNode remoteReplica : replicas.values()) {
+		for (RemoteNode remoteReplica : replicas) {
 			syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
 		}
 
 		// wait for everybody
 		try {
 			syncer.waitForAll();
-			if(syncer.isAllSucceed()) {
+			if(syncer.allSucceeded()) {
 				System.out.println("[ReplicaManager - delete] all succeed!");
 				return true;
 			}
@@ -114,8 +113,7 @@ public class ReplicaManager {
 	}
 
 	public RemoteNode has(File file){
-		// TODO need to be change
-		for (RemoteNode remoteReplica : replicas.values()) {
+		for (RemoteNode remoteReplica : replicas) {
 			try {
 				if(remoteReplica.has(file))
 					return remoteReplica;
@@ -131,7 +129,7 @@ public class ReplicaManager {
 	}
 
 	public HashMap<String, File> getMetadata() {
-		for (RemoteNode remoteReplica : replicas.values()) {
+		for (RemoteNode remoteReplica : replicas) {
 			try {
 				// Return first metadata found!
 				HashMap<String, File> metadataTmp = remoteReplica.getMetadata(); 
@@ -150,13 +148,13 @@ public class ReplicaManager {
 	}
 
 	public void propagateMetadataAdd(File metadata) {
-		for(RemoteNode remoteReplica : replicas.values()) {
+		for(RemoteNode remoteReplica : replicas) {
 			new Thread(new ThreadReplicaMetadataUpdate(metadata, remoteReplica, ActionThreadMetadata.ADD)).start();
 		}
 	}
 
 	public void propagateMetadataDelete(File metadata) {
-		for(RemoteNode remoteReplica : replicas.values()) {
+		for(RemoteNode remoteReplica : replicas) {
 			new Thread(new ThreadReplicaMetadataUpdate(metadata, remoteReplica, ActionThreadMetadata.DELETE)).start();
 		}
 	}

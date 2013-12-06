@@ -15,22 +15,13 @@ import common.ConfigManager.ConfigType;
 import server.RemoteReplica;
 import server.ReplicaManager;
 import server.thread.ThreadDelete;
+import server.thread.ThreadDiscovery;
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
 import server.thread.ThreadWrite;
 
 public class Server {
 	
-	public void restoreMetaData() {
-		System.out.println("[Server] Updating metadata...");
-		ReplicaManager replicaManager = new ReplicaManager();
-		HashMap<String, File> metadata = replicaManager.getMetadata();
-		if(metadata != null)
-			FileManager.setMetadata(metadata);
-		System.out.println("[Server] Metadata updated...");
-		System.out.println(FileManager.represent());
-	}
-
 	public void run(String[] args) throws Exception{
 		
 		// initialize the configuration
@@ -45,12 +36,9 @@ public class Server {
 			ConfigManager.init(ConfigType.SERVER);
 		}
 
-		try {
-			restoreMetaData();
-			System.out.println("[Server -metadata] " + FileManager.representMetadata());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    	// instantiate a read thread
+    	System.out.println("[Server] Initializing a discovery thread");
+		new Thread(new ThreadDiscovery()).start();
 
 		try {
 			RemoteReplica me = (RemoteReplica)ConfigManager.getMe();

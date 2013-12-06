@@ -24,14 +24,14 @@ public class ConfigManager {
 	private static final int N = 3;
 	private static final int K = 1;
 
-	private static ArrayList<String> serversPriority = new ArrayList<String>(N);
-
-	private static HashMap<String, RemoteNode> sRemoteNodes;
+	private static HashMap<String, RemoteNode> serversMap;
+	private static ArrayList<RemoteNode> serversList;
 	private static RemoteNode sMe;
 	private static String sHostName;
 
 	static {
-		sRemoteNodes = new HashMap<String, RemoteNode>();
+		serversMap = new HashMap<String, RemoteNode>();
+		serversList = new ArrayList<RemoteNode>(N);
 		sMe = null;
 	}
 
@@ -111,7 +111,9 @@ public class ConfigManager {
 				// otherwise, we just pick the one with the desired hostname
 				sMe = remoteNode;
 			} else {
-				sRemoteNodes.put(remoteNode.getName(), remoteNode);
+				// store in a hash (to be gotten by name) and a list (for random order)
+				serversMap.put(remoteNode.getName(), remoteNode);
+				serversList.add(remoteNode);
 			}
 		}
 
@@ -120,35 +122,14 @@ public class ConfigManager {
 					"[config manager] Error - could not establish who I am !");
 		}
 
-		if (configType == ConfigType.CLIENT && sRemoteNodes.size() == 0) {
+		if (configType == ConfigType.CLIENT && serversMap.size() == 0) {
 			throw new Exception(
 					"[config manager] Error - client could not find any servers");
 		}
 
-		System.out.println("[config manager] initialized with "
-				+ sRemoteNodes.size() + " hosts");
-
-		generatePriorityServers();
+		System.out.println("[config manager] initialized with " + serversMap.size() + " hosts");
 	}
-
-	/**
-	 * serversPriority contains all the servers in random order
-	 */
-	private static void generatePriorityServers() {
-
-		for (RemoteNode node : getRemoteNodes().values()) {
-			serversPriority.add(node.getName());
-		}
-
-		Collections.shuffle(serversPriority);
-
-	}
-
-	/**
-	 * Get the instance of the current replica
-	 * 
-	 * @return The current instance of the replica
-	 */
+	
 	public static RemoteNode getMe() {
 		return sMe;
 	}
@@ -156,58 +137,7 @@ public class ConfigManager {
 	public static String getHostName() {
 		return sHostName;
 	}
-
-	/**
-	 * Get all RemoteNodes according to the configuration file
-	 * 
-	 * @return List of RemoteNode
-	 */
-	public static synchronized HashMap<String, RemoteNode> getRemoteNodes() {
-		return sRemoteNodes;
-	}
-
-	public static HashMap<String, RemoteNode> getRemoteReplicas() {
-		HashMap<String, RemoteNode> map = new HashMap<String, RemoteNode>();
-		int k = K;
-		for (int i = 0; i < k; i++) {
-			String nameServer = serversPriority.get(i);
-			RemoteNode server = getRemoteNodes().get(nameServer);
-
-			if (server != null){
-				map.put(nameServer, server);
-			}else{
-				k++;
-			}
-
-		}
-		return map;
-	}
-
-	public static RemoteNode getOtherRemoteReplica(HashMap<String, RemoteNode> map) {
-		if (map.size() >= getRemoteNodes().size()) {
-			return null;
-		} else {
-			Iterator<RemoteNode> it = getRemoteNodes().values().iterator();
-
-			while (it.hasNext()) {
-				Iterator<RemoteNode> itMap = map.values().iterator();
-				boolean found = false;
-				RemoteNode node = (RemoteNode) it.next();
-
-				while (itMap.hasNext() && !found) {
-
-					RemoteNode nodeMap = (RemoteNode) itMap.next();
-					if (node.equals(nodeMap))
-						found = true;
-				}
-				if (!found)
-					return node;
-			}
-
-		}
-		return null;
-	}
-
+	
 	public static synchronized int getN() {
 		return N;
 	}
@@ -217,7 +147,14 @@ public class ConfigManager {
 	}
 
 	public static synchronized RemoteNode getRemoteNode(String remoteNodeName) {
-		return sRemoteNodes.get(remoteNodeName);
+		return serversMap.get(remoteNodeName);
 	}
-
+	
+	public static synchronized HashMap<String, RemoteNode> getRemoteNodes() {
+		return serversMap;
+	}
+	
+	public static synchronized ArrayList<RemoteNode> getRemoteNodesList() {
+		return serversList;
+	}
 }

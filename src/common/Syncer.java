@@ -14,7 +14,6 @@ public class Syncer {
 	private ArrayList<Runnable> waitingthreads;
 	private ArrayList<Runnable> failedThreads;
 	private ArrayList<Runnable> succeedThreads;
-	//private int N = 0;
 	private ThreadResult[] results;
 	
 	
@@ -59,16 +58,16 @@ public class Syncer {
 		}
 
 		// wait for them to finish
-		System.out.println("[syncer] waiting for everybody");
+		System.out.println("[syncer] waiting for all " + this.hashCode());
 		latch.await();
-		System.out.print("[syncer] finished: [");
+		System.out.print("[syncer] finished " + this.hashCode());
 		for (ThreadResult i : results){
 			System.out.print(i + " ");
 		}
 		System.out.println("]");
 	}
 
-	public synchronized boolean isAllSucceed() {
+	public synchronized boolean allSucceeded() {
 		return failedThreads.size() == 0;
 	}
 	
