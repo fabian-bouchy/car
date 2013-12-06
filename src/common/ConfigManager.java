@@ -2,6 +2,7 @@ package common;
 
 import java.io.FileInputStream;
 import java.net.Inet4Address;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -10,9 +11,6 @@ import org.json.JSONTokener;
 
 import server.RemoteReplica;
 import client.RemoteServer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Collections;
 
 public class ConfigManager {
 
@@ -39,7 +37,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * @brief First method that need to be called
+	 * @brief First method that needs to be called
 	 * 
 	 *        Initialize the ConfigManager and the current replica with default
 	 *        values.
@@ -56,7 +54,7 @@ public class ConfigManager {
 	}
 
 	/**
-	 * @brief First method that need to be called
+	 * @brief First method that needs to be called
 	 * 
 	 *        Initialize the ConfigManager and the current replica.
 	 * 

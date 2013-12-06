@@ -60,7 +60,7 @@ public class Syncer {
 		// wait for them to finish
 		System.out.println("[syncer] waiting for all " + this.hashCode());
 		latch.await();
-		System.out.print("[syncer] finished " + this.hashCode());
+		System.out.print("[syncer] finished " + this.hashCode() + "[");
 		for (ThreadResult i : results){
 			System.out.print(i + " ");
 		}
