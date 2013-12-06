@@ -1,5 +1,7 @@
 package server.thread;
 
+import java.net.ConnectException;
+
 import common.File;
 import common.RemoteNode;
 
@@ -27,6 +29,8 @@ public class ThreadReplicaMetadataUpdate implements Runnable {
 			} else if(actionThreadMetadata == ActionThreadMetadata.DELETE) {
 				remoteReplica.deleteMetadata(metadata);
 			}
+		} catch(ConnectException e) {
+			System.out.println("[Server - thread replicate update metadata] Unable to connect to remote: " + e.getLocalizedMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

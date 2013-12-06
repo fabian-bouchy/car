@@ -3,7 +3,9 @@ package server;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import server.thread.ThreadReplicaMetadataUpdate;
 import server.thread.ThreadReplicaMetadataUpdate.ActionThreadMetadata;
@@ -32,75 +34,58 @@ public class ReplicaManager {
 	 */
 	public boolean replicate(File file){
 		Syncer syncer = new Syncer();
-		//ArrayList<ThreadReplicaWriteOrDelete> threads = new ArrayList<ThreadReplicaWriteOrDelete>();
+		// Shuffle list
+		HashMap<String, RemoteNode> replicasHashMap = ConfigManager.getRemoteNodes();
+		List<RemoteNode> replicasShuffled = new ArrayList<RemoteNode>(replicasHashMap.values());
+		Collections.shuffle(replicasShuffled);
+
+		// Init var
+		int done = 0, K = ConfigManager.getK();
+		int nbReplicationNeeded = 0, nbReplicationRemaining = 0;
 
 		// Check global version file
 		// if == 1 => write only on K+1 server
 		// else broadcast update to all servers
 		if(file.getGlobalVersion() == 1) {
-
-			// Need to select K+1 server
-			for (RemoteNode remoteReplica : replicasK.values()) {
-				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer);
-				//threads.add(thread);
-				syncer.addThread(thread);
-			}
+			nbReplicationNeeded = K;
 		} else {
-			// Need to propagate broadcast update
-			for (RemoteNode remoteReplica : replicas.values()) {
-				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer);
-				//threads.add(thread);
+			nbReplicationNeeded = ConfigManager.getN() - 1;
+		}
+		nbReplicationRemaining = nbReplicationNeeded;
+
+		// Replicate
+		while(done < nbReplicationNeeded && nbReplicationRemaining > 0) {
+			for(int i = 0; i < nbReplicationRemaining && i < replicasShuffled.size(); i++) {
+				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(replicasShuffled.get(i), file, syncer);
 				syncer.addThread(thread);
 			}
-		}
-
-		try {
-			syncer.waitForAll();
-			System.out.println("[ReplicaManager replicate] after waitForAll");
-			
-			int i = 0, nbRetry = ConfigManager.getN() - ConfigManager.getK();
-			while(!syncer.isAllSucceed() && i < nbRetry) {
-				System.out.println("[ReplicaManager replicate] syncer one or many failed, retrying...");
-				for (Runnable runnable : syncer.getFailedThreads()) {
-					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
-					synchronized (thread) {
-						thread.setNextStep(NextStep.ABORT);
-						RemoteNode newRemoteNode = ConfigManager.getOtherRemoteReplica(replicasK);
-						syncer.addThread(new ThreadReplicaWriteOrDelete(newRemoteNode, thread.getFile(), syncer));
-						thread.notify();
-					}
-				}
+			try {
 				syncer.waitForAll();
-				System.out.println("[ReplicaManager replicate] syncer one or many failed");
-				i++;
-			}
-			// Need to abort all succeed thread.
-			if(!syncer.isAllSucceed()) {
-				System.out.println("[ReplicaManager replicate] syncer abort all succeed threads");
-				// BROADCAST abort
-				for(Runnable runnable: syncer.getSucceedThreads()) {
+				// Remove succeed replication
+				for (Runnable runnable : syncer.getSucceedThreads()) {
 					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
 					synchronized (thread) {
-						thread.setNextStep(NextStep.ABORT);
-						thread.notify();
-					}
-				}
-			}
-			else {
-				System.out.println("[ReplicaManager replicate] syncer all succeed");
-				for(Runnable runnable: syncer.getSucceedThreads()) {
-					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
-					synchronized (thread) {
+						replicasShuffled.remove(thread.getRemoteNode());
 						thread.setNextStep(NextStep.COMMIT);
 						thread.notify();
 					}
 				}
-				return true;
+				// Remove failed replication
+				for (Runnable runnable : syncer.getFailedThreads()) {
+					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
+					synchronized (thread) {
+						replicasShuffled.remove(thread.getRemoteNode());
+						thread.setNextStep(NextStep.COMMIT);
+						thread.notify();
+					}
+				}
+				done += syncer.getSucceedThreads().size();
+				nbReplicationRemaining = nbReplicationNeeded - done - syncer.getFailedThreads().size();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
-		return false;
+		return true;
 	}
 
 	/**
