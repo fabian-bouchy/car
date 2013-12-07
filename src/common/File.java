@@ -40,6 +40,8 @@ public class File implements java.io.Serializable{
 			this.size = f.length();
 			this.data = new byte[(int) f.length()];
 			f.read(this.data);
+			// Encrypt
+			this.data = UserManager.getCypherManager().encrypt(this.data);
 			f.close();
 			this.hasFile = true;
 		}
@@ -93,6 +95,7 @@ public class File implements java.io.Serializable{
 			bos = new BufferedOutputStream(fos);
 			if(this.data != null){
 				bos.write(this.data);
+				this.data = UserManager.getCypherManager().decrypt(this.data);
 			}
 		} catch (Exception e) {
 			System.out.println("[file] Error writing to a file " + e);

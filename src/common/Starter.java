@@ -1,5 +1,6 @@
 package common;
 
+import client.Benchmark;
 import client.main.Client;
 import server.main.Server;
 
@@ -31,6 +32,8 @@ public class Starter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+        }else if((args.length == 1 || args.length == 2 ) && args[0].equals("benchmark")){
+        	Benchmark.run(args);
         }else{
             System.err.println("Usage:");
             System.err.println("    java -jar bobby.jar server [config.json] [hostname]");
