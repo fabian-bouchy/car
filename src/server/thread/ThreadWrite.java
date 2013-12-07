@@ -39,7 +39,7 @@ public class ThreadWrite extends ThreadWorker{
 				FileManager.addOrReplaceFile(file);
 				
 				// replicate on all servers
-				if(replicaManager.replicate(file)) {
+				if(replicaManager.replicate(file, true)) {
 					
 					System.out.println("[server thread write] Replication succeeded: " + file);
 					
@@ -76,7 +76,7 @@ public class ThreadWrite extends ThreadWorker{
 				file.incrementVersion(myId);
 				
 				// replicate on all servers
-				if(replicaManager.replicate(file)) {
+				if(replicaManager.replicate(file, false)) {
 					
 					System.out.println("[server thread write] Replication succeeded: " + file);
 					
