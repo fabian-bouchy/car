@@ -21,9 +21,10 @@ public class ThreadWrite extends ThreadWorker{
 
 	@Override
 	public void run() {
+		System.out.println("[server thread write] running...");
 		try {
-			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 			out.println(UtilBobby.SERVER_WRITE_READY);
+			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 			File file = (File) reader.readObject();
 			System.out.println("[server thread write] Object received: " + file + " from client!");
 			

@@ -24,7 +24,7 @@ public class ServerManager {
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
 			
 			currentServer = (RemoteServer) server;
-			System.out.print("[server manager] Trying " + currentServer + " ... ");
+			System.out.println("[server manager] Trying " + currentServer + " ... ");
 			try{
 				currentServer.write(file);
 				return;
