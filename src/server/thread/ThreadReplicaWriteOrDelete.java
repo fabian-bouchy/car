@@ -33,6 +33,7 @@ public class ThreadReplicaWriteOrDelete implements Runnable {
 		try {
 			if(this.file.getData() != null){
 				this.remoteReplica.write(this.file);
+				System.out.println("[ReplicaManager - Thread replica WorD] write ok, calling callback...");
 				// callback
 				this.syncer.callback(this, ThreadResult.SUCCEEDED);
 				System.out.println("[ReplicaManager - Thread replica WorD] waiting...");

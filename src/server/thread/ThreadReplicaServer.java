@@ -111,6 +111,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 							System.out.println("[thread replica server] new file");
 							FileManager.prepare(file); // store in temporary storage
 							out.println(UtilBobby.REPLICA_WRITE_OK);
+							System.out.println("[thread replica server] file prepared");
 						}
 						else 
 						{

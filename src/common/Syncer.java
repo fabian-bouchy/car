@@ -49,25 +49,34 @@ public class Syncer {
 		latch.countDown();
 	}
 	
-	public synchronized void waitForAll() throws InterruptedException{
-		failedThreads.clear();
-		succeededThreads.clear();
+	public void waitForAll() throws InterruptedException{
 		latch = new CountDownLatch(waitingthreads.size());
 		results = new ThreadResult[waitingthreads.size()];
+		
+		synchronized (failedThreads) {
+			failedThreads.clear();
+		}
 
-		// start all threads
-		for(Runnable runnable : waitingthreads){
-			System.out.println("[syncer] running " + runnable);
-			Thread thread = new Thread(runnable);
-			thread.start();
+		synchronized (succeededThreads) {
+			succeededThreads.clear();
+		}
+		synchronized (waitingthreads) {
+			// start all threads
+			for(Runnable runnable : waitingthreads){
+				System.out.println("[syncer] running " + runnable);
+				Thread thread = new Thread(runnable);
+				thread.start();
+			}
 		}
 
 		// wait for them to finish
 		System.out.println("[syncer] waiting for all " + this.hashCode());
 		latch.await();
-		System.out.print("[syncer] finished " + this.hashCode() + "[");
-		for (ThreadResult i : results){
-			System.out.print(i + " ");
+		synchronized (results) {
+			System.out.print("[syncer] finished " + this.hashCode() + "[");
+			for (ThreadResult i : results){
+				System.out.print(i + " ");
+			}
 		}
 		System.out.println("]");
 	}
