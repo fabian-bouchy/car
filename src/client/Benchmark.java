@@ -36,7 +36,7 @@ public class Benchmark {
 				ConfigManager.init(ConfigType.CLIENT);
 			}
 			// init the user manager
-			UserManager.init("benchmarker" + Math.random());
+			UserManager.init("benchmarker" + Math.random(), "testmdp");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

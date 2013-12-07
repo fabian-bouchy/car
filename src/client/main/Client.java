@@ -1,5 +1,7 @@
 package client.main;
 
+import java.io.Console;
+
 import server.UserManager;
 import client.ServerManager;
 import common.ConfigManager;
@@ -28,9 +30,12 @@ public class Client {
 			// all default parameters
 			ConfigManager.init(ConfigType.CLIENT);
 		}
+		System.out.println("Mot de passe pour la session en cours:");
+		Console co = System.console();
+		String passWord = new String(co.readPassword());
 		
 		// init the user manager
-		UserManager.init(username);
+		UserManager.init(username, passWord);
 		
 		long startTime = System.nanoTime();
 		
