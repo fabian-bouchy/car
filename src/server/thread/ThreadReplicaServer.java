@@ -78,8 +78,9 @@ public class ThreadReplicaServer extends ThreadWorker{
 					
 					// check if we have the file
 					File have = FileManager.getFile(cmd[2]);
+					File metadata = FileManager.getMetadata(cmd[2]);
 					// send a "ready" message
-					if (have != null){
+					if (have != null || metadata == null){
 						out.println(UtilBobby.REPLICA_WRITE_READY_FILE);
 					}else{
 						out.println(UtilBobby.REPLICA_WRITE_READY_META);
@@ -91,7 +92,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 					System.out.println("[thread replica server] file received: "+file);
 					
 					if (file.isFile()){
-						
+						System.out.println("[thread replica server] is a file");
 						// let's verify if there is a conflict
 						File oldFile = FileManager.getFileOrMetadata(file.getId());
 
@@ -107,12 +108,13 @@ public class ThreadReplicaServer extends ThreadWorker{
 //								}
 //							}
 							// new file
+							System.out.println("[thread replica server] new file");
 							FileManager.prepare(file); // store in temporary storage
 							out.println(UtilBobby.REPLICA_WRITE_OK);
 						}
 						else 
 						{
-							
+							System.out.println("[thread replica server] update");
 							// TODO acquire a lock on the old file ?
 							try{
 								System.out.println("[thread replica server] acquiring a lock on : "+oldFile);
@@ -159,6 +161,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 						}
 						
 					}else{
+						System.out.println("[thread replica server] is not a file");
 						// it's a meta-data file, no content
 						// we just store the new value and say we're good
 						file.setHasFile(false);
