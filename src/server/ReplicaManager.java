@@ -5,9 +5,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import server.thread.ThreadReplicaMetadataUpdate;
-import server.thread.ThreadReplicaMetadataUpdate.ActionThreadMetadata;
-import server.thread.ThreadReplicaWriteOrDelete;
+import server.thread.ThreadReplicaServerWrite;
 
 import common.ConfigManager;
 import common.File;
@@ -26,73 +24,86 @@ public class ReplicaManager {
 		COMMIT,
 		ABORT
 	}
-
-	/**
-	 * Start threads to write file on replicas
-	 */
+	
 	public boolean replicate(File file, boolean initial){
+		System.out.println("[replica manager] replicate started");
 		Syncer syncer = new Syncer();
 		
 		// initialize variables
 		Collections.shuffle(replicas);
 		int done = 0, K = ConfigManager.getK();
-		int replicasNeeded = 0, replicasRemaining = 0;
+		int replicasNeeded, replicasRemaining;
 
-		// Check global version file
-		// if == 1 => write only on K+1 server
-		// else broadcast update to all servers
-		if(file.getGlobalVersion() == 1) {
+		/*
+		 * At the initial propagation, we need to store K copies of the file,
+		 * and N - K - 1 copies of meta-data (empty header with no content)
+		 * 
+		 * Later on, we will be broadcasting it to everybody,
+		 * and the thread itself will define whether to send a full copy,
+		 * or just meta-data to the particular replica
+		 * 
+		 */
+		if(initial) {
 			replicasNeeded = K;
 		} else {
 			replicasNeeded = ConfigManager.getN() - 1;
 		}
 		replicasRemaining = replicasNeeded;
 
-		// Replicate the file
 		while(done < replicasNeeded && replicasRemaining > 0) {
+			
+			// start K threads (or as many as we can) to store the file
 			for(int i = 0; i < replicasRemaining && i < replicas.size(); i++) {
-				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(replicas.get(i), file, syncer);
+				ThreadReplicaServerWrite thread = new ThreadReplicaServerWrite(replicas.get(i), file, syncer);
 				syncer.addThread(thread);
 			}
 			try {
 				syncer.waitForAll();
-				// Remove succeeded threads form the pool
+				
+				/*
+				 * For the successful replicas, we remove them form the pool, and ask to commit the transaction
+				 */
 				for (Runnable runnable : syncer.getSucceedThreads()) {
-					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
+					ThreadReplicaServerWrite thread = (ThreadReplicaServerWrite)runnable;
 					synchronized (thread) {
 						replicas.remove(thread.getRemoteNode());
 						thread.setNextStep(NextStep.COMMIT);
 						thread.notify();
 					}
 				}
-				// Remove failed replication
+				/*
+				 * For the failed replicas, we also remove them from the pool, so that we don't retry
+				 */
 				for (Runnable runnable : syncer.getFailedThreads()) {
-					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
+					ThreadReplicaServerWrite thread = (ThreadReplicaServerWrite)runnable;
 					replicas.remove(thread.getRemoteNode());
 				}
+				
 				done += syncer.getSucceedThreads().size();
 				replicasRemaining = replicasNeeded - done - syncer.getFailedThreads().size();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("[replica manager] replicate files done");
 		if (replicasRemaining > 0){
 			System.out.println("[ReplicaManager] could not replicate to K servers");
-		}else{
-			if (initial){
-				// replicate meta-data
-				Syncer syncerMeta = new Syncer();
-				for(int i = 0; i < replicasRemaining && i < replicas.size(); i++) {
-					ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(replicas.get(i), file.generateMetadata(), syncer);
-					syncerMeta.addThread(thread);
-				}
-				try {
-					syncerMeta.waitForAll();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+		}
+		
+		if (initial){
+			// replicate meta-data
+			Syncer syncerMeta = new Syncer();
+			for(int i = 0; i < replicas.size(); i++) {
+				ThreadReplicaServerWrite thread = new ThreadReplicaServerWrite(replicas.get(i), file.generateMetadata(), syncerMeta);
+				syncerMeta.addThread(thread);
+			}
+			try {
+				syncerMeta.waitForAll();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
+		System.out.println("[replica manager] replicate finished");
 		return true;
 	}
 
@@ -103,7 +114,7 @@ public class ReplicaManager {
 		Syncer syncer = new Syncer();
 
 		for (RemoteNode remoteReplica : replicas) {
-			syncer.addThread(new ThreadReplicaWriteOrDelete(remoteReplica, file, syncer));
+			syncer.addThread(new ThreadReplicaServerWrite(remoteReplica, file, syncer));
 		}
 
 		// wait for everybody
@@ -137,11 +148,5 @@ public class ReplicaManager {
 			}
 		}
 		return null;
-	}
-
-	public void propagateMetadataAdd(File metadata) {
-		for(RemoteNode remoteReplica : replicas) {
-			new Thread(new ThreadReplicaMetadataUpdate(metadata, remoteReplica, ActionThreadMetadata.ADD)).start();
-		}
 	}
 }

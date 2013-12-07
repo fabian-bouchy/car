@@ -59,7 +59,9 @@ public class File implements java.io.Serializable{
 	 * @param file 
 	 */
 	private File(File file) {
-		// fill in fields
+		// lock on the file
+		this.lock = new Semaphore(1);
+		// fill in fields for an empty meta-data
 		this.id = file.getId();
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
@@ -190,7 +192,7 @@ public class File implements java.io.Serializable{
 	
 	public String toString(){
 		String txt = id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
-		if(hasFile){
+		if(isFile()){
 			return "[file] " + txt;
 		}
 		return "[metadata] " + txt;

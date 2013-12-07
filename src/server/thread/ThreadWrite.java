@@ -16,17 +16,17 @@ public class ThreadWrite extends ThreadWorker{
 
 	public ThreadWrite(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in){
 		super(serverSocket, clientSocket, out, in);
-		System.out.println("[thread server write] init");
+		System.out.println("[ThreadWrite] init");
 	}
 
 	@Override
 	public void run() {
-		System.out.println("[server thread write] running...");
+		System.out.println("[ThreadWrite] running...");
 		try {
 			out.println(UtilBobby.SERVER_WRITE_READY);
 			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 			File file = (File) reader.readObject();
-			System.out.println("[server thread write] Object received: " + file + " from client!");
+			System.out.println("[ThreadWrite] Object received: " + file + " from client!");
 			
 			// Manager version
 			int myId = ConfigManager.getMe().getPriority();
@@ -34,7 +34,7 @@ public class ThreadWrite extends ThreadWorker{
 			
 			if(fileOrMetadata == null) // file doesn't exist on this server or any other server
 			{
-				System.out.println("[server thread write] Creating new file " + file);
+				System.out.println("[ThreadWrite] Creating new file " + file);
 				
 				file.incrementVersion(myId);
 				FileManager.addOrReplaceFile(file);
@@ -42,7 +42,7 @@ public class ThreadWrite extends ThreadWorker{
 				// replicate on all servers
 				if(replicaManager.replicate(file, true)) {
 					
-					System.out.println("[server thread write] Replication succeeded: " + file);
+					System.out.println("[ThreadWrite] Replication of new file succeeded: " + file);
 					
 					FileManager.commit(file.getId());
 					
@@ -50,7 +50,7 @@ public class ThreadWrite extends ThreadWorker{
 					out.println(UtilBobby.SERVER_WRITE_OK);
 				} else {
 					
-					System.out.println("[server thread write] Replication failed: " + file);
+					System.out.println("[ThreadWrite] Replication of new file failed: " + file);
 					
 					FileManager.abort(file.getId());
 					// send to client that the write failed
@@ -61,10 +61,10 @@ public class ThreadWrite extends ThreadWorker{
 			{
 				if(fileOrMetadata.isFile()){
 					// file exists on this node
-					System.out.println("[server thread write] File found on this node: "+fileOrMetadata);
+					System.out.println("[ThreadWrite] File found on this node: "+fileOrMetadata);
 				}else{
 					// file exists on another node
-					System.out.println("[server thread write] Metadata of the file found "+fileOrMetadata);
+					System.out.println("[ThreadWrite] Metadata of the file found "+fileOrMetadata);
 				}
 				
 				// acquire lock
@@ -74,21 +74,24 @@ public class ThreadWrite extends ThreadWorker{
 					e.printStackTrace();
 				}
 				
+				file.setVersion(fileOrMetadata.getVersion());
 				file.incrementVersion(myId);
 				
 				// replicate on all servers
 				if(replicaManager.replicate(file, false)) {
 					
-					System.out.println("[server thread write] Replication succeeded: " + file);
+					System.out.println("[ThreadWrite] Replication succeeded: " + file);
 					
 					FileManager.commit(file.getId());
-					FileManager.addOrReplaceFile(file);
+					if(fileOrMetadata.isFile()){
+						FileManager.addOrReplaceFile(file);
+					}
 					
 					// send to client that the write succeeded
 					out.println(UtilBobby.SERVER_WRITE_OK);
 				} else {
 					
-					System.out.println("[server thread write] Replication failed: " + file);
+					System.out.println("[ThreadWrite] Replication failed: " + file);
 					
 					FileManager.abort(file.getId());
 					

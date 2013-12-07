@@ -22,7 +22,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 	public ThreadReplicaServer(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in, String command){
 		super(serverSocket, clientSocket, out, in);
 		this.command = command;
-		System.out.println("[thread replica server] init for other replica "+clientSocket.getInetAddress().getAddress());
+		System.out.println("[thread replica server] init for other replica "+clientSocket.getInetAddress());
 	}
 	
 	@Override
@@ -30,13 +30,8 @@ public class ThreadReplicaServer extends ThreadWorker{
 		System.out.println("[thread replica server] run");
 		try {
 			String[] cmd = command.split(UtilBobby.SPLIT_REGEX);
+			System.out.println("[thread replica server] " + command + " (" + cmd.length + ")");
 			
-			/**
-			 * 0 : should be replica UtilBobby.REPLICA
-			 * 1 : action - write/has/delete
-			 * [2 : argument - id]
-			 */
-			System.out.println("[thread replica server] " + command + " [" + cmd.length + "]");
 			if(cmd.length >= 2) {
 				
 				// Be sure that the message is for the replica thread!
@@ -44,6 +39,11 @@ public class ThreadReplicaServer extends ThreadWorker{
 					System.out.println("[thread replica server] wrong command");
 					return;
 				}
+				
+/*
+ *	----------------------------------------------------------------------------------------------------------------------
+ *	METADATA
+ */
 				
 				// send all meta-data from the node: the ones I have and the ones I don't have
 				if (cmd[1].equals(UtilBobby.REPLICA_METADATA_SYMBOL)) {
@@ -71,6 +71,11 @@ public class ThreadReplicaServer extends ThreadWorker{
 					}
 				}
 
+/*
+ *	----------------------------------------------------------------------------------------------------------------------
+ *	WRITE
+ */
+				
 				// store the files/metadata we receive
 				if(cmd[1].equals(UtilBobby.REPLICA_WRITE_SYMBOL)) {
 					
@@ -99,14 +104,6 @@ public class ThreadReplicaServer extends ThreadWorker{
 						if (oldFile == null)
 						{
 							// check if it's not already in the temporary storage waiting for a commit
-//							File tmp = FileManager.getTempFile(file.getId());
-//							if (tmp != null){
-//								try{
-//									tmp.lock();
-//								}catch(InterruptedException e){
-//									e.printStackTrace();
-//								}
-//							}
 							// new file
 							System.out.println("[thread replica server] new file");
 							FileManager.prepare(file); // store in temporary storage
@@ -162,7 +159,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 						}
 						
 					}else{
-						System.out.println("[thread replica server] is not a file");
+						System.out.println("[thread replica server] metadata received "+file);
 						// it's a meta-data file, no content
 						// we just store the new value and say we're good
 						file.setHasFile(false);
@@ -170,6 +167,11 @@ public class ThreadReplicaServer extends ThreadWorker{
 						out.println(UtilBobby.REPLICA_WRITE_OK);
 					}
 				}
+				
+/*
+ *	---------------------------------------------------------------------------------------------------------------------- 
+ *	HAS
+ */
 				
 				// check if the file exists on this node
 				if(cmd[1].equals(UtilBobby.REPLICA_HAS_SYMBOL)) {
@@ -181,6 +183,11 @@ public class ThreadReplicaServer extends ThreadWorker{
 						out.println(UtilBobby.ANSWER_FALSE);
 					}
 				}
+				
+/*
+ *	----------------------------------------------------------------------------------------------------------------------
+ *	TRANSACTION
+ */
 
 				// commit file
 				if(cmd[1].equals(UtilBobby.REPLICA_TRANSACTION_SYMBOL)){
@@ -196,6 +203,11 @@ public class ThreadReplicaServer extends ThreadWorker{
 						out.println(UtilBobby.REPLICA_TRANSACTION_ABORTED);
 					}
 				}
+				
+/*
+ *	----------------------------------------------------------------------------------------------------------------------
+ *	DELETE
+ */
 
 				// delete the file
 				if(cmd[1].equals(UtilBobby.REPLICA_DELETE_SYMBOL)){
@@ -213,11 +225,16 @@ public class ThreadReplicaServer extends ThreadWorker{
 						out.println(UtilBobby.REPLICA_DELETE_KO);
 					}
 				}
+/*
+ *	---------------------------------------------------------------------------------------------------------------------- 
+ */
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		System.out.println("[thread replica server] end");
+		System.out.println();
 	}
 }

@@ -3,7 +3,7 @@ package server.thread;
 public class ThreadDiscovery implements Runnable {
 	
 	public ThreadDiscovery() {
-		System.out.println("[thread inventory] init");
+		System.out.println("[ThreadDiscovery] init");
 	}
 
 	@Override
