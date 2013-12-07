@@ -19,9 +19,9 @@ public class ServerManager {
 	
 	private ServerManager() {}
 	
-	public static void write(File file) throws UnknownHostException, IOException {	
+	public static void write(File file) throws UnknownHostException, IOException {
 		
-		for(RemoteNode server : ConfigManager.getRemoteNodes().values()){
+		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
 			
 			currentServer = (RemoteServer) server;
 			System.out.print("[server manager] Trying " + currentServer + " ... ");
@@ -39,7 +39,7 @@ public class ServerManager {
 	
 	public static File read(File file) {
 		
-		for(RemoteNode server : ConfigManager.getRemoteNodes().values()){
+		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
 			
 			currentServer = (RemoteServer) server;
 			System.out.print("[server manager] Trying " + currentServer + " ... ");
@@ -57,7 +57,7 @@ public class ServerManager {
 	
 	public static void delete(File file) {
 		
-		for(RemoteNode server : ConfigManager.getRemoteNodes().values()){
+		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
 			
 			currentServer = (RemoteServer) server;
 			System.out.print("[server manager] Trying " + currentServer + " ... ");
@@ -71,9 +71,5 @@ public class ServerManager {
 		}
 		
 		System.out.println("[server manager] No servers available");
-	}
-	
-	public static String[] listFiles() {
-		return null;
 	}
 }

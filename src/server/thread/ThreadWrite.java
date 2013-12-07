@@ -43,8 +43,7 @@ public class ThreadWrite extends ThreadWorker{
 			}
 			
 			// Update version
-			tmpVersion[currentRemoteNodeId] += 1;
-			file.setVersion(tmpVersion);
+			file.incrementVersion(currentRemoteNodeId);
 			
 			// Replace current version of file
 			FileManager.addFile(file);
