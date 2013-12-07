@@ -1,6 +1,7 @@
 package client.main;
 
 import server.UserManager;
+import client.Benchmark;
 import client.ServerManager;
 import common.ConfigManager;
 import common.ConfigManager.ConfigType;
@@ -48,6 +49,12 @@ public class Client {
 			
 			System.out.println("[client] Reading "+fileName);
 			File file = ServerManager.read(new File(fileName, false));
+			
+		}else if ("benchmark".equals(cmd)){
+			
+			System.out.println("[client] Benchmark starting...");
+			Benchmark.init();
+			Benchmark.startTest();
 			
 		}else{
 			
