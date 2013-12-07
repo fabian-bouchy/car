@@ -7,11 +7,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.net.UnknownHostException;
 
+import server.UserManager;
+import common.ConfigManager;
+import common.ConfigManager.ConfigType;
+
 public class Benchmark {
-	
+
 	// In kb unit
 	private static final int[] fileSizes = {1000, 10000, 20000, 50000, 100000};
 	private static final String outputPath = "/tmp/test_files";
@@ -19,21 +22,43 @@ public class Benchmark {
 	private static final String outputFilePrefix = outputPath + "/output_";
 	private static final String outputFileExtension = ".csv";
 	private static final String testFileExtension = ".txt";
-	
+
 	private static File currentOutputLogFile;
+
+	public static void run(String[] args){
+		// Global initialization
+		try {
+			if (args.length == 2){
+				// config name specified
+				ConfigManager.init(ConfigType.CLIENT, args[1]);
+			}else{
+				// all default parameters
+				ConfigManager.init(ConfigType.CLIENT);
+			}
+			// init the user manager
+			UserManager.init("benchmarker");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("[client] Benchmark starting...");
+		Benchmark.init();
+		Benchmark.startTest();
+		System.out.println("[client] Benchmark ended!");
+	}
 	
 	
 	// Init benchmark ei: create needed files
 	public static void init() {
-		// Créating output directory
+		// Creating output directory
 		File outputDir = new File(outputPath);
-
 		if (!outputDir.exists()) {
 			System.out.println("creating directory: " + outputPath);
 			if(outputDir.mkdir()) {  
 				System.out.println("DIR created");  
 			}
 		}
+		// Creating files
 		for (int size : fileSizes) {
 			try {
 //				RandomAccessFile file = new RandomAccessFile(testFilePrefix + size + testFileExtension,"rw");
@@ -68,7 +93,7 @@ public class Benchmark {
 		displayResult();
 		System.out.println("Test finish output file: " + currentOutputLogFile.getAbsolutePath());
 	}
-	
+
 	private static void writeTest() {
 		// Prepare output file
 		log("-------------- Test write -----------------");
@@ -122,9 +147,9 @@ public class Benchmark {
 		log("size(kB);time(ns)");
 		for (int size : fileSizes) {
 			try {
-				long startTime = System.nanoTime();
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
 				System.out.println(file);
+				long startTime = System.nanoTime();
 				ServerManager.read(file);
 				long elapsedTime = System.nanoTime() - startTime;
 				log(size + ";" + elapsedTime);
@@ -144,9 +169,9 @@ public class Benchmark {
 		log("size(kB);time(ns)");
 		for (int size : fileSizes) {
 			try {
-				long startTime = System.nanoTime();
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
 				System.out.println(file);
+				long startTime = System.nanoTime();
 				ServerManager.delete(file);
 				long elapsedTime = System.nanoTime() - startTime;
 				log(size + ";" + elapsedTime);
@@ -188,4 +213,3 @@ public class Benchmark {
 		}
 	}
 }
-

@@ -1,5 +1,6 @@
 package common;
 
+import client.Benchmark;
 import client.main.Client;
 import server.main.Server;
 
@@ -22,7 +23,7 @@ public class Starter {
 			}
         
         // client mode
-        }else if((args.length == 3 || args.length == 4) && (args[0].equals("write") || args[0].equals("get") ||  args[0].equals("benchmark")  || args[0].equals("delete")  || args[0].equals("read"))){
+        }else if((args.length == 3 || args.length == 4) && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete")  || args[0].equals("read"))){
         	// client mode
         	Client client = new Client();
         	try {
@@ -31,6 +32,8 @@ public class Starter {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+        }else if((args.length == 1 || args.length == 2 ) && args[0].equals("benchmark")){
+        	Benchmark.run(args);
         }else{
             System.err.println("Usage:");
             System.err.println("    java -jar bobby.jar server [config.json] [hostname]");
