@@ -90,6 +90,7 @@ public class ThreadWrite extends ThreadWorker{
 					System.out.println("[server thread write] Replication failed: " + file);
 					
 					FileManager.abort(file.getId());
+					
 					// send to client that the write failed
 					out.println(UtilBobby.SERVER_WRITE_KO);
 				}

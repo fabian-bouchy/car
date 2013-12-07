@@ -30,7 +30,7 @@ public class ReplicaManager {
 	/**
 	 * Start threads to write file on replicas
 	 */
-	public boolean replicate(File file){
+	public boolean replicate(File file, boolean initial){
 		Syncer syncer = new Syncer();
 		
 		// initialize variables
@@ -48,7 +48,7 @@ public class ReplicaManager {
 		}
 		replicasRemaining = replicasNeeded;
 
-		// Replicate
+		// Replicate the file
 		while(done < replicasNeeded && replicasRemaining > 0) {
 			for(int i = 0; i < replicasRemaining && i < replicas.size(); i++) {
 				ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(replicas.get(i), file, syncer);
@@ -78,6 +78,20 @@ public class ReplicaManager {
 		}
 		if (replicasRemaining > 0){
 			System.out.println("[ReplicaManager] could not replicate to K servers");
+		}else{
+			if (initial){
+				// replicate meta-data
+				Syncer syncerMeta = new Syncer();
+				for(int i = 0; i < replicasRemaining && i < replicas.size(); i++) {
+					ThreadReplicaWriteOrDelete thread = new ThreadReplicaWriteOrDelete(replicas.get(i), file.generateMetadata(), syncer);
+					syncerMeta.addThread(thread);
+				}
+				try {
+					syncerMeta.waitForAll();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return true;
 	}
@@ -103,7 +117,6 @@ public class ReplicaManager {
 				return true;
 			}
 		} catch (InterruptedException e) {
-			System.out.println("[ReplicaManager - delete] delete failed!");
 			e.printStackTrace();
 		}
 		return false;

@@ -26,11 +26,11 @@ public class UtilBobby {
 	/** Server */
 	public final static String SERVER		 		= "server";
 	// Write
-	public final static String SERVER_WRITE_SYMBOL	= "write";
-	public final static String SERVER_WRITE 		= SERVER + SPLIT_REGEX + SERVER_WRITE_SYMBOL;
-	public final static String SERVER_WRITE_READY 	= SERVER_WRITE + SPLIT_REGEX + "ready";
-	public final static String SERVER_WRITE_OK		= SERVER_WRITE + SPLIT_REGEX + "ok";
-	public final static String SERVER_WRITE_KO		= SERVER_WRITE + SPLIT_REGEX + "KO";
+	public final static String SERVER_WRITE_SYMBOL		= "write";
+	public final static String SERVER_WRITE 			= SERVER + SPLIT_REGEX + SERVER_WRITE_SYMBOL;
+	public final static String SERVER_WRITE_READY 		= SERVER_WRITE + SPLIT_REGEX + "ready";
+	public final static String SERVER_WRITE_OK			= SERVER_WRITE + SPLIT_REGEX + "ok";
+	public final static String SERVER_WRITE_KO			= SERVER_WRITE + SPLIT_REGEX + "KO";
 
 	// Has
 	public final static String SERVER_HAS_SYMBOL	= "has";
@@ -59,11 +59,13 @@ public class UtilBobby {
 	/** Replica */
 	public final static String REPLICA		 		= "replica";
 	// Write
-	public final static String REPLICA_WRITE_SYMBOL	= "write";
-	public final static String REPLICA_WRITE		= REPLICA + SPLIT_REGEX + REPLICA_WRITE_SYMBOL;
-	public final static String REPLICA_WRITE_READY  = REPLICA_WRITE + SPLIT_REGEX + "ready";
-	public final static String REPLICA_WRITE_OK		= REPLICA_WRITE + SPLIT_REGEX + "ok";
-	public final static String REPLICA_WRITE_KO		= REPLICA_WRITE + SPLIT_REGEX + "KO";
+	public final static String REPLICA_WRITE_SYMBOL			= "write";
+	public final static String REPLICA_WRITE				= REPLICA + SPLIT_REGEX + REPLICA_WRITE_SYMBOL;
+	public final static String REPLICA_WRITE_READY  		= REPLICA_WRITE + SPLIT_REGEX + "ready";
+	public final static String REPLICA_WRITE_READY_FILE  	= REPLICA_WRITE_READY + SPLIT_REGEX + "file";
+	public final static String REPLICA_WRITE_READY_META  	= REPLICA_WRITE_READY + SPLIT_REGEX + "meta";
+	public final static String REPLICA_WRITE_OK				= REPLICA_WRITE + SPLIT_REGEX + "ok";
+	public final static String REPLICA_WRITE_KO				= REPLICA_WRITE + SPLIT_REGEX + "KO";
 
 	// TRANSACTION
 	public final static String REPLICA_TRANSACTION_SYMBOL	= "transaction";

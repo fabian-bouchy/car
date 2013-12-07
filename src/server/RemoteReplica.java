@@ -19,8 +19,12 @@ public class RemoteReplica extends RemoteNode{
 	public RemoteReplica(String sName, String sIpAddress, String sInterface, int iPriority, int iPort) {
 		super(sName, sIpAddress, sInterface, iPriority, iPort);
 	}
-
+	
 	public void write(File file) throws UnknownHostException, IOException{
+		write(file, false);
+	}
+
+	public void write(File file, boolean forceFile) throws UnknownHostException, IOException{
 		// Checking if update was needed :
 		if(file.getGlobalVersion() != 1 && !has(file))
 			return;
@@ -28,16 +32,20 @@ public class RemoteReplica extends RemoteNode{
 		Socket echoSocket = connect();
 		PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
 		BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-
-
-		// Write or override file on replica.
-		out.println(UtilBobby.REPLICA_WRITE);
+		
+		// Write or override file on replica
+		out.println(UtilBobby.REPLICA_WRITE + UtilBobby.SPLIT_REGEX + file.getId());
 		
 		String line = in.readLine();
 		
-		if (line.equals(UtilBobby.REPLICA_WRITE_READY)){
+		if (line.contains(UtilBobby.REPLICA_WRITE_READY)){
 			ObjectOutputStream outStream = new ObjectOutputStream(echoSocket.getOutputStream());
-			outStream.writeObject(file);
+			
+			if (line.equals(UtilBobby.REPLICA_WRITE_READY_FILE) || forceFile){
+				outStream.writeObject(file);
+			}else{
+				outStream.writeObject(file.generateMetadata());
+			}
 
 			// Check if write OK
 			String status = in.readLine();
