@@ -13,12 +13,12 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class CypherManager {
+public class CipherManager {
 	
 	private Cipher aes;
 	private SecretKeySpec key;
 	
-	public CypherManager(String passPhrase, String saltIn) {
+	public CipherManager(String passPhrase, String saltIn) {
 		byte[] salt = saltIn.getBytes();
 		int iterations = 10000;
 		SecretKeyFactory factory;
