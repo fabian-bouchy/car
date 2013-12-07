@@ -76,7 +76,6 @@ public class ThreadReplicaServer extends ThreadWorker{
 					
 					System.out.println("[thread replica server] write");
 					
-					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 					// check if we have the file
 					File have = FileManager.getFile(cmd[2]);
 					// send a "ready" message
@@ -86,6 +85,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 						out.println(UtilBobby.REPLICA_WRITE_READY_META);
 					}
 					// receive the file
+					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 					File file = (File) reader.readObject();
 					
 					System.out.println("[thread replica server] file received: "+file);
