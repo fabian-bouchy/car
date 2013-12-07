@@ -1,5 +1,7 @@
 package server.thread;
 
+import java.security.InvalidParameterException;
+
 import server.ReplicaManager.NextStep;
 import common.File;
 import common.RemoteNode;
@@ -32,31 +34,28 @@ public class ThreadReplicaServerWrite implements Runnable {
 			// callback
 			this.syncer.callback(this, ThreadResult.SUCCEEDED);
 			
-			/*
-			 * For files, we have a two-step process,
-			 * for meta-data, though, we stop here
-			 */
-			if (file.isFile()){
-				System.out.println("[ThreadReplicaServerWrite] waiting...");
-				synchronized (this) {
-					this.wait();
-				}
-				System.out.println("[ThreadReplicaServerWrite] finished waiting");
-			
-				// do the action which was decided
-				if(nextStep == NextStep.ABORT) {
-					System.out.println("[ThreadReplicaServerWrite] abort" + this.file);
-					this.remoteReplica.abortWrite(this.file);
-				} else if(nextStep == NextStep.COMMIT) {
-					System.out.println("[ThreadReplicaServerWrite] commit " + this.file);
-					this.remoteReplica.commitWrite(this.file);
-				}
+			System.out.println("[ThreadReplicaServerWrite] waiting...");
+			synchronized (this) {
+				this.wait();
+			}
+			System.out.println("[ThreadReplicaServerWrite] finished waiting");
+		
+			// do the action which was decided
+			if(nextStep == NextStep.ABORT) {
+				System.out.println("[ThreadReplicaServerWrite] abort" + this.file);
+				this.remoteReplica.abortWrite(this.file);
+			} else if(nextStep == NextStep.COMMIT) {
+				System.out.println("[ThreadReplicaServerWrite] commit " + this.file);
+				this.remoteReplica.commitWrite(this.file);
 			}
 			System.out.println("[ThreadReplicaServerWrite] finished");
 			
+		} catch (InvalidParameterException e) {
+			System.out.println("[ThreadReplicaServerWrite] write failed");
+			this.syncer.callback(this, ThreadResult.FAILED);
 		} catch (Exception e) {
 			System.out.println("[ThreadReplicaServerWrite] failed: " + e.getLocalizedMessage());
-			this.syncer.callback(this, ThreadResult.FAILED);
+			this.syncer.callback(this, ThreadResult.UNAVAILABLE);
 		}
 	}
 

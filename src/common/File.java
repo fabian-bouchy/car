@@ -133,14 +133,14 @@ public class File implements java.io.Serializable{
 		return globalVersion;
 	}
 	
-	public boolean isCompatibleWith(File file)
+	public boolean isCompatibleWith(File newFile)
 	{
-		if (file == null){
+		if (newFile == null){
 			return false;
 		}
 		
 		for (int i=0; i < ConfigManager.getN(); i++){
-			if (file.getVersion()[i] < this.version[i]){
+			if (newFile.getVersion()[i] < this.version[i]){
 				return false;
 			}
 		}

@@ -72,11 +72,11 @@ public class FileManager {
 	public static synchronized void commit(String fileId) {
 		File file = tmpFiles.get(fileId);
 		if(file != null) {
-			try {
-				file.unlock();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				file.unlock();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
 			System.out.println("[FileManager] commit for " + file);
 			tmpFiles.remove(fileId);
 			addOrReplaceFile(file);

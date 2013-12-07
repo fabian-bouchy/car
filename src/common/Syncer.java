@@ -47,7 +47,6 @@ public class Syncer {
 			waitingthreads.remove(runnable);
 		}
 		latch.countDown();
-		System.out.println("[syncer] countDown() thread finished: " + runnable);
 	}
 	
 	public void waitForAll() throws InterruptedException{

@@ -117,17 +117,27 @@ public class ThreadReplicaServer extends ThreadWorker{
 							try{
 								System.out.println("[thread replica server] acquiring a lock on : "+oldFile);
 								oldFile.lock();
-								System.out.println("[thread replica server] lock acquired ont : "+oldFile);
+								System.out.println("[thread replica server] lock acquired on : "+oldFile);
 							}catch(InterruptedException e){
 								e.printStackTrace();
 							}
 							
-							if (file.isCompatibleWith(oldFile) && (file.getGlobalVersion() == (oldFile.getGlobalVersion() + 1)))
+							System.out.println("[thread replica server] comp:" + oldFile.isCompatibleWith(file) + " new:" + file.getGlobalVersion() + " old+1:" + (oldFile.getGlobalVersion() + 1));
+							
+							if (oldFile.isCompatibleWith(file) && (file.getGlobalVersion() >= (oldFile.getGlobalVersion() + 1)))
 							{
 								// not new, but no conflict
 								// TODO verify conditions and locks
+								// TODO unlock in commit
 								FileManager.prepare(file); // store in temporary storage
 								out.println(UtilBobby.REPLICA_WRITE_OK);
+								
+								try {
+									oldFile.unlock();
+									System.out.println("[thread replica server] released the lock on : "+oldFile);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
 							}
 							else
 							{
@@ -139,12 +149,16 @@ public class ThreadReplicaServer extends ThreadWorker{
 									theirPriority = them.getPriority();
 								}
 								
+								System.out.println("[thread replica server] my priority is " + myPriority + " theirs is " +theirPriority);
+								
 								if (myPriority < theirPriority){
-									// TODO verufy this is correct
+									// TODO verify this is correct
+									System.out.println("[thread replica server] I obey and store the new file");
 									FileManager.addOrReplaceFile(file);
 									out.println(UtilBobby.REPLICA_WRITE_OK);
 								}else{
 									// reject the file
+									System.out.println("[thread replica server] I refuse the new file");
 									out.println(UtilBobby.REPLICA_WRITE_KO);
 								}
 								
@@ -163,7 +177,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 						// it's a meta-data file, no content
 						// we just store the new value and say we're good
 						file.setHasFile(false);
-						FileManager.addOrReplaceFile(file);
+						FileManager.prepare(file); // store in temporary storage
 						out.println(UtilBobby.REPLICA_WRITE_OK);
 					}
 				}
@@ -191,14 +205,13 @@ public class ThreadReplicaServer extends ThreadWorker{
 
 				// commit file
 				if(cmd[1].equals(UtilBobby.REPLICA_TRANSACTION_SYMBOL)){
-					System.out.println("[thread replica server] commit");
 
 					if(command.contains(UtilBobby.REPLICA_TRANSACTION_COMMIT)) {
-						System.out.println("[thread replica server] commit for " + cmd[2]);
+						System.out.println("[thread replica server] commit for " + cmd[3]);
 						FileManager.commit(cmd[3]);
 						out.println(UtilBobby.REPLICA_TRANSACTION_COMMITED);
 					} else {
-						System.out.println("[thread replica server] abort");
+						System.out.println("[thread replica server] abort for " + cmd[3]);
 						FileManager.abort(cmd[3]);
 						out.println(UtilBobby.REPLICA_TRANSACTION_ABORTED);
 					}

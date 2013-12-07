@@ -61,6 +61,23 @@ public class ReplicaManager {
 				syncer.waitForAll();
 				
 				/*
+				 * If we have one refusal of a replica, we need to rollback the entire operation
+				 */
+				if (syncer.getFailedThreads().size() > 0){
+					
+					for (Runnable runnable : syncer.getSucceedThreads()) {
+						ThreadReplicaServerWrite thread = (ThreadReplicaServerWrite)runnable;
+						synchronized (thread) {
+							replicas.remove(thread.getRemoteNode());
+							thread.setNextStep(NextStep.ABORT);
+							thread.notify();
+						}
+					}
+					
+					return false;
+				}
+				
+				/*
 				 * For the successful replicas, we remove them form the pool, and ask to commit the transaction
 				 */
 				for (Runnable runnable : syncer.getSucceedThreads()) {
@@ -72,9 +89,9 @@ public class ReplicaManager {
 					}
 				}
 				/*
-				 * For the failed replicas, we also remove them from the pool, so that we don't retry
+				 * For the unavailable replicas, we also remove them from the pool, so that we don't retry
 				 */
-				for (Runnable runnable : syncer.getFailedThreads()) {
+				for (Runnable runnable : syncer.getUnavailableThreads()) {
 					ThreadReplicaServerWrite thread = (ThreadReplicaServerWrite)runnable;
 					replicas.remove(thread.getRemoteNode());
 				}
@@ -99,6 +116,35 @@ public class ReplicaManager {
 			}
 			try {
 				syncerMeta.waitForAll();
+				
+				/*
+				 * If we have one refusal of a replica, we need to rollback the entire operation
+				 */
+				if (syncerMeta.getFailedThreads().size() > 0){
+					
+					for (Runnable runnable : syncerMeta.getSucceedThreads()) {
+						ThreadReplicaServerWrite thread = (ThreadReplicaServerWrite)runnable;
+						synchronized (thread) {
+							replicas.remove(thread.getRemoteNode());
+							thread.setNextStep(NextStep.ABORT);
+							thread.notify();
+						}
+					}
+					
+					return false;
+				}
+				
+				/*
+				 * For the successful replicas, we remove them form the pool, and ask to commit the transaction
+				 */
+				for (Runnable runnable : syncerMeta.getSucceedThreads()) {
+					ThreadReplicaServerWrite thread = (ThreadReplicaServerWrite)runnable;
+					synchronized (thread) {
+						replicas.remove(thread.getRemoteNode());
+						thread.setNextStep(NextStep.COMMIT);
+						thread.notify();
+					}
+				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

@@ -39,21 +39,12 @@ public class ThreadWrite extends ThreadWorker{
 				file.incrementVersion(myId);
 				FileManager.addOrReplaceFile(file);
 				
-				// replicate on all servers
-				if(replicaManager.replicate(file, true)) {
-					
-					System.out.println("[ThreadWrite] Replication of new file succeeded: " + file);
-					
-					FileManager.commit(file.getId());
-					
-					// send to client that the write succeeded
+				// replicate on all servers & reply to the client
+				if(replicaManager.replicate(file, true)){
+					System.out.println("[ThreadWrite] Replication of new file finished: " + file);
 					out.println(UtilBobby.SERVER_WRITE_OK);
-				} else {
-					
-					System.out.println("[ThreadWrite] Replication of new file failed: " + file);
-					
-					FileManager.abort(file.getId());
-					// send to client that the write failed
+				}else{
+					System.out.println("[ThreadWrite] Replication of new file FAILED: " + file);
 					out.println(UtilBobby.SERVER_WRITE_KO);
 				}
 			}
