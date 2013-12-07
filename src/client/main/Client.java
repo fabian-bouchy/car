@@ -24,18 +24,18 @@ public class Client {
 		
 		// initialize the configuration
 		if (args.length == 4){
-			// config name specified
+			// configuration name specified
 			ConfigManager.init(ConfigType.CLIENT, args[3]);
 		}else{
 			// all default parameters
 			ConfigManager.init(ConfigType.CLIENT);
 		}
-		System.out.println("Mot de passe pour la session en cours:");
+		System.out.println("Enter password for this file:");
 		Console co = System.console();
-		String passWord = new String(co.readPassword());
+		String password = new String(co.readPassword());
 		
 		// init the user manager
-		UserManager.init(username, passWord);
+		UserManager.init(username, password);
 		
 		long startTime = System.nanoTime();
 		

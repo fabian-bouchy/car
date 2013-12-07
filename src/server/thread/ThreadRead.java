@@ -26,7 +26,7 @@ public class ThreadRead extends ThreadWorker{
 			out.println(UtilBobby.SERVER_READ_READY);
 			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 			File metadata = (File) reader.readObject();
-			System.out.println("[thread read] reading: " + metadata);
+			System.out.println("[thread read] reading: " + metadata.getFileName());
 
 			// Get file form our list
 			File fileRead = FileManager.getFile(metadata.getId());
@@ -36,6 +36,7 @@ public class ThreadRead extends ThreadWorker{
 				out.println(UtilBobby.SERVER_READ_FILE_FOUND);
 				ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 	        	outStream.writeObject(fileRead);
+	        	System.out.println("[thread read] reading succeeded!");
 			} else {
 				System.out.println("[thread read] reading failed: file not found locally");
 				System.out.println("[thread read] reading failed: reading metadata...");

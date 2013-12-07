@@ -94,8 +94,8 @@ public class File implements java.io.Serializable{
 			FileOutputStream fos = new FileOutputStream(theFile);
 			bos = new BufferedOutputStream(fos);
 			if(this.data != null){
-				bos.write(this.data);
 				this.data = UserManager.getCypherManager().decrypt(this.data);
+				bos.write(this.data);
 			}
 		} catch (Exception e) {
 			System.out.println("[file] Error writing to a file " + e);

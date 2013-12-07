@@ -13,7 +13,7 @@ public class UserManager {
 
 	public static void init(String name, String passPhrase) throws Exception {
 		username = name;
-		cypherManager = new CipherManager(passPhrase, String.valueOf(Math.random()));
+		cypherManager = new CipherManager(passPhrase, "this is a very lovely salt, my dear!");
 	}
 
 	public static String getUsername() {

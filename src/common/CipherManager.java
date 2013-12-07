@@ -20,7 +20,7 @@ public class CipherManager {
 	
 	public CipherManager(String passPhrase, String saltIn) {
 		byte[] salt = saltIn.getBytes();
-		int iterations = 10000;
+		int iterations = 1000;
 		SecretKeyFactory factory;
 		try {
 			factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -38,6 +38,7 @@ public class CipherManager {
 	}
 
 	public byte[] encrypt(byte[] clearBytes) {
+		System.out.println("[Crypto] encrypting...");
 		try {
 			aes.init(Cipher.ENCRYPT_MODE, key);
 			return aes.doFinal(clearBytes);
@@ -52,6 +53,7 @@ public class CipherManager {
 	}
 	
 	public byte[] decrypt(byte[] cypherBytes) {
+		System.out.println("[Crypto] decrypting...");
 		try {
 			aes.init(Cipher.DECRYPT_MODE, key);
 			return aes.doFinal(cypherBytes);
