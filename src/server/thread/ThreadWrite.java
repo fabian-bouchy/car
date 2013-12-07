@@ -21,44 +21,87 @@ public class ThreadWrite extends ThreadWorker{
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		try {
-			// send to client that the server is ready
-			out.println(UtilBobby.SERVER_WRITE_READY);
 			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
+			out.println(UtilBobby.SERVER_WRITE_READY);
 			File file = (File) reader.readObject();
-			System.out.println("Object received: " + file + " form client!");
+			System.out.println("[server thread write] Object received: " + file + " from client!");
 			
-			// Manager version :
-			int[] tmpVersion = file.getVersion(); // Should be 0.0.0.0 etc...
-			int currentRemoteNodeId = ConfigManager.getMe().getPriority();
+			// Manager version
+			int myId = ConfigManager.getMe().getPriority();
+			File fileOrMetadata = FileManager.getFileOrMetadata(file.getId());
 			
-			// Exists => Update
-			File metadataFile = FileManager.getMetadata(file.getId());
-			if(metadataFile != null) {
-				System.out.println("[server thread write] Metadata found!");
-				// Set old version
-				tmpVersion = metadataFile.getVersion();
-				tmpVersion[currentRemoteNodeId] = metadataFile.getVersion()[currentRemoteNodeId]; 
+			if(fileOrMetadata == null) // file doesn't exist on this server or any other server
+			{
+				System.out.println("[server thread write] Creating new file " + file);
+				
+				file.incrementVersion(myId);
+				FileManager.addOrReplaceFile(file);
+				
+				// replicate on all servers
+				if(replicaManager.replicate(file)) {
+					
+					System.out.println("[server thread write] Replication succeeded: " + file);
+					
+					FileManager.commit(file.getId());
+					
+					// send to client that the write succeeded
+					out.println(UtilBobby.SERVER_WRITE_OK);
+				} else {
+					
+					System.out.println("[server thread write] Replication failed: " + file);
+					
+					FileManager.abort(file.getId());
+					// send to client that the write failed
+					out.println(UtilBobby.SERVER_WRITE_KO);
+				}
 			}
-			
-			// Update version
-			file.incrementVersion(currentRemoteNodeId);
-			
-			// Replace current version of file
-			FileManager.addOrReplaceFile(file);
+			else 
+			{
+				if(fileOrMetadata.isFile()){
+					// file exists on this node
+					System.out.println("[server thread write] File found on this node: "+fileOrMetadata);
+				}else{
+					// file exists on another node
+					System.out.println("[server thread write] Metadata of the file found "+fileOrMetadata);
+				}
+				
+				// acquire lock
+				try{
+					fileOrMetadata.lock();
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+				
+				file.incrementVersion(myId);
+				
+				// replicate on all servers
+				if(replicaManager.replicate(file)) {
+					
+					System.out.println("[server thread write] Replication succeeded: " + file);
+					
+					FileManager.commit(file.getId());
+					FileManager.addOrReplaceFile(file);
+					
+					// send to client that the write succeeded
+					out.println(UtilBobby.SERVER_WRITE_OK);
+				} else {
+					
+					System.out.println("[server thread write] Replication failed: " + file);
+					
+					FileManager.abort(file.getId());
+					// send to client that the write failed
+					out.println(UtilBobby.SERVER_WRITE_KO);
+				}
+				
+				try{
+					fileOrMetadata.unlock();
+				}catch(InterruptedException e){
+					e.printStackTrace();
+				}
+			}
 
-			// TODO check if replication successed
-			if(replicaManager.replicate(file)) {
-				FileManager.commit(file.getId());
-				replicaManager.propagateMetadataAdd(file.getMetadata());
-				// send to client that the write succeed
-				out.println(UtilBobby.SERVER_WRITE_OK);
-			} else {
-				FileManager.abort(file.getId());
-				// send to client that the write failed
-				out.println(UtilBobby.SERVER_WRITE_KO);
-			}
+
 		} catch (IOException e )  {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

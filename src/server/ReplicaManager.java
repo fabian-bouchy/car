@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 import server.thread.ThreadReplicaMetadataUpdate;
 import server.thread.ThreadReplicaMetadataUpdate.ActionThreadMetadata;
@@ -120,25 +119,6 @@ public class ReplicaManager {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
-	}
-
-	public HashMap<String, File> getMetadata() {
-		for (RemoteNode remoteReplica : replicas) {
-			try {
-				// Return first metadata found!
-				HashMap<String, File> metadataTmp = remoteReplica.getMetadata(); 
-				if(metadataTmp != null) {
-					return metadataTmp;
-				}
-			} catch (UnknownHostException e) {
-				System.out.println("[server - metadata] Unable to connect to :" + remoteReplica + " " + e.getLocalizedMessage());
-			} catch (IOException e) {
-				System.out.println("[server - metadata] Unable to connect to :" + remoteReplica + " " + e.getLocalizedMessage());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

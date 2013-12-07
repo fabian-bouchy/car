@@ -55,7 +55,7 @@ public class File implements java.io.Serializable{
 	
 
 	/**
-	 * Create metadata for the file gives in parameters
+	 * Create meta-data for the file gives in parameters
 	 * @param file 
 	 */
 	private File(File file) {
