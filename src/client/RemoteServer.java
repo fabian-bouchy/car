@@ -75,6 +75,7 @@ public class RemoteServer extends RemoteNode {
 
 	@Override
 	public File read(File metadata) throws Exception {
+		System.out.println("[remote server] read init");
 		// Init the connection:
 		Socket socketToServer = this.connect();
 		PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);

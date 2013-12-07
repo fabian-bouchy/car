@@ -194,10 +194,9 @@ public class File implements java.io.Serializable{
 	}
 	
 	public String toString(){
-		String txt = id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
 		if(isFile()){
-			return "[file] " + txt;
+			return "[file] " + id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
 		}
-		return "[metadata] " + txt;
+		return "[metadata]  (" + fileName + "), version " + getVersionToString();
 	}
 }

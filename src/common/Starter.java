@@ -38,6 +38,7 @@ public class Starter {
             System.err.println("Usage:");
             System.err.println("    java -jar bobby.jar server [config.json] [hostname]");
             System.err.println("    java -jar bobby.jar write|read|delete file username [config.json]");
+            System.err.println("    java -jar bobby.jar benchmark [config.json]");
             System.exit(1);
         }
 	}

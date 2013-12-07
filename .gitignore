@@ -10,6 +10,7 @@ build/
 /host3
 
 /test-files
+/tmp
 
 bobby.jar
 .settings/org.eclipse.jdt.core.prefs

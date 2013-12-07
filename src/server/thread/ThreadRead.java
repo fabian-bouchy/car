@@ -37,6 +37,7 @@ public class ThreadRead extends ThreadWorker{
 				ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
 	        	outStream.writeObject(fileRead);
 	        	System.out.println("[thread read] reading succeeded!");
+	        	clientSocket.close();
 			} else {
 				System.out.println("[thread read] reading failed: file not found locally");
 				System.out.println("[thread read] reading failed: reading metadata...");
@@ -54,6 +55,7 @@ public class ThreadRead extends ThreadWorker{
 				// Not found
 				System.out.println("[thread read] file not found anywhere");
 				out.println(UtilBobby.SERVER_READ_FILE_NOT_FOUND);
+				clientSocket.close();
 			}
 		} catch (IOException e )  {
 			e.printStackTrace();

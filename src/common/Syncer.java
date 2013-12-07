@@ -26,27 +26,40 @@ public class Syncer {
 		unavailableThreads 	= new ArrayList<Runnable>();
 	}
 	
-	public synchronized void addThread(Runnable thread){
-		waitingthreads.add(thread);
+	public void addThread(Runnable thread){
+		synchronized (waitingthreads){
+			waitingthreads.add(thread);
+		}
 	}
 	
-	public synchronized void callback(Runnable runnable, ThreadResult value){
+	public void callback(Runnable runnable, ThreadResult value){
 		System.out.println("[syncer] thread finished: " + runnable);
-
-		// store the value form callback
-		int position = waitingthreads.indexOf(runnable);
-		if (position != -1){
-			results[position] = value;
-			if(value == ThreadResult.FAILED) {
-				failedThreads.add(runnable);
-			} else if(value == ThreadResult.SUCCEEDED) {
-				succeededThreads.add(runnable);
-			} else {
-				unavailableThreads.add(runnable);
+		
+		synchronized (waitingthreads){
+			synchronized (succeededThreads){
+				synchronized (failedThreads){
+					synchronized (unavailableThreads){
+						synchronized (results) {
+									
+							// store the value form callback
+							int position = waitingthreads.indexOf(runnable);
+							if (position != -1){
+								results[position] = value;
+								if(value == ThreadResult.FAILED) {
+									failedThreads.add(runnable);
+								} else if(value == ThreadResult.SUCCEEDED) {
+									succeededThreads.add(runnable);
+								} else {
+									unavailableThreads.add(runnable);
+								}
+								waitingthreads.remove(runnable);
+							}
+							latch.countDown();
+						}
+					}
+				}
 			}
-			waitingthreads.remove(runnable);
 		}
-		latch.countDown();
 	}
 	
 	public void waitForAll() throws InterruptedException{
@@ -81,22 +94,26 @@ public class Syncer {
 		System.out.println("]");
 	}
 
-	public synchronized boolean allSucceeded() {
-		return succeededThreads.size() == results.length;
+	public boolean allSucceeded() {
+		synchronized (results) {			
+			return succeededThreads.size() == results.length;
+		}
 	}
 	
-	public synchronized boolean noneFailed() {
-		return failedThreads.size() == 0;
+	public boolean noneFailed() {
+		synchronized (failedThreads) {			
+			return failedThreads.size() == 0;
+		}
 	}
 	
 	
-	public synchronized ArrayList<Runnable> getFailedThreads() {
+	public ArrayList<Runnable> getFailedThreads() {
 		return failedThreads;
 	}
-	public synchronized ArrayList<Runnable> getSucceedThreads() {
+	public ArrayList<Runnable> getSucceedThreads() {
 		return succeededThreads;
 	}
-	public synchronized ArrayList<Runnable> getUnavailableThreads() {
+	public ArrayList<Runnable> getUnavailableThreads() {
 		return unavailableThreads;
 	}
 }

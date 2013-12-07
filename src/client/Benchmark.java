@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.UnknownHostException;
 
 import server.UserManager;
@@ -16,8 +17,8 @@ import common.ConfigManager.ConfigType;
 public class Benchmark {
 
 	// In kb unit
-	private static final int[] fileSizes = {1000, 10000, 20000, 50000, 100000};
-	private static final String outputPath = "/tmp/test_files";
+	private static final int[] fileSizes = {1, 50, 100, 500, 1000, 5000};
+	private static final String outputPath = "./tmp/test_files";
 	private static final String testFilePrefix = outputPath + "/test_";
 	private static final String outputFilePrefix = outputPath + "/output_";
 	private static final String outputFileExtension = ".csv";
@@ -54,17 +55,17 @@ public class Benchmark {
 		File outputDir = new File(outputPath);
 		if (!outputDir.exists()) {
 			System.out.println("creating directory: " + outputPath);
-			if(outputDir.mkdir()) {  
+			if(outputDir.mkdirs()) {  
 				System.out.println("DIR created");  
 			}
 		}
-		// Creating files
+		// Creating files of the right sizes
 		for (int size : fileSizes) {
 			try {
-//				RandomAccessFile file = new RandomAccessFile(testFilePrefix + size + testFileExtension,"rw");
-//				file.setLength(size);
-//				file.close();
-				Runtime.getRuntime().exec("dd if=/dev/zero of="+ testFilePrefix + size + testFileExtension + " bs=1kB count=" + size);
+				RandomAccessFile file = new RandomAccessFile(testFilePrefix + size + testFileExtension,"rw");
+				file.setLength(size*1024);
+				file.close();
+				Runtime.getRuntime().exec("dd if=/dev/zero of="+ testFilePrefix + size + testFileExtension + " bs=1kB count=" + size*1024);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -98,7 +99,7 @@ public class Benchmark {
 		// Prepare output file
 		log("-------------- Test write -----------------");
 		// Header
-		log("size(kB);time(ns)");
+		log("size(kB);time(ns);bandwidth(MB/s)");
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, true);
@@ -107,8 +108,9 @@ public class Benchmark {
 				long startTime = System.nanoTime();
 				ServerManager.write(file);
 				long elapsedTime = System.nanoTime() - startTime;
+				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0);
 				// end
-				log(size + ";" + elapsedTime);
+				log(size + ";" + elapsedTime + ";" + bandwidth);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 				log(size + ";" + e.getLocalizedMessage());
@@ -122,7 +124,7 @@ public class Benchmark {
 	private static void updateTest() {
 		log("-------------- Test Update -----------------");
 		// Header
-		log("size(kB);time(ns)");
+		log("size(kB);time(ns);bandwidth(MB/s)");
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, true);
@@ -130,7 +132,9 @@ public class Benchmark {
 				long startTime = System.nanoTime();
 				ServerManager.write(file);
 				long elapsedTime = System.nanoTime() - startTime;
-				log(size + ";" + elapsedTime);
+				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0);
+				// end
+				log(size + ";" + elapsedTime + ";" + bandwidth);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 				log(size + ";" + e.getLocalizedMessage());
@@ -144,7 +148,7 @@ public class Benchmark {
 	private static void readTest() {
 		log("-------------- Test Read -----------------");
 		// Header
-		log("size(kB);time(ns)");
+		log("size(kB);time(ns);bandwidth(MB/s)");
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
@@ -152,7 +156,9 @@ public class Benchmark {
 				long startTime = System.nanoTime();
 				ServerManager.read(file);
 				long elapsedTime = System.nanoTime() - startTime;
-				log(size + ";" + elapsedTime);
+				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0);
+				// end
+				log(size + ";" + elapsedTime + ";" + bandwidth);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 				log(size + ";" + e.getLocalizedMessage());
