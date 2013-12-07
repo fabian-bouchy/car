@@ -35,6 +35,10 @@ public class FileManager {
 		}
 	}
 	
+	public static synchronized File getTempFile(String id){
+		return tmpFiles.get(id);
+	}
+	
 	public static synchronized File getFile(String id){
 		return files.get(id);
 	}
@@ -68,6 +72,11 @@ public class FileManager {
 	public static synchronized void commit(String fileId) {
 		File file = tmpFiles.get(fileId);
 		if(file != null) {
+			try {
+				file.unlock();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			System.out.println("[FileManager] commit for " + file);
 			tmpFiles.remove(fileId);
 			addOrReplaceFile(file);

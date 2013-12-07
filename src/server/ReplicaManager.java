@@ -57,7 +57,7 @@ public class ReplicaManager {
 			}
 			try {
 				syncer.waitForAll();
-				// Remove succeed replication
+				// Remove succeeded threads form the pool
 				for (Runnable runnable : syncer.getSucceedThreads()) {
 					ThreadReplicaWriteOrDelete thread = (ThreadReplicaWriteOrDelete)runnable;
 					synchronized (thread) {

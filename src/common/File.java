@@ -4,16 +4,12 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.concurrent.Semaphore;
 
 import server.UserManager;
 
 public class File implements java.io.Serializable{
 	
-	// http://www.java2s.com/Code/Java/File-Input-Output/Readfiletobytearrayandsavebytearraytofile.htm
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -970661273181400441L;
 
 	private String id;
@@ -21,16 +17,22 @@ public class File implements java.io.Serializable{
 	private byte[] data;
 	private long size;
 	private int[] version;
-	private boolean isFile;
+	private boolean hasFile;
+
+	private Semaphore lock;
 
 	public File(String fileName, boolean init) throws IOException {
+		
+		// lock on the file
+		this.lock = new Semaphore(1);
+		
 		// fill in fields
 		this.fileName = fileName;
 		this.id = UserManager.getUsername()+"_"+fileName;
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
 		this.data = null;
-		this.isFile = false;
+		this.hasFile = false;
 		
 		if(init) {
 			// read the file
@@ -39,9 +41,18 @@ public class File implements java.io.Serializable{
 			this.data = new byte[(int) f.length()];
 			f.read(this.data);
 			f.close();
-			this.isFile = true;
+			this.hasFile = true;
 		}
 	}
+	
+	public void lock() throws InterruptedException {
+		this.lock.acquire();
+	}
+	
+	public void unlock() throws InterruptedException {
+		this.lock.release();
+	}
+	
 
 	/**
 	 * Create metadata for the file gives in parameters
@@ -54,10 +65,16 @@ public class File implements java.io.Serializable{
 		this.version = new int[ConfigManager.getN()];
 		this.setVersion(file.getVersion());
 		this.data = null;
-		this.isFile = false;
+		this.hasFile = file.hasFile;
 	}
 	public boolean isFile() {
-		return isFile;
+		return this.data != null;
+	}
+	public void setHasFile(boolean hasFile) {
+		this.hasFile = hasFile;
+	}
+	public boolean hasFile() {
+		return this.hasFile;
 	}
 
 	public File generateMetadata(){
@@ -113,6 +130,21 @@ public class File implements java.io.Serializable{
 		}
 		return globalVersion;
 	}
+	
+	public boolean isCompatibleWith(File file)
+	{
+		if (file == null){
+			return false;
+		}
+		
+		for (int i=0; i < ConfigManager.getN(); i++){
+			if (file.getVersion()[i] < this.version[i]){
+				return false;
+			}
+		}
+		
+		return true;
+	}
 
 	public String getId() {
 		return id;
@@ -158,7 +190,7 @@ public class File implements java.io.Serializable{
 	
 	public String toString(){
 		String txt = id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
-		if(isFile){
+		if(hasFile){
 			return "[file] " + txt;
 		}
 		return "[metadata] " + txt;

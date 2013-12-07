@@ -7,9 +7,12 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
+import common.ConfigManager;
 import common.File;
 import common.FileManager;
+import common.RemoteNode;
 import common.UtilBobby;
 
 public class ThreadReplicaServer extends ThreadWorker{
@@ -19,7 +22,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 	public ThreadReplicaServer(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in, String command){
 		super(serverSocket, clientSocket, out, in);
 		this.command = command;
-		System.out.println("[thread replica server] init");
+		System.out.println("[thread replica server] init for other replica "+clientSocket.getInetAddress().getAddress());
 	}
 	
 	@Override
@@ -42,34 +45,120 @@ public class ThreadReplicaServer extends ThreadWorker{
 					return;
 				}
 				
+				// send all meta-data from the node: the ones I have and the ones I don't have
+				if (cmd[1].equals(UtilBobby.REPLICA_METADATA_SYMBOL)) {
+					
+					if (cmd[2].equals(UtilBobby.REPLICA_METADATA_GET_SYMBOL)) {
+						
+						ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
+						out.println(UtilBobby.REPLICA_METADATA_READY);
+						System.out.println("[thread replica server] get metadata ready");
+						
+						// external meta-data
+						HashMap<String, File> metadata = FileManager.getMetadata();
+						// internal meta-data
+						for (File file : FileManager.getFiles().values()){
+							metadata.put(file.getId(), file.generateMetadata());
+						}
+						
+						outStream.writeObject(metadata);
+						
+						if (in.readLine().equals(UtilBobby.REPLICA_METADATA_OK)){
+							System.out.println("[thread replica server] metadata sent!");
+						}else{
+							System.out.println("[thread replica server] metadata not sent!");
+						}
+					}
+				}
+
 				// store the files/metadata we receive
 				if(cmd[1].equals(UtilBobby.REPLICA_WRITE_SYMBOL)) {
 					
 					System.out.println("[thread replica server] write");
 					
+					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 					// send a "ready" message
 					out.println(UtilBobby.REPLICA_WRITE_READY);
-					
 					// receive the file
-					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
 					File file = (File) reader.readObject();
-					System.out.println("File received: " + file);
 					
-					File oldFile = FileManager.getFileOrMetadata(file.getId());
-					// Update issue?
-					if(oldFile == null) {
-						// the file not present - first write
+					System.out.println("[thread replica server] file received: "+file);
+					
+					if (file.isFile()){
+						
+						// let's verify if there is a conflict
+						File oldFile = FileManager.getFileOrMetadata(file.getId());
+
+						if (oldFile == null)
+						{
+							// check if it's not already in the temporary storage waiting for a commit
+//							File tmp = FileManager.getTempFile(file.getId());
+//							if (tmp != null){
+//								try{
+//									tmp.lock();
+//								}catch(InterruptedException e){
+//									e.printStackTrace();
+//								}
+//							}
+							// new file
+							FileManager.prepare(file); // store in temporary storage
+							out.println(UtilBobby.REPLICA_WRITE_OK);
+						}
+						else 
+						{
+							
+							// TODO acquire a lock on the old file ?
+							try{
+								System.out.println("[thread replica server] acquiring a lock on : "+oldFile);
+								oldFile.lock();
+								System.out.println("[thread replica server] lock acquired ont : "+oldFile);
+							}catch(InterruptedException e){
+								e.printStackTrace();
+							}
+							
+							if (file.isCompatibleWith(oldFile) && (file.getGlobalVersion() == (oldFile.getGlobalVersion() + 1)))
+							{
+								// not new, but no conflict
+								// TODO verify conditions and locks
+								FileManager.prepare(file); // store in temporary storage
+								out.println(UtilBobby.REPLICA_WRITE_OK);
+							}
+							else
+							{
+								// there is a conflicted copy
+								int myPriority = ConfigManager.getMe().getPriority();
+								int theirPriority = Integer.MIN_VALUE;
+								RemoteNode them = ConfigManager.getRemoteNodeByIp(clientSocket.getInetAddress().getHostAddress());
+								if (them != null){
+									theirPriority = them.getPriority();
+								}
+								
+								if (myPriority < theirPriority){
+									// TODO verufy this is correct
+									FileManager.addOrReplaceFile(file);
+									out.println(UtilBobby.REPLICA_WRITE_OK);
+								}else{
+									// reject the file
+									out.println(UtilBobby.REPLICA_WRITE_KO);
+								}
+								
+								try {
+									oldFile.unlock();
+									System.out.println("[thread replica server] released the lock on : "+oldFile);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+							}
+							
+						}
+						
+					}else{
+						// it's a meta-data file, no content
+						// we just store the new value and say we're good
+						file.setHasFile(false);
 						FileManager.addOrReplaceFile(file);
-					} else if(oldFile != null && oldFile.getGlobalVersion() == file.getGlobalVersion() && !file.equals(oldFile)) {
-						// TODO Manage Conflict on update!!!!
-					} else {
-						// no conflict - update
+						out.println(UtilBobby.REPLICA_WRITE_OK);
 					}
-					
-					// TODO check support of FileManager
-					// Add file in temp state
-					
-					out.println(UtilBobby.REPLICA_WRITE_OK);
 				}
 				
 				// check if the file exists on this node

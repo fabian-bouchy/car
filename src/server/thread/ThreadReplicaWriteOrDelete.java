@@ -40,7 +40,7 @@ public class ThreadReplicaWriteOrDelete implements Runnable {
 				synchronized (this) {
 					this.wait();
 				}
-				System.out.println("[ReplicaManager - Thread replica WorD] Restarting!!!!");
+				System.out.println("[ReplicaManager - Thread replica WorD] finished waiting");
 				if(nextStep == NextStep.ABORT) {
 					System.out.println("[ReplicaManager] abort" + this.file);
 					this.remoteReplica.abortWrite(this.file);

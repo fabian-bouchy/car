@@ -24,10 +24,10 @@ public class Server {
 		
 		// initialize the configuration
 		if (args.length == 3){
-			// config name and hostname
+			// configure name and host name
 			ConfigManager.init(ConfigType.SERVER, args[1], args[2]);
 		}else if (args.length == 2){
-			// only config name
+			// only configure name
 			ConfigManager.init(ConfigType.SERVER, args[1]);
 		}else{
 			// all default parameters
@@ -51,7 +51,7 @@ public class Server {
 	                Socket clientSocket = serverSocket.accept();
 	                System.out.println("[Server] Accepted a new connection from " + clientSocket.getInetAddress());
 	                
-	                // create io
+	                // create input-output
 	                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
 	                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 	                String command = in.readLine();
@@ -74,7 +74,7 @@ public class Server {
 	            		ThreadRead thread = new ThreadRead(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
 
-	            	// a client asks to delete
+	            	// a client asks to delete a file
 	                } else if (command.equals(UtilBobby.CLIENT_DELETE)){
 
 	                	// instantiate a read thread
@@ -82,7 +82,7 @@ public class Server {
 	            		ThreadDelete thread = new ThreadDelete(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
 
-	            	// a client asks to write or delete
+	            	// a client asks to write or update a file
 	                } else{
 	                	
 	                	// instantiate a create/update thread

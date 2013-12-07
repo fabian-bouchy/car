@@ -148,6 +148,15 @@ public class ConfigManager {
 		return serversMap.get(remoteNodeName);
 	}
 	
+	public static synchronized RemoteNode getRemoteNodeByIp(String ip){
+		for (RemoteNode node : serversList){
+			if (node.getIpAddress().equals(ip)){
+				return node;
+			}
+		}
+		return null;
+	}
+	
 	public static synchronized HashMap<String, RemoteNode> getRemoteNodes() {
 		return serversMap;
 	}
