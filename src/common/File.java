@@ -8,6 +8,9 @@ import java.util.concurrent.Semaphore;
 
 import server.UserManager;
 
+/**
+ * Represent a file in the filesystem.
+ */
 public class File implements java.io.Serializable{
 	
 	private static final long serialVersionUID = -970661273181400441L;
@@ -35,7 +38,7 @@ public class File implements java.io.Serializable{
 		this.hasFile = false;
 		
 		if(init) {
-			// read the file
+			// read the file from hard drive.
 			RandomAccessFile f = new RandomAccessFile(fileName, "r");
 			
 			java.io.File file = new java.io.File(fileName);
@@ -77,27 +80,18 @@ public class File implements java.io.Serializable{
 		this.data = null;
 		this.hasFile = file.hasFile;
 	}
-	public boolean isFile() {
-		return this.data != null;
-	}
-	public void setHasFile(boolean hasFile) {
-		this.hasFile = hasFile;
-	}
-	public boolean hasFile() {
-		return this.hasFile;
-	}
 
-	public File generateMetadata(){
-		return new File(this);
-	}
-
-	public void writeToFile(String theFile) throws IOException {
+	/**
+	 * Persiste file to hard drive
+	 * @param outputPathName The output file path
+	 */
+	public void writeToFile(String outputPathName) throws IOException {
 		BufferedOutputStream bos = null;
 		
-		System.out.println("[file] Writing " + this.fileName + " => " + theFile);
+		System.out.println("[file] Writing " + this.fileName + " => " + outputPathName);
 
 		try {
-			FileOutputStream fos = new FileOutputStream(theFile);
+			FileOutputStream fos = new FileOutputStream(outputPathName);
 			bos = new BufferedOutputStream(fos);
 			if(this.data != null){
 				this.data = UserManager.getCypherManager().decrypt(this.data);
@@ -117,6 +111,21 @@ public class File implements java.io.Serializable{
 		}
 	}
 	
+	public boolean isFile() {
+		return this.data != null;
+	}
+
+	public void setHasFile(boolean hasFile) {
+		this.hasFile = hasFile;
+	}
+
+	public boolean hasFile() {
+		return this.hasFile;
+	}
+
+	public File generateMetadata(){
+		return new File(this);
+	}
 
 	public long getSize() {
 		return size;

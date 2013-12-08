@@ -3,6 +3,10 @@ package common;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Manage and store files and metadata in memory.
+ * All provide temp storage to commit or abort file transaction.
+ */
 public class FileManager {
 	
 	// Files contain in memory
@@ -12,12 +16,50 @@ public class FileManager {
 	// Meta-data of network
 	private static HashMap<String, File> metadata = new HashMap<String, File>();
 
-	static {
-	}
-	
 	private FileManager(){}
 	
-	
+	// ADD AND REMOVE
+	public static synchronized void addOrReplaceFile(File file){
+		if (file.isFile()){
+			files.put(file.getId(), file);
+			System.out.println(represent());
+		} else {
+			metadata.put(file.getId(), file);
+			System.out.println(representMetadata());
+		}
+	}
+
+	public static synchronized void removeFile(String id){
+		files.remove(id);
+		metadata.remove(id);
+		System.out.println(represent());
+	}
+
+	// TRANSACTIONS
+	public static synchronized void prepare(File file){
+		tmpFiles.put(file.getId(), file);
+	}
+
+	public static synchronized void commit(String fileId) {
+		File file = tmpFiles.get(fileId);
+		if(file != null) {
+//			try {
+//				file.unlock();
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+			System.out.println("[FileManager] commit for " + file);
+			tmpFiles.remove(fileId);
+			addOrReplaceFile(file);
+		} else {
+			System.out.println("[FileManager] nothing to commit for " + fileId);
+		}
+	}
+
+	public static synchronized void abort(String fileId) {
+		tmpFiles.remove(fileId);
+	}
+
 	// GETTERS
 	public static synchronized HashMap<String, File> getMetadata() {
 		return metadata;
@@ -61,50 +103,7 @@ public class FileManager {
 	public static synchronized File getMetadata(String id){
 		return metadata.get(id);
 	}
-	
-	// ADD AND REMOVE
-	public static synchronized void addOrReplaceFile(File file){
-		if (file.isFile()){
-			files.put(file.getId(), file);
-			System.out.println(represent());
-		} else {
-			metadata.put(file.getId(), file);
-			System.out.println(representMetadata());
-		}
-	}
 
-	public static synchronized void removeFile(String id){
-		files.remove(id);
-		metadata.remove(id);
-		System.out.println(represent());
-	}
-
-	// TRANSACTIONS
-	public static synchronized void prepare(File file){
-		tmpFiles.put(file.getId(), file);
-	}
-
-	public static synchronized void commit(String fileId) {
-		File file = tmpFiles.get(fileId);
-		if(file != null) {
-//			try {
-//				file.unlock();
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-			System.out.println("[FileManager] commit for " + file);
-			tmpFiles.remove(fileId);
-			addOrReplaceFile(file);
-		} else {
-			System.out.println("[FileManager] nothing to commit for " + fileId);
-		}
-	}
-
-	public static synchronized void abort(String fileId) {
-		tmpFiles.remove(fileId);
-	}
-	
-	
 	// DISPLAYING
 	public static synchronized String represent(){
 		if(FileManager.files.isEmpty())
