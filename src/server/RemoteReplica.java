@@ -149,7 +149,6 @@ public class RemoteReplica extends RemoteNode{
 		
 		out.writeObject(UtilBobby.REPLICA_METADATA_GET);
 
-		System.out.println("[remote replica] waiting metadata...");
 		try {
 			String line = ((String) in.readObject());
 		
@@ -157,7 +156,7 @@ public class RemoteReplica extends RemoteNode{
 				try{
 					HashMap<String, File> metadata = (HashMap<String, File>) in.readObject();
 					out.writeObject(UtilBobby.REPLICA_METADATA_OK);
-					System.out.println("[remote replica] metadata read!");
+					System.out.println("[remote replica] metadata sent");
 					return metadata;
 				} catch (Exception e){
 					System.out.println("[remote replica] error readObject!");
@@ -181,6 +180,23 @@ public class RemoteReplica extends RemoteNode{
 
 	@Override
 	public File read(File file) throws UnknownHostException, IOException {
+		// Initialize the connection:
+		Socket socketToServer  = this.connect();
+		ObjectOutputStream out = new ObjectOutputStream(socketToServer.getOutputStream());                   
+		ObjectInputStream  in  = new ObjectInputStream(socketToServer.getInputStream());
+		
+		out.writeObject(UtilBobby.REPLICA_READ + UtilBobby.SPLIT_REGEX + file.getId());
+		
+		try {
+			File input = ((File) in.readObject());
+			socketToServer.close();
+			return input;
+		} catch(IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 }

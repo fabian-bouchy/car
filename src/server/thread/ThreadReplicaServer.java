@@ -3,6 +3,7 @@ package server.thread;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream.GetField;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -245,8 +246,18 @@ public class ThreadReplicaServer extends ThreadWorker{
 					}
 				}
 /*
- *	---------------------------------------------------------------------------------------------------------------------- 
+ *	----------------------------------------------------------------------------------------------------------------------
+ *	READ
  */
+				// send the file they are asking for
+				if (cmd[1].equals(UtilBobby.REPLICA_READ_SYMBOL)) {
+					
+					System.out.println("[thread replica server] get file ready: " + cmd[2]);
+					out.writeObject(FileManager.getFile(cmd[2]));
+					System.out.println("[thread replica server] get file sent: " + cmd[2]);
+				}
+				
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

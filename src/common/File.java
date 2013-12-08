@@ -64,7 +64,8 @@ public class File implements java.io.Serializable{
 		// lock on the file
 		this.lock = new Semaphore(1);
 		// fill in fields for an empty meta-data
-		this.id = file.getId();
+		this.id = file.id;
+		this.fileName = file.fileName;
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
 		this.setVersion(file.getVersion());
@@ -185,6 +186,11 @@ public class File implements java.io.Serializable{
 		}
 		
 		File other = (File)obj;
+		
+		if (!id.equals(other.id)){
+			return false;
+		}
+		
 		for(int i = 0; i < this.version.length; i++ ) {
 			if(this.version[i] != other.version[i])
 				return false;
@@ -193,10 +199,14 @@ public class File implements java.io.Serializable{
 		return true;
 	}
 	
+	public int hashCode(){
+		return id.charAt(0);
+	}
+	
 	public String toString(){
 		if(isFile()){
 			return "[file] " + id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
 		}
-		return "[metadata]  (" + fileName + "), version " + getVersionToString();
+		return "[metadata] " + id + " (" + fileName + "), version " + getVersionToString();
 	}
 }
