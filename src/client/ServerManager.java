@@ -19,7 +19,12 @@ public class ServerManager {
 	}
 	
 	private ServerManager() {}
-	
+
+	/**
+	 * Find an available remote node and initiate a write session.
+	 * If this action failed, try for each other remote nodes.
+	 * @param file The file to write
+	 */
 	public static void write(File file) throws UnknownHostException, IOException {
 		
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
@@ -30,14 +35,19 @@ public class ServerManager {
 				currentServer.write(file);
 				return;
 			}catch(Exception e){
-				// server doesn't respond, try another one
+				// server doesn't respond, display a  message and try another one
 				System.out.println("Error connecting to server: " + e);
 			}
 		}
-		
 		System.out.println("[server manager] No servers available");
 	}
-	
+
+	/**
+	 * Find an available remote node and initiate a read session.
+	 * If this action failed, try for each other remote nodes.
+	 * @param file The metadata to identify the request file.
+	 * @return The file read or null if not found.
+	 */
 	public static File read(File file) {
 		
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
@@ -55,7 +65,12 @@ public class ServerManager {
 		System.out.println("[server manager] No servers available");
 		return null;
 	}
-	
+
+	/**
+	 * Find an available remote node and initiate a delete session.
+	 * If this action failed, try for each other remote nodes.
+	 * @param file The metadata to identify the file to delete.
+	 */
 	public static void delete(File file) {
 		
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
@@ -74,6 +89,12 @@ public class ServerManager {
 		System.out.println("[server manager] No servers available");
 	}
 
+	/**
+	 * Find an available remote node and initiate a listFile session.
+	 * If this action failed, try for each other remote nodes.
+	 * @param file The metadata to identify the request file
+	 * @return The file read or null if not found.
+	 */
 	public static void listFile(String username) {
 
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
