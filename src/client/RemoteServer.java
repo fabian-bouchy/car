@@ -1,11 +1,8 @@
 package client;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -15,34 +12,44 @@ import common.File;
 import common.RemoteNode;
 import common.UtilBobby;
 
+/**
+ *	@author mickey
+ *	
+ *	High-level representation of a replica server
+ *
+ */
 public class RemoteServer extends RemoteNode {
 
-	public RemoteServer(String sName, String sIpAddress, String sInterface,
-			int iPriority, int iPort) {
-		super(sName, sIpAddress, sInterface, iPriority, iPort);
+	public RemoteServer(String sName, String sIpAddress, int iPriority, int iPort) {
+		super(sName, sIpAddress, iPriority, iPort);
 	}
 
 	@Override
 	public void write(File file) throws UnknownHostException, IOException {
-		// Init the connection:
 		System.out.println("[remote server] writing " + file);
-		Socket socketToServer = this.connect();
-		PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);                   
-        BufferedReader in = new BufferedReader(new InputStreamReader(socketToServer.getInputStream()));
+		// Initialize the connection:
+		Socket socketToServer  = this.connect();
+		ObjectOutputStream out = new ObjectOutputStream(socketToServer.getOutputStream());                   
+		ObjectInputStream  in  = new ObjectInputStream(socketToServer.getInputStream());
         
-        out.println(UtilBobby.CLIENT_WRITE);
-        String answer = in.readLine();
-        if(answer.equals(UtilBobby.SERVER_WRITE_READY)) {
-        	// Create output stream to send file to server
-        	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
-			outStream.writeObject(file);
-			answer = in.readLine();
-			if(answer.equals(UtilBobby.SERVER_WRITE_OK)){
-				System.out.println("[remote server] Write done!");
-			}else{
-				System.out.println("[remote server] Write failed!");
+        out.writeObject(UtilBobby.CLIENT_WRITE);
+        String answer;
+		try {
+			answer = (String) in.readObject();
+			if(answer.equals(UtilBobby.SERVER_WRITE_READY)) {
+				
+				out.writeObject(file);
+				answer = (String) in.readObject();
+				if(answer.equals(UtilBobby.SERVER_WRITE_OK)){
+					System.out.println("[remote server] Write done!");
+				}else{
+					System.out.println("[remote server] Write failed!");
+				}
 			}
-        }
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+        
 	}
 
 	@Override
@@ -53,48 +60,54 @@ public class RemoteServer extends RemoteNode {
 
 	@Override
 	public boolean delete(File file) throws UnknownHostException, IOException {
-		// Init the connection:
+		// Initialize the connection:
 		Socket socketToServer = this.connect();
-		PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socketToServer.getInputStream()));
+		ObjectOutputStream out = new ObjectOutputStream(socketToServer.getOutputStream());                   
+		ObjectInputStream  in  = new ObjectInputStream(socketToServer.getInputStream());
 
-        out.println(UtilBobby.CLIENT_DELETE);
-        String answer = in.readLine();
-        if(answer.equals(UtilBobby.SERVER_DELETE_READY)) {
-        	// Create output stream to send file to server
-        	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
-        	outStream.writeObject(file);
-			answer = in.readLine();
-			if(answer.equals(UtilBobby.SERVER_DELETE_OK))
-				System.out.println("[remote server] Delete done!");
-			else
-				System.out.println("[remote server] Delete failed!");
-        }
+        out.writeObject(UtilBobby.CLIENT_DELETE);
+        String answer;
+		try {
+			answer = (String) in.readObject();
+			if(answer.equals(UtilBobby.SERVER_DELETE_READY)) {
+				
+				out.writeObject(file);
+				answer = (String) in.readObject();
+				
+				if(answer.equals(UtilBobby.SERVER_DELETE_OK)){
+					System.out.println("[remote server] Delete done!");
+				}else{
+					System.out.println("[remote server] Delete failed!");
+				}
+			}
+			return false;
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return false;
 	}
 
 	@Override
 	public File read(File metadata) throws Exception {
 		System.out.println("[remote server] read init");
-		// Init the connection:
+		// Initialize the connection:
 		Socket socketToServer = this.connect();
-		PrintWriter out = new PrintWriter(socketToServer.getOutputStream(), true);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socketToServer.getInputStream()));
+		ObjectOutputStream out = new ObjectOutputStream(socketToServer.getOutputStream());                   
+		ObjectInputStream  in  = new ObjectInputStream(socketToServer.getInputStream());
 
-        out.println(UtilBobby.CLIENT_READ);
-        String answer = in.readLine();
+        out.writeObject(UtilBobby.CLIENT_READ);
+        String answer = (String) in.readObject();
         
         if(answer.equals(UtilBobby.SERVER_READ_READY)) {
         	System.out.println("[remote server] ready to read from " + this);
-        	// Create output stream to send metadata to server 
-        	ObjectOutputStream outStream = new ObjectOutputStream(socketToServer.getOutputStream());
-        	outStream.writeObject(metadata);
-			answer = in.readLine();
+        	
+        	out.writeObject(metadata);
+			answer = (String) in.readObject();
 			
 			if(answer.equals(UtilBobby.SERVER_READ_FILE_FOUND)){
 				// Read file from server
-				ObjectInputStream reader = new ObjectInputStream(socketToServer.getInputStream());
-				File tmp = (File) reader.readObject();
+				File tmp = (File) in.readObject();
 				if(tmp != null ) {
 					System.out.println("[remote server] File read "+tmp);
 					return tmp;
@@ -139,18 +152,6 @@ public class RemoteServer extends RemoteNode {
 
 	@Override
 	public boolean abortWrite(File file) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean addMetadata(File metadata) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean deleteMetadata(File metadata) throws Exception {
 		// TODO Auto-generated method stub
 		return false;
 	}

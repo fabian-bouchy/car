@@ -17,7 +17,7 @@ import common.ConfigManager.ConfigType;
 public class Benchmark {
 
 	// In kb unit
-	private static final int[] fileSizes = {1, 50, 100, 500, 1000, 5000};
+	private static final int[] fileSizes = {10, 50, 100, 500, 1000, 5000};
 	private static final String outputPath = "./tmp/test_files";
 	private static final String testFilePrefix = outputPath + "/test_";
 	private static final String outputFilePrefix = outputPath + "/output_";

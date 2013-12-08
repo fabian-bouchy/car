@@ -1,9 +1,8 @@
 package server.thread;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.PrintWriter;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -14,7 +13,7 @@ import common.UtilBobby;
 
 public class ThreadWrite extends ThreadWorker{
 
-	public ThreadWrite(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in){
+	public ThreadWrite(ServerSocket serverSocket, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in){
 		super(serverSocket, clientSocket, out, in);
 		System.out.println("[ThreadWrite] init");
 	}
@@ -23,9 +22,8 @@ public class ThreadWrite extends ThreadWorker{
 	public void run() {
 		System.out.println("[ThreadWrite] running...");
 		try {
-			out.println(UtilBobby.SERVER_WRITE_READY);
-			ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
-			File file = (File) reader.readObject();
+			out.writeObject(UtilBobby.SERVER_WRITE_READY);
+			File file = (File) in.readObject();
 			System.out.println("[ThreadWrite] Object received: " + file + " from client!");
 			
 			// Manager version
@@ -42,10 +40,10 @@ public class ThreadWrite extends ThreadWorker{
 				// replicate on all servers & reply to the client
 				if(replicaManager.replicate(file, true)){
 					System.out.println("[ThreadWrite] Replication of new file finished: " + file);
-					out.println(UtilBobby.SERVER_WRITE_OK);
+					out.writeObject(UtilBobby.SERVER_WRITE_OK);
 				}else{
 					System.out.println("[ThreadWrite] Replication of new file FAILED: " + file);
-					out.println(UtilBobby.SERVER_WRITE_KO);
+					out.writeObject(UtilBobby.SERVER_WRITE_KO);
 				}
 			}
 			else 
@@ -79,7 +77,7 @@ public class ThreadWrite extends ThreadWorker{
 					}
 					
 					// send to client that the write succeeded
-					out.println(UtilBobby.SERVER_WRITE_OK);
+					out.writeObject(UtilBobby.SERVER_WRITE_OK);
 				} else {
 					
 					System.out.println("[ThreadWrite] Replication failed: " + file);
@@ -87,7 +85,7 @@ public class ThreadWrite extends ThreadWorker{
 					FileManager.abort(file.getId());
 					
 					// send to client that the write failed
-					out.println(UtilBobby.SERVER_WRITE_KO);
+					out.writeObject(UtilBobby.SERVER_WRITE_KO);
 				}
 				
 				try{

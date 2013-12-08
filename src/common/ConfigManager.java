@@ -86,16 +86,15 @@ public class ConfigManager {
 			String sName = jsonObjReplica.getString("name");
 			String sIp = jsonObjReplica.getString("ip");
 			int iPort = jsonObjReplica.getInt("port");
-			String sInterface = jsonObjReplica.getString("interface");
 
 			// Create replica instance
 			RemoteNode remoteNode;
 			switch (configType) {
 			case SERVER:
-				remoteNode = new RemoteReplica(sName, sIp, sInterface, i, iPort);
+				remoteNode = new RemoteReplica(sName, sIp, i, iPort);
 				break;
 			case CLIENT:
-				remoteNode = new RemoteServer(sName, sIp, sInterface, i, iPort);
+				remoteNode = new RemoteServer(sName, sIp, i, iPort);
 				break;
 			default:
 				remoteNode = null;

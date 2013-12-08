@@ -1,10 +1,8 @@
 package server.thread;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -15,11 +13,21 @@ import common.FileManager;
 import common.RemoteNode;
 import common.UtilBobby;
 
+/**
+ *	@author mickey
+ *	This thread is called when another replica calls this one to ask to do something (synchronization).
+ *	It is reading the command, and executing it without any questions.
+ *
+ *	For parallel actions, I am using:
+ *		- ThreadReplicaServerWrite (for	write and update actions)
+ *		- ThreadReplicaServerDelete (yes, you guessed it, for deleting)
+ *
+ */
 public class ThreadReplicaServer extends ThreadWorker{
 
 	private String command;
 	
-	public ThreadReplicaServer(ServerSocket serverSocket, Socket clientSocket, PrintWriter out, BufferedReader in, String command){
+	public ThreadReplicaServer(ServerSocket serverSocket, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in, String command){
 		super(serverSocket, clientSocket, out, in);
 		this.command = command;
 		System.out.println("[thread replica server] init for other replica "+clientSocket.getInetAddress());
@@ -50,8 +58,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 					
 					if (cmd[2].equals(UtilBobby.REPLICA_METADATA_GET_SYMBOL)) {
 						
-						ObjectOutputStream outStream = new ObjectOutputStream(clientSocket.getOutputStream());
-						out.println(UtilBobby.REPLICA_METADATA_READY);
+						out.writeObject(UtilBobby.REPLICA_METADATA_READY);
 						System.out.println("[thread replica server] get metadata ready");
 						
 						// external meta-data
@@ -61,13 +68,13 @@ public class ThreadReplicaServer extends ThreadWorker{
 							metadata.put(file.getId(), file.generateMetadata());
 						}
 						
-						outStream.writeObject(metadata);
+						out.writeObject(metadata);
 						
-						if (in.readLine().equals(UtilBobby.REPLICA_METADATA_OK)){
+						if (((String)in.readObject()).equals(UtilBobby.REPLICA_METADATA_OK)){
 							System.out.println("[thread replica server] metadata sent!");
 						}else{
 							System.out.println("[thread replica server] metadata not sent!");
-						}
+						}						
 					}
 				}
 
@@ -86,13 +93,12 @@ public class ThreadReplicaServer extends ThreadWorker{
 					File metadata = FileManager.getMetadata(cmd[2]);
 					// send a "ready" message
 					if (have != null || metadata == null){
-						out.println(UtilBobby.REPLICA_WRITE_READY_FILE);
+						out.writeObject(UtilBobby.REPLICA_WRITE_READY_FILE);
 					}else{
-						out.println(UtilBobby.REPLICA_WRITE_READY_META);
+						out.writeObject(UtilBobby.REPLICA_WRITE_READY_META);
 					}
 					// receive the file
-					ObjectInputStream reader = new ObjectInputStream(clientSocket.getInputStream());
-					File file = (File) reader.readObject();
+					File file = (File) in.readObject();
 					
 					System.out.println("[thread replica server] file received: "+file);
 					
@@ -107,7 +113,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 							// new file
 							System.out.println("[thread replica server] new file");
 							FileManager.prepare(file); // store in temporary storage
-							out.println(UtilBobby.REPLICA_WRITE_OK);
+							out.writeObject(UtilBobby.REPLICA_WRITE_OK);
 							System.out.println("[thread replica server] file prepared");
 						}
 						else 
@@ -130,7 +136,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 								// TODO verify conditions and locks
 								// TODO unlock in commit
 								FileManager.prepare(file); // store in temporary storage
-								out.println(UtilBobby.REPLICA_WRITE_OK);
+								out.writeObject(UtilBobby.REPLICA_WRITE_OK);
 								
 								try {
 									oldFile.unlock();
@@ -155,11 +161,11 @@ public class ThreadReplicaServer extends ThreadWorker{
 									// TODO verify this is correct
 									System.out.println("[thread replica server] I obey and store the new file");
 									FileManager.addOrReplaceFile(file);
-									out.println(UtilBobby.REPLICA_WRITE_OK);
+									out.writeObject(UtilBobby.REPLICA_WRITE_OK);
 								}else{
 									// reject the file
 									System.out.println("[thread replica server] I refuse the new file");
-									out.println(UtilBobby.REPLICA_WRITE_KO);
+									out.writeObject(UtilBobby.REPLICA_WRITE_KO);
 								}
 								
 								try {
@@ -178,7 +184,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 						// we just store the new value and say we're good
 						file.setHasFile(false);
 						FileManager.prepare(file); // store in temporary storage
-						out.println(UtilBobby.REPLICA_WRITE_OK);
+						out.writeObject(UtilBobby.REPLICA_WRITE_OK);
 					}
 				}
 				
@@ -192,9 +198,9 @@ public class ThreadReplicaServer extends ThreadWorker{
 					System.out.println("[thread replica server] has");
 					
 					if (FileManager.getFile(cmd[2]) != null){
-						out.println(UtilBobby.ANSWER_TRUE);
+						out.writeObject(UtilBobby.ANSWER_TRUE);
 					}else{
-						out.println(UtilBobby.ANSWER_FALSE);
+						out.writeObject(UtilBobby.ANSWER_FALSE);
 					}
 				}
 				
@@ -209,11 +215,11 @@ public class ThreadReplicaServer extends ThreadWorker{
 					if(command.contains(UtilBobby.REPLICA_TRANSACTION_COMMIT)) {
 						System.out.println("[thread replica server] commit for " + cmd[3]);
 						FileManager.commit(cmd[3]);
-						out.println(UtilBobby.REPLICA_TRANSACTION_COMMITED);
+						out.writeObject(UtilBobby.REPLICA_TRANSACTION_COMMITED);
 					} else {
 						System.out.println("[thread replica server] abort for " + cmd[3]);
 						FileManager.abort(cmd[3]);
-						out.println(UtilBobby.REPLICA_TRANSACTION_ABORTED);
+						out.writeObject(UtilBobby.REPLICA_TRANSACTION_ABORTED);
 					}
 				}
 				
@@ -226,16 +232,16 @@ public class ThreadReplicaServer extends ThreadWorker{
 				if(cmd[1].equals(UtilBobby.REPLICA_DELETE_SYMBOL)){
 					try {
 						System.out.println("[thread replica server] delete");
-						if (FileManager.getFile(cmd[2]) != null){
+						if (FileManager.getFileOrMetadata(cmd[2]) != null){
 							FileManager.removeFile(cmd[2]);
-							System.out.println("[thread replica server] delete succeed");
-							out.println(UtilBobby.REPLICA_DELETE_OK);
+							System.out.println("[thread replica server] delete succeeded");
+							out.writeObject(UtilBobby.REPLICA_DELETE_OK);
 						}else{
 							System.out.println("[thread replica server] delete failed: file not found.");
-							out.println(UtilBobby.REPLICA_DELETE_NOT_FOUND);
+							out.writeObject(UtilBobby.REPLICA_DELETE_NOT_FOUND);
 						}
 					} catch (Exception e) {
-						out.println(UtilBobby.REPLICA_DELETE_KO);
+						out.writeObject(UtilBobby.REPLICA_DELETE_KO);
 					}
 				}
 /*
@@ -249,5 +255,6 @@ public class ThreadReplicaServer extends ThreadWorker{
 		}
 		System.out.println("[thread replica server] end");
 		System.out.println();
+		close();
 	}
 }

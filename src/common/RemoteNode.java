@@ -9,16 +9,13 @@ public abstract class RemoteNode {
 
 	private String 	sName;
 	private String 	sIpAddress;
-	@SuppressWarnings("unused")
-	private String 	sInterface;
 	private int 	iPriority;
 	private int 	iPort;
 
-	public RemoteNode(String sName, String sIpAddress, String sInterface, int iPriority, int iPort) {
+	public RemoteNode(String sName, String sIpAddress, int iPriority, int iPort) {
 		super();
 		this.sName 		= sName;
 		this.sIpAddress = sIpAddress;
-		this.sInterface = sInterface;
 		this.iPriority 	= iPriority;
 		this.iPort 		= iPort;
 	}
@@ -28,20 +25,12 @@ public abstract class RemoteNode {
 	}
 
 	public abstract void 	write(File file) throws Exception;
-	
 	public abstract boolean	commitWrite(File file) throws Exception;
-	
 	public abstract boolean	abortWrite(File file) throws Exception;
-	
-	public abstract boolean has(File file) throws Exception;
-	
 	public abstract File 	read(File file) throws Exception;
-	
+	public abstract boolean has(File file) throws Exception;
 	public abstract boolean delete(File file) throws Exception;
 	
-	public abstract boolean addMetadata(File metadata) throws Exception;
-	public abstract boolean deleteMetadata(File metadata) throws Exception;
-
 	public abstract HashMap<String, File> getMetadata() throws Exception;
 	
 	public String getName() {

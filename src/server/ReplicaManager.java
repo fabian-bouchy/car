@@ -5,6 +5,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import server.thread.ThreadReplicaServerDelete;
 import server.thread.ThreadReplicaServerWrite;
 
 import common.ConfigManager;
@@ -97,7 +98,7 @@ public class ReplicaManager {
 				}
 				
 				done += syncer.getSucceedThreads().size();
-				replicasRemaining = replicasNeeded - done - syncer.getFailedThreads().size();
+				replicasRemaining = replicasNeeded - done - syncer.getFailedThreads().size() - syncer.getUnavailableThreads().size();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -160,7 +161,7 @@ public class ReplicaManager {
 		Syncer syncer = new Syncer();
 
 		for (RemoteNode remoteReplica : replicas) {
-			syncer.addThread(new ThreadReplicaServerWrite(remoteReplica, file, syncer));
+			syncer.addThread(new ThreadReplicaServerDelete(remoteReplica, file, syncer));
 		}
 
 		// wait for everybody

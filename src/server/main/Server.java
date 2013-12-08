@@ -1,9 +1,8 @@
 package server.main;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -18,6 +17,18 @@ import common.ConfigManager;
 import common.ConfigManager.ConfigType;
 import common.UtilBobby;
 
+/**
+ *	@author mickey
+ *	
+ *	This is our main server class - we are waiting for connections from clients (both end users and other replicas) and dispatching events.
+ *
+ *	Main threads are (all of them extend the common ThreadWorker class):
+ *		- ThreadWrite (client sends us a file)
+ *		- ThreadRead (client wants a file)
+ *		- ThreadDelete (client wants to delete a file)
+ *		- ThreadReplicaServer (another replica wants to synchronize)
+ *
+ */
 public class Server {
 	
 	public void run(String[] args) throws Exception{
@@ -52,9 +63,11 @@ public class Server {
 	                System.out.println("[Server] Accepted a new connection from " + clientSocket.getInetAddress());
 	                
 	                // create input-output
-	                PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);                   
-	                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-	                String command = in.readLine();
+	                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());  
+	                out.flush();
+	                ObjectInputStream  in  = new ObjectInputStream(clientSocket.getInputStream());
+	                
+	                String command = (String) in.readObject();
 	                
 	                System.out.println("[Server] Received a message: '" + command + "' " + clientSocket.getInetAddress());
 	                

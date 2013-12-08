@@ -3,6 +3,12 @@ package common;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ *	@author mickey
+ *	
+ *	Util class to synchronize threads and wait for all of them to finish
+ *
+ */
 public class Syncer {
 	
 	public enum ThreadResult {
