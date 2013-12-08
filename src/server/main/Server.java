@@ -9,10 +9,10 @@ import java.net.Socket;
 import server.RemoteReplica;
 import server.thread.ThreadDelete;
 import server.thread.ThreadDiscovery;
+import server.thread.ThreadListFiles;
 import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
 import server.thread.ThreadWrite;
-
 import common.ConfigManager;
 import common.ConfigManager.ConfigType;
 import common.UtilBobby;
@@ -90,20 +90,28 @@ public class Server {
 	            	// a client asks to delete a file
 	                } else if (command.equals(UtilBobby.CLIENT_DELETE)){
 
-	                	// instantiate a read thread
+	                	// instantiate a delete thread
 	                	System.out.println("[Server] Initializing a delete thread for " + clientSocket.getInetAddress());
 	            		ThreadDelete thread = new ThreadDelete(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
 
+	            	// a client asks to list his file
+	                } else if (command.contains(UtilBobby.CLIENT_LIST)){
+
+	                	// instantiate a listfile thread
+	                	System.out.println("[Server] Initializing a list file thread for " + clientSocket.getInetAddress());
+	            		ThreadListFiles thread = new ThreadListFiles(serverSocket, clientSocket, out, in, command);
+	            		new Thread(thread).start();
+
 	            	// a client asks to write or update a file
 	                } else{
-	                	
+
 	                	// instantiate a create/update thread
 	                	System.out.println("[Server] Initializing a write thread for " + clientSocket.getInetAddress());
 	            		ThreadWrite thread = new ThreadWrite(serverSocket, clientSocket, out, in);
 	            		new Thread(thread).start();
 	                }
-	                
+
 	            } catch (IOException e) {
 	                System.out.println("Exception caught when trying to listen on port " + me.getPort() + " or listening for a connection");
 	                System.out.println(e.getMessage());

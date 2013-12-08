@@ -155,4 +155,29 @@ public class RemoteServer extends RemoteNode {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public HashMap<String, File> listFiles(String username) throws Exception {
+		System.out.println("[remote server] listing files for " + username);
+		// Initialize the connection:
+		Socket socketToServer  = this.connect();
+		ObjectOutputStream out = new ObjectOutputStream(socketToServer.getOutputStream());
+		ObjectInputStream  in  = new ObjectInputStream(socketToServer.getInputStream());
+
+        out.writeObject(UtilBobby.CLIENT_LIST + UtilBobby.SPLIT_REGEX + username);
+        String answer;
+		try {
+			answer = (String) in.readObject();
+			if(answer.equals(UtilBobby.SERVER_LIST_READY)) {
+				System.out.println("[remote server] anwser : " + answer);
+				HashMap<String, File> metadata = (HashMap<String, File>) in.readObject();
+				return metadata;
+			} else {
+				System.out.println("[remote server] anwser : " + answer);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

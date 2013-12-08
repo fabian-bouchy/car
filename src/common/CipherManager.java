@@ -24,7 +24,11 @@ public class CipherManager {
 		SecretKeyFactory factory;
 		try {
 			factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-			SecretKey tmp = factory.generateSecret(new PBEKeySpec(passPhrase.toCharArray(), salt, iterations, 128));
+			char[] passPhraseCharArray = null;
+			if(passPhrase != null) {
+				passPhraseCharArray =passPhrase.toCharArray();
+			}
+			SecretKey tmp = factory.generateSecret(new PBEKeySpec(passPhraseCharArray, salt, iterations, 128));
 			key = new SecretKeySpec(tmp.getEncoded(), "AES");
 			
 			aes = Cipher.getInstance("AES/ECB/PKCS5Padding");

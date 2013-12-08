@@ -31,9 +31,24 @@ public class Starter {
         	// client mode
         	Client client = new Client();
         	try {
-				client.run(args);
+        		String configname = null;
+        		if(args.length == 4) {
+        			configname = args[3];
+        		}
+				client.run(args[0], args[1], args[2], configname);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }else if((args.length == 2 || args.length == 3) && args[0].equals("ls")){
+        	// client mode
+        	Client client = new Client();
+        	try {
+        		String configname = null;
+        		if(args.length == 3) {
+        			configname = args[2];
+        		}
+				client.run(args[0], null, args[1], configname);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
         }else if((args.length == 1 || args.length == 2 ) && args[0].equals("benchmark")){
@@ -42,6 +57,7 @@ public class Starter {
             System.err.println("Usage:");
             System.err.println("    java -jar bobby.jar server [config.json] [hostname]");
             System.err.println("    java -jar bobby.jar write|read|delete file username [config.json]");
+            System.err.println("    java -jar bobby.jar ls username [config.json]");
             System.err.println("    java -jar bobby.jar benchmark [config.json]");
             System.exit(1);
         }

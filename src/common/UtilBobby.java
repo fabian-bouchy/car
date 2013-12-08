@@ -22,7 +22,11 @@ public class UtilBobby {
 	// Read
 	public final static String CLIENT_READ_SYMBOL	= "read";
 	public final static String CLIENT_READ			= CLIENT + SPLIT_REGEX + CLIENT_READ_SYMBOL;
-	
+
+	// List
+	public final static String CLIENT_LIST_SYMBOL	= "list";
+	public final static String CLIENT_LIST			= CLIENT + SPLIT_REGEX + CLIENT_LIST_SYMBOL;
+
 	/** Server */
 	public final static String SERVER		 		= "server";
 	// Write
@@ -31,6 +35,11 @@ public class UtilBobby {
 	public final static String SERVER_WRITE_READY 		= SERVER_WRITE + SPLIT_REGEX + "ready";
 	public final static String SERVER_WRITE_OK			= SERVER_WRITE + SPLIT_REGEX + "ok";
 	public final static String SERVER_WRITE_KO			= SERVER_WRITE + SPLIT_REGEX + "KO";
+
+	// List
+	public final static String SERVER_LIST_SYMBOL	= "list";
+	public final static String SERVER_LIST 			= SERVER + SPLIT_REGEX + SERVER_LIST_SYMBOL;
+	public final static String SERVER_LIST_READY 	= SERVER_LIST + SPLIT_REGEX + "ready";
 
 	// Has
 	public final static String SERVER_HAS_SYMBOL	= "has";

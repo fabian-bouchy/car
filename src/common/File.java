@@ -179,11 +179,6 @@ public class File implements java.io.Serializable{
 		return fileName;
 	}
 
-	public File getMetadata() {
-		File metadata = new File(this);
-		return metadata;
-	}
-
 	@Override
 	public boolean equals(Object obj) {
 		if(obj == null){

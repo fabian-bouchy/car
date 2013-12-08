@@ -2,40 +2,37 @@ package client.main;
 
 import java.io.Console;
 
-import server.UserManager;
 import client.ServerManager;
 import common.ConfigManager;
 import common.ConfigManager.ConfigType;
 import common.File;
+import server.UserManager;
 
 /**
  * Main class for client side. 
  */
 public class Client {
 	
-	public void run(String[] args) throws Exception{
-		
-		// arguments
-		String cmd = args[0];
-		String fileName = args[1];
-		String username = args[2];
-		
+	public void run(String cmd, String fileName, String userName, String configFile) throws Exception{
 		// client write|get|delete file
 		
 		// initialize the configuration
-		if (args.length == 4){
+		if (configFile != null){
 			// configuration name specified
-			ConfigManager.init(ConfigType.CLIENT, args[3]);
+			ConfigManager.init(ConfigType.CLIENT, configFile);
 		}else{
 			// all default parameters
 			ConfigManager.init(ConfigType.CLIENT);
 		}
-		System.out.println("Enter password for this file:");
-		Console co = System.console();
-		String password = new String(co.readPassword());
+		String password = null;
+		if("write".equals(cmd) || "read".equals(cmd)) {
+			System.out.println("Enter password for this file:");
+			Console co = System.console();
+			password = new String(co.readPassword());
+		}
 		
 		// init the user manager
-		UserManager.init(username, password);
+		UserManager.init(userName, password);
 		
 		long startTime = System.nanoTime();
 		
@@ -54,7 +51,11 @@ public class Client {
 			System.out.println("[client] Reading "+fileName);
 			File file = ServerManager.read(new File(fileName, false));
 			file.writeToFile("read_"+ file.getFileName());
-			
+
+		}else if ("ls".equals(cmd)){
+
+			System.out.println("[client] Listing files owned by " + userName);
+			ServerManager.listFile(userName);
 		}else{
 			
 			System.out.println("[client] Command unknown "+cmd);

@@ -2,6 +2,7 @@ package client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 
 import common.ConfigManager;
 import common.File;
@@ -70,6 +71,31 @@ public class ServerManager {
 			}
 		}
 		
+		System.out.println("[server manager] No servers available");
+	}
+
+	public static void listFile(String username) {
+
+		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
+
+			currentServer = (RemoteServer) server;
+			System.out.println("[server manager] Trying " + currentServer + " ... ");
+			try{
+				HashMap<String, File> userMetadata = currentServer.listFiles(username);
+				if(userMetadata != null) {
+					for (File metadata: userMetadata.values()) {
+						System.out.println(metadata);
+					}
+				} else {
+					System.out.println("No files found for " + username);
+				}
+				return;
+			}catch(Exception e){
+				// server doesn't respond, try another one
+				System.out.println("Error connecting to server: " + e);
+			}
+		}
+
 		System.out.println("[server manager] No servers available");
 	}
 }

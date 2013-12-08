@@ -27,6 +27,21 @@ public class FileManager {
 		return files;
 	}
 	
+	public static synchronized HashMap<String, File> getMetadataByUsername(String username) {
+		HashMap<String, File> tmp = new HashMap<String, File>();
+		for (File file : metadata.values()) {
+			if(file.getId().startsWith(username + UtilBobby.SPLIT_REGEX)) {
+				tmp.put(file.getId(), file);
+			}
+		}
+		for (File file : files.values()) {
+			if(file.getId().startsWith(username + UtilBobby.SPLIT_REGEX)) {
+				tmp.put(file.getId(), file);
+			}
+		}
+		return tmp;
+	}
+
 	public static synchronized File getFileOrMetadata(String id){
 		if (files.get(id) != null){
 			return files.get(id);
@@ -52,7 +67,7 @@ public class FileManager {
 		if (file.isFile()){
 			files.put(file.getId(), file);
 			System.out.println(represent());
-		}else{
+		} else {
 			metadata.put(file.getId(), file);
 			System.out.println(representMetadata());
 		}

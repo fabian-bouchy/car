@@ -199,4 +199,9 @@ public class RemoteReplica extends RemoteNode{
 		
 		return null;
 	}
+
+	@Override
+	public HashMap<String, File> listFiles(String username) throws Exception {
+		return null;
+	}
 }
