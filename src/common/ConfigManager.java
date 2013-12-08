@@ -23,8 +23,8 @@ public class ConfigManager {
 	}
 
 	private static final String DEFAULT_CONFIG_FILE_NAME = "config.json";
-	private static final int N = 3;
-	private static final int K = 1;
+	private static int N = 3;
+	private static int K = 1;
 
 	private static HashMap<String, RemoteNode> serversMap;
 	private static ArrayList<RemoteNode> serversList;
@@ -100,6 +100,8 @@ public class ConfigManager {
 		// prepare JSON
 		JSONTokener jsonTokener = new JSONTokener(new FileInputStream(sConfigFile));
 		JSONObject jsonFile = new JSONObject(jsonTokener);
+		K = jsonFile.getInt("K");
+		System.out.println("[ConfigManager] K read: " + K);
 		JSONArray jsonArrayReplicas = jsonFile.getJSONArray("replicas");
 
 		// Extract data and create local configuration
@@ -147,8 +149,8 @@ public class ConfigManager {
 			throw new Exception(
 					"[config manager] Error - client could not find any servers");
 		}
-
-		System.out.println("[config manager] initialized with " + serversMap.size() + " hosts");
+		N = serversMap.size() + 1;
+		System.out.println("[config manager] initialized with " + serversMap.size() + " hosts. So N=" + N + " and K=" + K );
 	}
 	
 	public static RemoteNode getMe() {
