@@ -20,7 +20,7 @@ public class Benchmark {
 	private static final int[] fileSizes = {50, 100, 500, 1000, 5000, 25000};
 	private static final String outputPath = "./tmp/test_files";
 	private static final String testFilePrefix = outputPath + "/test_";
-	private static final String outputFilePrefix = outputPath + "/output_";
+	private static final String outputFilePrefix = "./tmp/output_";
 	private static final String outputFileExtension = ".csv";
 	private static final String testFileExtension = ".txt";
 
@@ -98,7 +98,7 @@ public class Benchmark {
 		// Prepare output file
 		log("-------------- Test write -----------------");
 		// Header
-		log("size(kB);time(ns);bandwidth(MB/s)");
+		log("size(kb);time(ns);bandwidth(MB/s)");
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, true);
@@ -107,7 +107,7 @@ public class Benchmark {
 				long startTime = System.nanoTime();
 				ServerManager.write(file);
 				long elapsedTime = System.nanoTime() - startTime;
-				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0);
+				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0)*8;
 				// end
 				log(size + ";" + elapsedTime + ";" + bandwidth);
 			} catch (UnknownHostException e) {
@@ -123,7 +123,7 @@ public class Benchmark {
 	private static void updateTest() {
 		log("-------------- Test Update -----------------");
 		// Header
-		log("size(kB);time(ns);bandwidth(MB/s)");
+		log("size(kb);time(ns);bandwidth(MB/s)");
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, true);
@@ -131,7 +131,7 @@ public class Benchmark {
 				long startTime = System.nanoTime();
 				ServerManager.write(file);
 				long elapsedTime = System.nanoTime() - startTime;
-				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0);
+				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0)*8;
 				// end
 				log(size + ";" + elapsedTime + ";" + bandwidth);
 			} catch (UnknownHostException e) {
@@ -147,7 +147,7 @@ public class Benchmark {
 	private static void readTest() {
 		log("-------------- Test Read -----------------");
 		// Header
-		log("size(kB);time(ns);bandwidth(MB/s)");
+		log("size(kb);time(ns);bandwidth(MB/s)");
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
@@ -155,7 +155,7 @@ public class Benchmark {
 				long startTime = System.nanoTime();
 				ServerManager.read(file);
 				long elapsedTime = System.nanoTime() - startTime;
-				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0);
+				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0)*8;
 				// end
 				log(size + ";" + elapsedTime + ";" + bandwidth);
 			} catch (UnknownHostException e) {
@@ -171,7 +171,7 @@ public class Benchmark {
 	private static void deleteTest() {
 		log("-------------- Test Delete -----------------");
 		// Header
-		log("size(kB);time(ns)");
+		log("size(kb);time(ns)");
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
