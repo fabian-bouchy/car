@@ -12,11 +12,18 @@ import common.File;
 import common.RemoteNode;
 import common.UtilBobby;
 
+/**
+ * High-level representation of a remote replica.
+ * The remote replica represent nodes reach by the remote server to replica for example.
+ */
 public class RemoteReplica extends RemoteNode{
 	public RemoteReplica(String sName, String sIpAddress, int iPriority, int iPort) {
 		super(sName, sIpAddress, iPriority, iPort);
 	}
 
+	/**
+	 * Write in replication context or in update metadata.
+	 */
 	public void write(File file) throws UnknownHostException, IOException{
 
 		// Initialize the connection:
@@ -50,11 +57,15 @@ public class RemoteReplica extends RemoteNode{
 				throw new IOException();
 			}
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[remote replica] Replication failed: " + e.getLocalizedMessage());
 		}
 		
 	}
 
+	/**
+	 * Return if the current replica owned the request file.
+	 */
+	@Override
 	public boolean has(File metadata) throws UnknownHostException, IOException{
 		System.out.println("[RemoteReplica - has] " + metadata + "?");
 		
@@ -71,13 +82,15 @@ public class RemoteReplica extends RemoteNode{
 		try {
 			answer = ((String) in.readObject()).equals(UtilBobby.ANSWER_TRUE);
 			System.out.println("[RemoteReplica - has] " + answer );
-			return answer;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[remote replica] has failed: " + e.getLocalizedMessage());
 		}
 		return answer;
 	}
 
+	/**
+	 * Commit the replication in case all other replicas are also ready to commit.
+	 */
 	@Override
 	public boolean commitWrite(File file) throws UnknownHostException, IOException{
 		// Initialize the connection:
@@ -92,13 +105,15 @@ public class RemoteReplica extends RemoteNode{
 		try {
 			answer = ((String) in.readObject()).equals(UtilBobby.REPLICA_TRANSACTION_COMMITED);
 			System.out.println("[RemoteReplica - has] " + answer );
-			return answer;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[RemoteReplica - has] failed " + e.getLocalizedMessage());
 		}
 		return answer;
 	}
 
+	/**
+	 * Abort the replication in case one or all other replicas failed to write the file.
+	 */
 	@Override
 	public boolean abortWrite(File file) throws UnknownHostException, IOException {
 		// Initialize the connection:
@@ -112,14 +127,17 @@ public class RemoteReplica extends RemoteNode{
 		boolean answer = false;
 		try {
 			answer = ((String) in.readObject()).equals(UtilBobby.REPLICA_TRANSACTION_ABORTED);
-			System.out.println("[RemoteReplica - has] " + answer );
-			return answer;
+			System.out.println("[RemoteReplica - abortWrite] " + answer );
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[RemoteReplica - abortWrite] failed " + e.getLocalizedMessage());
 		}
 		return answer;
 	}
 
+	/**
+	 * Return if the delete action succeed.
+	 */
+	@Override
 	public boolean delete(File file)throws UnknownHostException, IOException{
 		// Initialize the connection:
 		Socket socketToServer  = this.connect();
@@ -134,13 +152,16 @@ public class RemoteReplica extends RemoteNode{
 			String text = ((String) in.readObject());
 			answer = text.equals(UtilBobby.REPLICA_DELETE_OK) || text.equals(UtilBobby.REPLICA_DELETE_NOT_FOUND);
 			System.out.println("[RemoteReplica - has] " + answer );
-			return answer;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[RemoteReplica - delete] failed " + e.getLocalizedMessage());
 		}
 		return answer;
 	}
 
+	/**
+	 * Return metadata representing the network state.
+	 */
+	@Override
 	public HashMap<String, File> getMetadata() throws UnknownHostException, IOException, ClassNotFoundException {
 		// Initialize the connection:
 		Socket socketToServer  = this.connect();
@@ -159,25 +180,22 @@ public class RemoteReplica extends RemoteNode{
 					System.out.println("[remote replica] metadata sent");
 					return metadata;
 				} catch (Exception e){
-					System.out.println("[remote replica] error readObject!");
 					out.writeObject(UtilBobby.REPLICA_METADATA_KO);
-					e.printStackTrace();
-					return null;
+					System.out.println("[remote replica] error readObject! " + e.getLocalizedMessage());
 				}
 			}else{
 				System.out.println("[remote replica] replica not ready to metadata!");
-				throw new IOException();
 			}
 		} catch(IOException e) {
-			e.printStackTrace();
-			return null;
+			System.out.println("[RemoteReplica - getMetadata] failed " + e.getLocalizedMessage());
 		}
+		return null;
 	}
 
-	public String toString(){
-		return "[remote replica] ("+this.getPriority()+") "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
-	}
-
+	/**
+	 * Read file in another replica.
+	 * Use to retreive a correcte network state.
+	 */
 	@Override
 	public File read(File file) throws UnknownHostException, IOException {
 		// Initialize the connection:
@@ -192,12 +210,15 @@ public class RemoteReplica extends RemoteNode{
 			socketToServer.close();
 			return input;
 		} catch(IOException e) {
-			e.printStackTrace();
+			System.out.println("[RemoteReplica - read] failed " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[RemoteReplica - read] failed " + e.getLocalizedMessage());
 		}
-		
 		return null;
+	}
+
+	public String toString(){
+		return "[remote replica] ("+this.getPriority()+") "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
 	}
 
 	@Override

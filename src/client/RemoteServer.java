@@ -13,7 +13,8 @@ import common.RemoteNode;
 import common.UtilBobby;
 
 /**
- *	High-level representation of a replica server
+ * High-level representation of a remote server.
+ * The remote server represent the node reach by the client.
  */
 public class RemoteServer extends RemoteNode {
 
