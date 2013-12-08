@@ -23,9 +23,9 @@ public class ThreadDiscovery implements Runnable {
 		
 		int K = ConfigManager.getK();
 		
-		HashMap<File, Integer> files = new HashMap<>();
-		HashMap<File, Integer> metadata = new HashMap<>();
-		HashMap<File, RemoteReplica> where = new HashMap<>();
+		HashMap<File, Integer> files = new HashMap<File, Integer>();
+		HashMap<File, Integer> metadata = new HashMap<File, Integer>();
+		HashMap<File, RemoteReplica> where = new HashMap<File, RemoteReplica>();
 		
 		
 		// discover files on the network
