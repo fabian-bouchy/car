@@ -11,6 +11,10 @@ import common.File;
 import common.FileManager;
 import common.UtilBobby;
 
+/**
+ * Thread to answer to the ListFiles session in the server.
+ * Send to the server the metadata files list associate to an user. 
+ */
 public class ThreadListFiles extends ThreadWorker{
 	private String username;
 

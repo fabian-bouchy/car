@@ -8,6 +8,11 @@ import common.RemoteNode;
 import common.Syncer;
 import common.Syncer.ThreadResult;
 
+/**
+ * Thread to answer to the write replicate session in a replica.
+ * Persiste the file in the replica memory.
+ * Send to the server a message to indicate if the process succeed or failed. 
+ */
 public class ThreadReplicaServerWrite implements Runnable {
 	private File file;
 	private RemoteNode remoteReplica;

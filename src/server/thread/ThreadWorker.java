@@ -8,6 +8,9 @@ import java.net.Socket;
 
 import server.ReplicaManager;
 
+/**
+ * Abstract class to initiate thread sessions.
+ */
 public abstract class ThreadWorker implements Runnable{
 
 	protected Socket clientSocket;
@@ -24,7 +27,8 @@ public abstract class ThreadWorker implements Runnable{
 		this.in = in;
 		this.replicaManager = new ReplicaManager();
 	}
-	
+
+	// Close all streams and the connection.
 	public void close(){
 		try {
 			in.close();

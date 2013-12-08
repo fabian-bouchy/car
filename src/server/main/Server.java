@@ -18,8 +18,6 @@ import common.ConfigManager.ConfigType;
 import common.UtilBobby;
 
 /**
- *	@author mickey
- *	
  *	This is our main server class - we are waiting for connections from clients (both end users and other replicas) and dispatching events.
  *
  *	Main threads are (all of them extend the common ThreadWorker class):
@@ -131,7 +129,7 @@ public class Server {
 	            }
 			}
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			System.out.println("[Server] Erreur creating server socket " + e1.getLocalizedMessage());
 		}
 	}
 }

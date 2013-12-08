@@ -11,6 +11,10 @@ import common.File;
 import common.FileManager;
 import common.UtilBobby;
 
+/**
+ * Thread to answer to the write/update sessions in the server side.
+ * Receive and start replica sessions to replicate the file.
+ */
 public class ThreadWrite extends ThreadWorker{
 
 	public ThreadWrite(ServerSocket serverSocket, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in){

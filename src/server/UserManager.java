@@ -2,7 +2,10 @@ package server;
 
 import common.CipherManager;
 
-
+/**
+ * Abstract the managment of users.
+ * Store some useful information about the current user: username, cypherManager etc..
+ */
 public class UserManager {
 	
 	private UserManager(){}

@@ -5,6 +5,10 @@ import common.RemoteNode;
 import common.Syncer;
 import common.Syncer.ThreadResult;
 
+/**
+ * Thread to answer to the delete session in a replica.
+ * Send to the server a message to indicate if the process succeed or failed. 
+ */
 public class ThreadReplicaServerDelete implements Runnable {
 
 	private File file;

@@ -11,6 +11,10 @@ import common.FileManager;
 import common.RemoteNode;
 import common.UtilBobby;
 
+/**
+ * Thread to answer to the read session in the server.
+ * Send to the server the file read or an error message when it's not found. 
+ */
 public class ThreadRead extends ThreadWorker{
 	public ThreadRead(ServerSocket serverSocket, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in){
 		super(serverSocket, clientSocket, out, in);
@@ -54,9 +58,9 @@ public class ThreadRead extends ThreadWorker{
 				close();
 			}
 		} catch (IOException e )  {
-			e.printStackTrace();
+			System.out.println("[thread read] read failed: " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[thread read] read failed: " + e.getLocalizedMessage());
 		}
 	}
 }

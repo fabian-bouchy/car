@@ -10,6 +10,9 @@ import common.File;
 import common.FileManager;
 import common.UtilBobby;
 
+/**
+ * Use with a delete session. 
+ */
 public class ThreadDelete extends ThreadWorker{
 
 	public ThreadDelete(ServerSocket serverSocket, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in){
@@ -41,14 +44,14 @@ public class ThreadDelete extends ThreadWorker{
 				return;
 			}
 		} catch (IOException e )  {
-			e.printStackTrace();
+			System.out.println("[Server] delete failed: " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[Server] delete failed: " + e.getLocalizedMessage());
 		}
 		try {
 			out.writeObject(UtilBobby.SERVER_DELETE_KO);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println("[Server] delete send message failed: " + e.getLocalizedMessage());
 		}
 	}
 }

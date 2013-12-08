@@ -11,6 +11,10 @@ import common.File;
 import common.FileManager;
 import common.RemoteNode;
 
+/**
+ * Failure recovery. Start with the server. It's the first action done.
+ * Collect metadata and find which file need to be replicate in this current replica.  
+ */
 public class ThreadDiscovery implements Runnable {
 	
 	public ThreadDiscovery() {

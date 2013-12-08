@@ -14,11 +14,10 @@ import common.RemoteNode;
 import common.UtilBobby;
 
 /**
- *	@author mickey
  *	This thread is called when another replica calls this one to ask to do something (synchronization).
  *	It is reading the command, and executing it without any questions.
  *
- *	For parallel actions, I am using:
+ *	For parallel actions, it's using:
  *		- ThreadReplicaServerWrite (for	write and update actions)
  *		- ThreadReplicaServerDelete (yes, you guessed it, for deleting)
  *

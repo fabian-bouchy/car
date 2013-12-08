@@ -13,6 +13,10 @@ import common.File;
 import common.RemoteNode;
 import common.Syncer;
 
+/**
+ * Manage replicas.
+ * For example, abstract the file replication by providing simple methods.
+ */
 public class ReplicaManager {
 	
 	private ArrayList<RemoteNode> replicas;
@@ -100,7 +104,7 @@ public class ReplicaManager {
 				done += syncer.getSucceedThreads().size();
 				replicasRemaining = replicasNeeded - done - syncer.getFailedThreads().size() - syncer.getUnavailableThreads().size();
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				System.out.println("[ReplicaManager] thread interrupted: " + e.getLocalizedMessage());
 			}
 		}
 		System.out.println("[replica manager] replicate files done");
@@ -180,6 +184,11 @@ public class ReplicaManager {
 		return false;
 	}
 
+	/**
+	 * Find the first remoteNode with the file requested.
+	 * @param file The request file / metadata.
+	 * @return The remote node.
+	 */
 	public RemoteNode has(File file){
 		for (RemoteNode remoteReplica : replicas) {
 			try {
