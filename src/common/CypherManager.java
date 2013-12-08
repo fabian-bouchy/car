@@ -17,12 +17,12 @@ import javax.crypto.spec.SecretKeySpec;
  * Tool to encrypt and decrypt files. Create and store the key.
  * Use the symetric process.
  */
-public class CipherManager {
+public class CypherManager {
 	
 	private Cipher aes;
 	private SecretKeySpec key;
 	
-	public CipherManager(String passPhrase, String saltIn) {
+	public CypherManager(String passPhrase, String saltIn) {
 		byte[] salt = saltIn.getBytes();
 		int iterations = 1000;
 		// Create the key based on passPhrase(=password) and a salt to encrypt and decrypt files.

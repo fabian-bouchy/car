@@ -19,12 +19,11 @@ public class Starter {
         	try {
 				server.run(args);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         
         // client mode
-        }else if((args.length == 3 || args.length == 4) && (args[0].equals("write") || args[0].equals("get") || args[0].equals("delete")  || args[0].equals("read"))){
+        }else if((args.length == 3 || args.length == 4) && (args[0].equals("write") || args[0].equals("compress") || args[0].equals("delete")  || args[0].equals("read"))){
         	// client mode
         	Client client = new Client();
         	try {
@@ -53,7 +52,7 @@ public class Starter {
         }else{
             System.err.println("Usage:");
             System.err.println("    java -jar bobby.jar server [config.json] [hostname]");
-            System.err.println("    java -jar bobby.jar write|read|delete file username [config.json]");
+            System.err.println("    java -jar bobby.jar write/compress|read|delete file username [config.json]");
             System.err.println("    java -jar bobby.jar ls username [config.json]");
             System.err.println("    java -jar bobby.jar benchmark [config.json]");
             System.exit(1);
