@@ -13,6 +13,10 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * Tool to encrypt and decrypt files. Create and store the key.
+ * Use the symetric process.
+ */
 public class CipherManager {
 	
 	private Cipher aes;
@@ -21,6 +25,7 @@ public class CipherManager {
 	public CipherManager(String passPhrase, String saltIn) {
 		byte[] salt = saltIn.getBytes();
 		int iterations = 1000;
+		// Create the key based on passPhrase(=password) and a salt to encrypt and decrypt files.
 		SecretKeyFactory factory;
 		try {
 			factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
@@ -41,6 +46,9 @@ public class CipherManager {
 		}
 	}
 
+	/**
+	 * Encrypt clear bytes.
+	 */
 	public byte[] encrypt(byte[] clearBytes) {
 		System.out.println("[Crypto] encrypting...");
 		try {
@@ -55,7 +63,10 @@ public class CipherManager {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Decrypt cyphered bytes.
+	 */
 	public byte[] decrypt(byte[] cypherBytes) {
 		System.out.println("[Crypto] decrypting...");
 		try {
