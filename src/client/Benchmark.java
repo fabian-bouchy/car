@@ -14,9 +14,13 @@ import server.UserManager;
 import common.ConfigManager;
 import common.ConfigManager.ConfigType;
 
+/**
+ * @class Benchmark
+ * Use to benchmark the project. Provide tests for Write/Update/Read with
+ * different size files.
+ */
 public class Benchmark {
-
-	// In kb unit
+	// Benchmark configuration: file size in kb unit.
 	private static final int[] fileSizes = {50, 100, 500, 1000, 5000, 25000};
 	private static final String outputPath = "./tmp/test_files";
 	private static final String testFilePrefix = outputPath + "/test_";
@@ -73,6 +77,10 @@ public class Benchmark {
 		}
 	}
 
+	/**
+	 * Main function, start test procedure.
+	 * Init() should be called before.
+	 */
 	public static void startTest() {
 		currentOutputLogFile = new File(outputFilePrefix + Math.random() + outputFileExtension);
 		try {
@@ -99,6 +107,7 @@ public class Benchmark {
 		log("-------------- Test write -----------------");
 		// Header
 		log("size(kb);time(ns);bandwidth(MB/s)");
+		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, true);
@@ -124,6 +133,7 @@ public class Benchmark {
 		log("-------------- Test Update -----------------");
 		// Header
 		log("size(kb);time(ns);bandwidth(MB/s)");
+		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, true);
@@ -148,6 +158,7 @@ public class Benchmark {
 		log("-------------- Test Read -----------------");
 		// Header
 		log("size(kb);time(ns);bandwidth(MB/s)");
+		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
@@ -172,6 +183,7 @@ public class Benchmark {
 		log("-------------- Test Delete -----------------");
 		// Header
 		log("size(kb);time(ns)");
+		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
 				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
@@ -189,7 +201,11 @@ public class Benchmark {
 			}
 		}
 	}
-	
+
+	/**
+	 * Use to add line in the output file
+	 * @param line Input line.
+	 */
 	private static void log(String line) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputLogFile, true));
@@ -200,7 +216,10 @@ public class Benchmark {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * Display in the console the output file content.
+	 */
 	private static void displayResult() {
 		System.out.println();
 		System.out.println("Test results:");
