@@ -12,6 +12,10 @@ import org.json.JSONTokener;
 import server.RemoteReplica;
 import client.RemoteServer;
 
+/**
+ * Static class to configure the file system.
+ * Read config file and instanciate RemoteNode.
+ */
 public class ConfigManager {
 
 	public enum ConfigType {
