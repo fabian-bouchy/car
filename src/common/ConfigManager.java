@@ -26,6 +26,26 @@ public class ConfigManager {
 	private static ArrayList<RemoteNode> serversList;
 	private static RemoteNode sMe;
 	private static String sHostName;
+	
+	private static boolean isAvailable;
+	private static final Object isAvailableLock = new Object();
+	
+	public static boolean isAvailable(){
+		synchronized (isAvailableLock) {			
+			return isAvailable;
+		}
+	}
+	
+	public static void setIsAvailable(boolean value){
+		synchronized (isAvailableLock) {
+			if (value){
+				System.out.println("[config manager] user writes unlocked");
+			}else{
+				System.out.println("[config manager] user writes locked");
+			}
+			isAvailable = value;
+		}
+	}
 
 	static {
 		serversMap = new HashMap<String, RemoteNode>();

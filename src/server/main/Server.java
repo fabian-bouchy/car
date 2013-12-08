@@ -79,38 +79,51 @@ public class Server {
 	            		ThreadReplicaServer thread = new ThreadReplicaServer(serverSocket, clientSocket, out, in, command);
 	            		new Thread(thread).start();
 	            	
-	            	// a client asks to read a file
-	                } else if (command.equals(UtilBobby.CLIENT_READ)){
+	                }else{
 	                	
-	                	// instantiate a read thread
-	                	System.out.println("[Server] Initializing a read thread for " + clientSocket.getInetAddress());
-	            		ThreadRead thread = new ThreadRead(serverSocket, clientSocket, out, in);
-	            		new Thread(thread).start();
-
-	            	// a client asks to delete a file
-	                } else if (command.equals(UtilBobby.CLIENT_DELETE)){
-
-	                	// instantiate a delete thread
-	                	System.out.println("[Server] Initializing a delete thread for " + clientSocket.getInetAddress());
-	            		ThreadDelete thread = new ThreadDelete(serverSocket, clientSocket, out, in);
-	            		new Thread(thread).start();
-
-	            	// a client asks to list his file
-	                } else if (command.contains(UtilBobby.CLIENT_LIST)){
-
-	                	// instantiate a listfile thread
-	                	System.out.println("[Server] Initializing a list file thread for " + clientSocket.getInetAddress());
-	            		ThreadListFiles thread = new ThreadListFiles(serverSocket, clientSocket, out, in, command);
-	            		new Thread(thread).start();
-
-	            	// a client asks to write or update a file
-	                } else{
-
-	                	// instantiate a create/update thread
-	                	System.out.println("[Server] Initializing a write thread for " + clientSocket.getInetAddress());
-	            		ThreadWrite thread = new ThreadWrite(serverSocket, clientSocket, out, in);
-	            		new Thread(thread).start();
-	                }
+	                	// if we are accepting the user connections
+	                	if (ConfigManager.isAvailable()){
+		                	
+			            	// a client asks to read a file
+			                if (command.equals(UtilBobby.CLIENT_READ)){
+			                	
+			                	// instantiate a read thread
+			                	System.out.println("[Server] Initializing a read thread for " + clientSocket.getInetAddress());
+			            		ThreadRead thread = new ThreadRead(serverSocket, clientSocket, out, in);
+			            		new Thread(thread).start();
+		
+			            	// a client asks to delete a file
+			                } else if (command.equals(UtilBobby.CLIENT_DELETE)){
+		
+			                	// instantiate a delete thread
+			                	System.out.println("[Server] Initializing a delete thread for " + clientSocket.getInetAddress());
+			            		ThreadDelete thread = new ThreadDelete(serverSocket, clientSocket, out, in);
+			            		new Thread(thread).start();
+		
+			            	// a client asks to list his file
+			                } else if (command.contains(UtilBobby.CLIENT_LIST)){
+		
+			                	// instantiate a listfile thread
+			                	System.out.println("[Server] Initializing a list file thread for " + clientSocket.getInetAddress());
+			            		ThreadListFiles thread = new ThreadListFiles(serverSocket, clientSocket, out, in, command);
+			            		new Thread(thread).start();
+		
+			            	// a client asks to write or update a file
+			                } else{
+		
+			                	// instantiate a create/update thread
+			                	System.out.println("[Server] Initializing a write thread for " + clientSocket.getInetAddress());
+			            		ThreadWrite thread = new ThreadWrite(serverSocket, clientSocket, out, in);
+			            		new Thread(thread).start();
+			                }
+	                	}else{
+	                		
+	                		// user operations are locked, refuse the connection
+	                		in.close();
+	                		out.close();
+	                		clientSocket.close();
+	                	}
+		        }
 
 	            } catch (IOException e) {
 	                System.out.println("Exception caught when trying to listen on port " + me.getPort() + " or listening for a connection");
