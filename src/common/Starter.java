@@ -19,7 +19,7 @@ public class Starter {
         	try {
 				server.run(args);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				System.out.println("[Starter] Server crashed! ");
 				e.printStackTrace();
 			}
         
@@ -34,6 +34,7 @@ public class Starter {
         		}
 				client.run(args[0], args[1], args[2], configname);
 			} catch (Exception e) {
+				System.out.println("[Starter] Client crashed! ");
 				e.printStackTrace();
 			}
         }else if((args.length == 2 || args.length == 3) && args[0].equals("ls")){
@@ -46,6 +47,7 @@ public class Starter {
         		}
 				client.run(args[0], null, args[1], configname);
 			} catch (Exception e) {
+				System.out.println("[Starter] Client crashed! ");
 				e.printStackTrace();
 			}
         }else if((args.length == 1 || args.length == 2 ) && args[0].equals("benchmark")){
