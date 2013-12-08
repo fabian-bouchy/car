@@ -3,20 +3,17 @@
 		{
 			"name"		: "host1",
 			"ip"		: "127.0.0.1",
-			"port"		: 7771,
-			"interface"	: "lo0"
+			"port"		: 7771
 		},
 		{
 			"name"		: "host2",
 			"ip"		: "127.0.0.1",
-			"port"		: 7772,
-			"interface"	: "lo0"
+			"port"		: 7772
 		},
 		{
 			"name"		: "host3",
 			"ip"		: "127.0.0.1",
-			"port"		: 7773,
-			"interface"	: "lo0"
+			"port"		: 7773
 		}
 	],
 	"K":1
