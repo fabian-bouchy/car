@@ -149,8 +149,13 @@ public class ConfigManager {
 			throw new Exception(
 					"[config manager] Error - client could not find any servers");
 		}
-		N = serversMap.size() + 1;
-		System.out.println("[config manager] initialized with " + serversMap.size() + " hosts. So N=" + N + " and K=" + K );
+		if (configType == ConfigType.CLIENT){
+			N = serversMap.size();
+			System.out.println("[config manager] initialized client with " + N + " servers");
+		}else{
+			N = serversMap.size() + 1;
+			System.out.println("[config manager] initialized server with " + serversMap.size() + " replicas. N=" + N + " and K=" + K + ".");
+		}
 	}
 	
 	public static RemoteNode getMe() {

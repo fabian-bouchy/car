@@ -1,10 +1,13 @@
 package common;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.concurrent.Semaphore;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import server.UserManager;
 
@@ -24,7 +27,7 @@ public class File implements java.io.Serializable{
 
 	private Semaphore lock;
 
-	public File(String fileName, boolean init) throws IOException {
+	public File(String fileName, boolean init, boolean zip) throws IOException {
 		
 		// lock on the file
 		this.lock = new Semaphore(1);
@@ -48,6 +51,16 @@ public class File implements java.io.Serializable{
 			this.size = f.length();
 			this.data = new byte[(int) f.length()];
 			f.read(this.data);
+			
+			// zip and change it's name/id
+			if (zip){
+				byte[] zipped = zipBytes(this.fileName, this.data);
+				this.data = zipped;
+				this.size = zipped.length;
+				this.fileName += ".zip";
+				this.id = UserManager.getUsername() + UtilBobby.SPLIT_FILE + this.fileName;
+			}
+			
 			// Encrypt
 			this.data = UserManager.getCypherManager().encrypt(this.data);
 			f.close();
@@ -186,6 +199,18 @@ public class File implements java.io.Serializable{
 
 	public String getFileName() {
 		return fileName;
+	}
+	
+	public static byte[] zipBytes(String filename, byte[] input) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ZipOutputStream zos = new ZipOutputStream(baos);
+		ZipEntry entry = new ZipEntry(filename);
+		entry.setSize(input.length);
+		zos.putNextEntry(entry);
+		zos.write(input);
+		zos.closeEntry();
+		zos.close();
+		return baos.toByteArray();
 	}
 
 	@Override

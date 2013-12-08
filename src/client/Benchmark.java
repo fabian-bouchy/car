@@ -110,7 +110,7 @@ public class Benchmark {
 		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
-				common.File file = new common.File(testFilePrefix + size + testFileExtension, true);
+				common.File file = new common.File(testFilePrefix + size + testFileExtension, true, false);
 				System.out.println(file);
 				// start
 				long startTime = System.nanoTime();
@@ -136,7 +136,7 @@ public class Benchmark {
 		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
-				common.File file = new common.File(testFilePrefix + size + testFileExtension, true);
+				common.File file = new common.File(testFilePrefix + size + testFileExtension, true, false);
 				System.out.println(file);
 				long startTime = System.nanoTime();
 				ServerManager.write(file);
@@ -161,7 +161,7 @@ public class Benchmark {
 		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
-				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
+				common.File file = new common.File(testFilePrefix + size + testFileExtension, false, false);
 				System.out.println(file);
 				long startTime = System.nanoTime();
 				ServerManager.read(file);
@@ -186,7 +186,7 @@ public class Benchmark {
 		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
-				common.File file = new common.File(testFilePrefix + size + testFileExtension, false);
+				common.File file = new common.File(testFilePrefix + size + testFileExtension, false, false);
 				System.out.println(file);
 				long startTime = System.nanoTime();
 				ServerManager.delete(file);

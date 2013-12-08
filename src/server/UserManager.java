@@ -1,9 +1,9 @@
 package server;
 
-import common.CipherManager;
+import common.CypherManager;
 
 /**
- * Abstract the managment of users.
+ * Abstract the management of users.
  * Store some useful information about the current user: username, cypherManager etc..
  */
 public class UserManager {
@@ -12,18 +12,18 @@ public class UserManager {
 
 	private static String username;
 
-	private static CipherManager cypherManager;
+	private static CypherManager cypherManager;
 
 	public static void init(String name, String passPhrase) throws Exception {
 		username = name;
-		cypherManager = new CipherManager(passPhrase, "this is a very lovely salt, my dear!");
+		cypherManager = new CypherManager(passPhrase, "this is a very lovely salt, my dear!");
 	}
 
 	public static String getUsername() {
 		return username;
 	}
 
-	public static CipherManager getCypherManager() {
+	public static CypherManager getCypherManager() {
 		return cypherManager;
 	}
 }
