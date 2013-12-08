@@ -30,7 +30,7 @@ public class File implements java.io.Serializable{
 		
 		// fill in fields
 		this.fileName = fileName;
-		this.id = UserManager.getUsername()+"_"+fileName;
+		this.id = UserManager.getUsername() + UtilBobby.SPLIT_REGEX + fileName;
 		this.size = 0;
 		this.version = new int[ConfigManager.getN()];
 		this.data = null;
@@ -42,7 +42,7 @@ public class File implements java.io.Serializable{
 			
 			java.io.File file = new java.io.File(fileName);
 			this.fileName = file.getName();
-			this.id = UserManager.getUsername()+"_"+this.fileName;
+			this.id = UserManager.getUsername() + UtilBobby.SPLIT_REGEX + this.fileName;
 			
 			this.size = f.length();
 			this.data = new byte[(int) f.length()];
