@@ -14,7 +14,7 @@ import server.UserManager;
 public class Client {
 	
 	public void run(String cmd, String fileName, String userName, String configFile) throws Exception{
-		// client write|get|delete file
+		// client write|get|delete file or listfiles
 		
 		// initialize the configuration
 		if (configFile != null){
@@ -24,6 +24,8 @@ public class Client {
 			// all default parameters
 			ConfigManager.init(ConfigType.CLIENT);
 		}
+
+		// Ask the password if it's needed
 		String password = null;
 		if("write".equals(cmd) || "read".equals(cmd)) {
 			System.out.println("Enter password for this file:");
@@ -56,10 +58,12 @@ public class Client {
 
 			System.out.println("[client] Listing files owned by " + userName);
 			ServerManager.listFile(userName);
+			
 		}else{
 			
 			System.out.println("[client] Command unknown "+cmd);
 		}
+
 		long elapsedTime = System.nanoTime() - startTime;
 		System.out.println("[client] Done in "+ ((double)elapsedTime / 1000000000.0) + " seconds");
 	}
