@@ -20,6 +20,7 @@ public class ThreadDiscovery implements Runnable {
 	@Override
 	public void run() {
 		System.out.println("[ThreadDiscovery] run");
+		ConfigManager.setIsAvailable(false);
 		
 		int K = ConfigManager.getK();
 		
@@ -99,5 +100,8 @@ public class ThreadDiscovery implements Runnable {
 			System.out.print("[ThreadDiscovery] Adding meta-data " + entry.getKey());
 			FileManager.addOrReplaceFile(entry.getKey());
 		}
+		
+		System.out.println("[ThreadDiscovery] finished");
+		ConfigManager.setIsAvailable(true);
 	}
 }
