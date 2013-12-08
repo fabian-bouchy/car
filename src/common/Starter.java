@@ -5,11 +5,8 @@ import client.main.Client;
 import server.main.Server;
 
 /**
- *	@author mickey
- *
  *	The main function. Reads the command line arguments, and sets up classes to become a server or a client,
  *	when it grows up. It likes cookies and never refuses one.
- *
  */
 public class Starter {
 

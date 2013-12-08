@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
 /**
- *	@author mickey
- *	
  *	Util class to synchronize threads and wait for all of them to finish
- *
  */
 public class Syncer {
 	
@@ -38,6 +35,9 @@ public class Syncer {
 		}
 	}
 	
+	/**
+	 * Useful to retreive and store thread results.
+	 */
 	public void callback(Runnable runnable, ThreadResult value){
 		System.out.println("[syncer] thread finished: " + runnable);
 		
@@ -68,6 +68,9 @@ public class Syncer {
 		}
 	}
 	
+	/**
+	 * Start all added threads and stop the current thread until they have all finished.
+	 */
 	public void waitForAll() throws InterruptedException{
 		latch = new CountDownLatch(waitingthreads.size());
 		results = new ThreadResult[waitingthreads.size()];
@@ -111,8 +114,8 @@ public class Syncer {
 			return failedThreads.size() == 0;
 		}
 	}
-	
-	
+
+	// Getters
 	public ArrayList<Runnable> getFailedThreads() {
 		return failedThreads;
 	}

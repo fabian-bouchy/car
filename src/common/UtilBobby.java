@@ -1,5 +1,10 @@
 package common;
 
+/**
+ * Common variable declarations.
+ * Represent all sent and received message accross protocol communications.
+ * Allow fast and stable modifications.  
+ */
 public class UtilBobby {
 	
 	public final static String SPLIT_REGEX			= ":";
@@ -60,7 +65,6 @@ public class UtilBobby {
 	public final static String SERVER_READ_SYMBOL			= "read";
 	public final static String SERVER_READ					= SERVER + SPLIT_REGEX + SERVER_READ_SYMBOL;
 	public final static String SERVER_READ_READY  			= SERVER_READ + SPLIT_REGEX + "ready";
-	//public final static String SERVER_READ_OK				= SERVER_READ + SPLIT_REGEX + "ok";
 	public final static String SERVER_READ_FILE_FOUND		= SERVER_READ + SPLIT_REGEX + "file_found";
 	public final static String SERVER_READ_FILE_NOT_FOUND	= SERVER_READ + SPLIT_REGEX + "file_not_found";
 	public final static String SERVER_READ_REDIRECT_TO		= SERVER_READ + SPLIT_REGEX + "redirect_to";

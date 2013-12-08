@@ -5,6 +5,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
+/**
+ * Abstract class to provide shared fields and function to Server and Replica representation. 
+ */
 public abstract class RemoteNode {
 
 	private String 	sName;
@@ -19,7 +22,10 @@ public abstract class RemoteNode {
 		this.iPriority 	= iPriority;
 		this.iPort 		= iPort;
 	}
-	
+
+	/**
+	 * Create & return a new socket
+	 */
 	protected Socket connect() throws UnknownHostException, IOException{
 		return new Socket(sIpAddress, iPort);
 	}
@@ -33,7 +39,8 @@ public abstract class RemoteNode {
 	
 	public abstract HashMap<String, File> getMetadata() throws Exception;
 	public abstract HashMap<String, File> listFiles(String username) throws Exception;
-	
+
+	// Getters & setters
 	public String getName() {
 		return sName;
 	}
