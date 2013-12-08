@@ -4,6 +4,8 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.Semaphore;
 
 import server.UserManager;
@@ -37,6 +39,11 @@ public class File implements java.io.Serializable{
 		if(init) {
 			// read the file
 			RandomAccessFile f = new RandomAccessFile(fileName, "r");
+			
+			java.io.File file = new java.io.File(fileName);
+			this.fileName = file.getName();
+			this.id = UserManager.getUsername()+"_"+this.fileName;
+			
 			this.size = f.length();
 			this.data = new byte[(int) f.length()];
 			f.read(this.data);
