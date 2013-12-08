@@ -3,6 +3,7 @@ package common;
 public class UtilBobby {
 	
 	public final static String SPLIT_REGEX			= ":";
+	public final static String SPLIT_FILE			= "+";
 	public final static String ANSWER_TRUE		 	= "true";
 	public final static String ANSWER_FALSE		 	= "false";
 	public final static String ANSWER_OK		 	= "ok";

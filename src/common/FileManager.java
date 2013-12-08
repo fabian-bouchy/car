@@ -30,12 +30,12 @@ public class FileManager {
 	public static synchronized HashMap<String, File> getMetadataByUsername(String username) {
 		HashMap<String, File> tmp = new HashMap<String, File>();
 		for (File file : metadata.values()) {
-			if(file.getId().startsWith(username + UtilBobby.SPLIT_REGEX)) {
+			if(file.getId().startsWith(username + UtilBobby.SPLIT_FILE)) {
 				tmp.put(file.getId(), file);
 			}
 		}
 		for (File file : files.values()) {
-			if(file.getId().startsWith(username + UtilBobby.SPLIT_REGEX)) {
+			if(file.getId().startsWith(username + UtilBobby.SPLIT_FILE)) {
 				tmp.put(file.getId(), file);
 			}
 		}
