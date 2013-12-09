@@ -47,6 +47,7 @@ public class Client {
 				ServerManager.write(new File(fileName, true, false));
 			} catch (Exception e) {
 				UtilPrinter.printlnError("[Client] Write failed! " + e.getLocalizedMessage());
+				return;
 			}
 			
 		}else if (cmd.startsWith("compress")){
@@ -67,6 +68,7 @@ public class Client {
 				file.writeToFile("read_"+ file.getFileName());
 			} else {
 				UtilPrinter.printlnError("[Client] File not found.");
+				return;
 			}
 
 		}else if ("ls".equals(cmd)){
@@ -75,8 +77,9 @@ public class Client {
 			ServerManager.listFile(userName);
 			
 		}else{
-			
+
 			System.out.println("[Client] Command unknown "+cmd);
+			return;
 		}
 
 		long elapsedTime = System.nanoTime() - startTime;
