@@ -122,7 +122,7 @@ public class Benchmark {
 				long elapsedTime = System.nanoTime() - startTime;
 				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0)*8;
 				// end
-				log(size + ";" + elapsedTime + ";" + bandwidth);
+				log(size + ";" + elapsedTime + ";" + String.valueOf(bandwidth).replace(".", ","));
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 				log(size + ";" + e.getLocalizedMessage());
@@ -147,7 +147,7 @@ public class Benchmark {
 				long elapsedTime = System.nanoTime() - startTime;
 				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0)*8;
 				// end
-				log(size + ";" + elapsedTime + ";" + bandwidth);
+				log(size + ";" + elapsedTime + ";" + String.valueOf(bandwidth).replace(".", ","));
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 				log(size + ";" + e.getLocalizedMessage());
@@ -172,7 +172,7 @@ public class Benchmark {
 				long elapsedTime = System.nanoTime() - startTime;
 				double bandwidth = (((long)size / (elapsedTime / 1000000000.0))/1024.0)*8;
 				// end
-				log(size + ";" + elapsedTime + ";" + bandwidth);
+				log(size + ";" + elapsedTime + ";" + String.valueOf(bandwidth).replace(".", ","));
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 				log(size + ";" + e.getLocalizedMessage());
