@@ -3,6 +3,7 @@ package common;
 import java.io.FileInputStream;
 import java.net.Inet4Address;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -156,6 +157,9 @@ public class ConfigManager {
 			N = serversMap.size() + 1;
 			System.out.println("[config manager] initialized server with " + serversMap.size() + " replicas. N=" + N + " and K=" + K + ".");
 		}
+
+		// Shuffle remote list:
+		Collections.shuffle(serversList);
 	}
 	
 	public static RemoteNode getMe() {
