@@ -11,6 +11,7 @@ import common.ConfigManager;
 import common.File;
 import common.RemoteNode;
 import common.UtilBobby;
+import common.UtilPrinter;
 
 /**
  * High-level representation of a remote server.
@@ -51,7 +52,7 @@ public class RemoteServer extends RemoteNode {
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			System.out.println("[RemoteServer] write failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[RemoteServer] write failed: " + e.getLocalizedMessage());
 		}
 	}
 
@@ -84,7 +85,7 @@ public class RemoteServer extends RemoteNode {
 			}
 			return false;
 		} catch (ClassNotFoundException e) {
-			System.out.println("[RemoteServer] delete failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[RemoteServer] delete failed: " + e.getLocalizedMessage());
 		}
 		return false;
 	}
@@ -129,13 +130,13 @@ public class RemoteServer extends RemoteNode {
 				return nextHop.read(metadata);
 			}
 			else if(answer.equals(UtilBobby.SERVER_READ_FILE_NOT_FOUND)){
-				System.out.println("[RemoteServer] File doesn't exist");
+				UtilPrinter.printlnWarning("[RemoteServer] File doesn't exist");
 			}
 			else {
-				System.out.println("[RemoteServer] Read failed: " + answer);
+				UtilPrinter.printlnError("[RemoteServer] Read failed: " + answer);
 			}
         } else {
-        	System.out.println("[RemoteServer] Server not ready for reading..." + answer);
+        	UtilPrinter.printlnError("[RemoteServer] Server not ready for reading..." + answer);
         }
 		return null;
 	}
@@ -164,6 +165,7 @@ public class RemoteServer extends RemoteNode {
 				return metadata;
 			}
 		} catch (ClassNotFoundException e) {
+			UtilPrinter.printlnError("[RemoteServer] error listing files: " + e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 		return null;

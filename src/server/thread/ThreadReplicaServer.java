@@ -12,6 +12,7 @@ import common.File;
 import common.FileManager;
 import common.RemoteNode;
 import common.UtilBobby;
+import common.UtilPrinter;
 
 /**
  *	This thread is called when another replica calls this one to ask to do something (synchronization).
@@ -43,7 +44,7 @@ public class ThreadReplicaServer extends ThreadWorker{
 				
 				// Be sure that the message is for the replica thread!
 				if(cmd[0].compareTo(UtilBobby.REPLICA) != 0){
-					System.out.println("[ThreadReplicaServer] wrong command");
+					UtilPrinter.printlnError("[ThreadReplicaServer] wrong command");
 					return;
 				}
 				
@@ -72,12 +73,12 @@ public class ThreadReplicaServer extends ThreadWorker{
 							if (((String)in.readObject()).equals(UtilBobby.REPLICA_METADATA_OK)){
 								System.out.println("[ThreadReplicaServer] metadata sent!");
 							}else{
-								System.out.println("[ThreadReplicaServer] metadata not sent!");
+								UtilPrinter.printlnError("[ThreadReplicaServer] metadata not sent!");
 							}						
 						}
 					} catch (Exception e) {
 						out.writeObject(UtilBobby.REPLICA_METADATA_KO);
-						System.out.println("[ThreadReplicaServer] metadata failed! " + e.getLocalizedMessage());
+						UtilPrinter.printlnError("[ThreadReplicaServer] metadata failed! " + e.getLocalizedMessage());
 					}
 				}
 

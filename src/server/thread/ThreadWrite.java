@@ -10,6 +10,7 @@ import common.ConfigManager;
 import common.File;
 import common.FileManager;
 import common.UtilBobby;
+import common.UtilPrinter;
 
 /**
  * Thread to answer to the write/update sessions in the server side.
@@ -47,7 +48,7 @@ public class ThreadWrite extends ThreadWorker{
 					System.out.println("[ThreadWrite] Replication of new file finished: " + file);
 					out.writeObject(UtilBobby.SERVER_WRITE_OK);
 				}else{
-					System.out.println("[ThreadWrite] Replication of new file FAILED: " + file);
+					UtilPrinter.printlnError("[ThreadWrite] Replication of new file FAILED: " + file);
 					out.writeObject(UtilBobby.SERVER_WRITE_KO);
 				}
 			}
@@ -86,7 +87,7 @@ public class ThreadWrite extends ThreadWorker{
 					out.writeObject(UtilBobby.SERVER_WRITE_OK);
 				} else {
 					
-					System.out.println("[ThreadWrite] Replication failed: " + file);
+					UtilPrinter.printlnError("[ThreadWrite] Replication failed: " + file);
 					
 					FileManager.abort(file.getId());
 					

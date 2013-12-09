@@ -9,6 +9,7 @@ import java.net.Socket;
 import common.File;
 import common.FileManager;
 import common.UtilBobby;
+import common.UtilPrinter;
 
 /**
  * Use with a delete session. 
@@ -33,7 +34,7 @@ public class ThreadDelete extends ThreadWorker{
 				FileManager.removeFile(file.getId());
 				System.out.println("[ThreadDelete] delete succeeded");
 			} else {
-				System.out.println("[ThreadDelete] delete failed: file not found.");
+				UtilPrinter.printlnWarning("[ThreadDelete] delete failed: file not found.");
 			}
 
 			// Broadcast delete to replicas
@@ -46,14 +47,14 @@ public class ThreadDelete extends ThreadWorker{
 				return;
 			}
 		} catch (IOException e )  {
-			System.out.println("[ThreadDelete] delete failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[ThreadDelete] delete failed: " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			System.out.println("[ThreadDelete] delete failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[ThreadDelete] delete failed: " + e.getLocalizedMessage());
 		}
 		try {
 			out.writeObject(UtilBobby.SERVER_DELETE_KO);
 		} catch (IOException e) {
-			System.out.println("[ThreadDelete] delete send message failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[ThreadDelete] delete send message failed: " + e.getLocalizedMessage());
 		}
 	}
 }
