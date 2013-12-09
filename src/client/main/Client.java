@@ -57,7 +57,11 @@ public class Client {
 			
 			System.out.println("[client] Reading "+fileName);
 			File file = ServerManager.read(new File(fileName, false, false));
-			file.writeToFile("read_"+ file.getFileName());
+			if(file != null) {
+				file.writeToFile("read_"+ file.getFileName());
+			} else {
+				System.out.println("[client] File not found.");
+			}
 
 		}else if ("ls".equals(cmd)){
 
