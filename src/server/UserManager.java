@@ -24,7 +24,7 @@ public class UserManager {
 	public static void init(String name, String passPhrase) throws Exception {
 		username = name;
 		if(passPhrase != null) {
-			System.out.println("Encryption enabled!");
+			System.out.println("[UserManager] Encryption enabled!");
 			cypherEnabled = true;
 			cypherManager = new CypherManager(passPhrase, "this is a very lovely salt, my dear!");
 		}

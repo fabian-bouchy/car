@@ -31,7 +31,7 @@ public class ReplicaManager {
 	}
 	
 	public boolean replicate(File file, boolean initial){
-		System.out.println("[replica manager] replicate started");
+		System.out.println("[ReplicaManager] replicate started");
 		Syncer syncer = new Syncer();
 		
 		// initialize variables
@@ -104,12 +104,12 @@ public class ReplicaManager {
 				done += syncer.getSucceedThreads().size();
 				replicasRemaining = replicasNeeded - done - syncer.getFailedThreads().size() - syncer.getUnavailableThreads().size();
 			} catch (InterruptedException e) {
-				System.out.println("[ReplicaManager] thread interrupted: " + e.getLocalizedMessage());
+				System.out.println("[ReplicaManager] replicate failed, thread interrupted: " + e.getLocalizedMessage());
 			}
 		}
-		System.out.println("[replica manager] replicate files done");
+		System.out.println("[ReplicaManager] replicate files done");
 		if (replicasRemaining > 0){
-			System.out.println("[ReplicaManager] could not replicate to K servers");
+			System.out.println("[ReplicaManager] replicate: could not replicate to K servers");
 		}
 		
 		if (initial){
@@ -154,7 +154,7 @@ public class ReplicaManager {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("[replica manager] replicate finished");
+		System.out.println("[ReplicaManager] replicate finished");
 		return true;
 	}
 
@@ -172,10 +172,10 @@ public class ReplicaManager {
 		try {
 			syncer.waitForAll();
 			if(syncer.allSucceeded()) {
-				System.out.println("[ReplicaManager - delete] all succeeded!");
+				System.out.println("[ReplicaManager] delete all succeeded!");
 				return true;
 			}else{
-				System.out.println("[ReplicaManager - delete] some servers unavailable");
+				System.out.println("[ReplicaManager] delete some servers unavailable");
 				return true;
 			}
 		} catch (InterruptedException e) {

@@ -50,10 +50,10 @@ public class Benchmark {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("[client] Benchmark starting...");
+		System.out.println("[Benchmark] starting...");
 		Benchmark.init();
 		Benchmark.startTest();
-		System.out.println("[client] Benchmark ended!");
+		System.out.println("[Benchmark] ended!");
 	}
 	
 	
@@ -62,9 +62,9 @@ public class Benchmark {
 		// Creating output directory
 		File outputDir = new File(outputPath);
 		if (!outputDir.exists()) {
-			System.out.println("creating directory: " + outputPath);
+			System.out.println("[Benchmark] creating directory: " + outputPath);
 			if(outputDir.mkdirs()) {  
-				System.out.println("DIR created");  
+				System.out.println("[Benchmark] directory created");  
 			}
 		}
 		// Creating files of the right sizes
@@ -92,18 +92,18 @@ public class Benchmark {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Current output file: " + currentOutputLogFile.getName());
-		System.out.println("Starting writing test...");
+		System.out.println("[Benchmark] Current output file: " + currentOutputLogFile.getName());
+		System.out.println("[Benchmark] Starting writing test...");
 		writeTest();
-		System.out.println("Starting updating test...");
+		System.out.println("[Benchmark] Starting updating test...");
 		updateTest();
-		System.out.println("Starting reading test...");
+		System.out.println("[Benchmark] Starting reading test...");
 		readTest();
-		System.out.println("Starting deleting test...");
+		System.out.println("[Benchmark] Starting deleting test...");
 		deleteTest();
 		
 		displayResult();
-		System.out.println("Test finish output file: " + currentOutputLogFile.getAbsolutePath());
+		System.out.println("[Benchmark] Test finish output file: " + currentOutputLogFile.getAbsolutePath());
 	}
 
 	private static void writeTest() {
@@ -226,7 +226,7 @@ public class Benchmark {
 	 */
 	private static void displayResult() {
 		System.out.println();
-		System.out.println("Test results:");
+		System.out.println("[Benchmark] Test results:");
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader(currentOutputLogFile));

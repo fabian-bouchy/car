@@ -44,9 +44,9 @@ public class ConfigManager {
 	public static void setIsAvailable(boolean value){
 		synchronized (isAvailableLock) {
 			if (value){
-				System.out.println("[config manager] user writes unlocked");
+				System.out.println("[ConfigManager] user writes unlocked");
 			}else{
-				System.out.println("[config manager] user writes locked");
+				System.out.println("[ConfigManager] user writes locked");
 			}
 			isAvailable = value;
 		}
@@ -96,13 +96,13 @@ public class ConfigManager {
 		String myHost = Inet4Address.getLocalHost().getHostName();
 		sHostName = myHost;
 
-		System.out.println("[config manager] init on " + myHost + " (" + myIP + ")");
+		System.out.println("[ConfigManager] init on " + myHost + " (" + myIP + ")");
 
 		// prepare JSON
 		JSONTokener jsonTokener = new JSONTokener(new FileInputStream(sConfigFile));
 		JSONObject jsonFile = new JSONObject(jsonTokener);
 		K = jsonFile.getInt("K");
-		System.out.println("[ConfigManager] K read: " + K);
+		System.out.println("[ConfigManager]  K read: " + K);
 		JSONArray jsonArrayReplicas = jsonFile.getJSONArray("replicas");
 
 		// Extract data and create local configuration
@@ -143,19 +143,19 @@ public class ConfigManager {
 
 		if (configType == ConfigType.SERVER && sMe == null) {
 			throw new Exception(
-					"[config manager] Error - could not establish who I am !");
+					"[ConfigManager] Error - could not establish who I am !");
 		}
 
 		if (configType == ConfigType.CLIENT && serversMap.size() == 0) {
 			throw new Exception(
-					"[config manager] Error - client could not find any servers");
+					"[ConfigManager] Error - client could not find any servers");
 		}
 		if (configType == ConfigType.CLIENT){
 			N = serversMap.size();
-			System.out.println("[config manager] initialized client with " + N + " servers");
+			System.out.println("[ConfigManager] initialized client with " + N + " servers");
 		}else{
 			N = serversMap.size() + 1;
-			System.out.println("[config manager] initialized server with " + serversMap.size() + " replicas. N=" + N + " and K=" + K + ".");
+			System.out.println("[ConfigManager] initialized server with " + serversMap.size() + " replicas. N=" + N + " and K=" + K + ".");
 		}
 
 		// Shuffle remote list:

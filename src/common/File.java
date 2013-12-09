@@ -42,7 +42,7 @@ public class File implements java.io.Serializable{
 		
 		if(init) {
 			// read the file from hard drive.
-			System.out.println("Reading file from storage...");
+			System.out.println("[File] Reading file from storage...");
 			RandomAccessFile f = new RandomAccessFile(fileName, "r");
 			
 			java.io.File file = new java.io.File(fileName);
@@ -104,7 +104,7 @@ public class File implements java.io.Serializable{
 	public void writeToFile(String outputPathName) throws IOException {
 		BufferedOutputStream bos = null;
 		
-		System.out.println("[file] Writing " + this.fileName + " => " + outputPathName);
+		System.out.println("[File] Writing " + this.fileName + " => " + outputPathName);
 
 		try {
 			FileOutputStream fos = new FileOutputStream(outputPathName);
@@ -116,14 +116,14 @@ public class File implements java.io.Serializable{
 				bos.write(this.data);
 			}
 		} catch (Exception e) {
-			System.out.println("[file] Error writing to a file " + e);
+			System.out.println("[File] Error writing to a file " + e);
 		} finally {
 			if (bos != null) {
 				try {
 					bos.flush();
 					bos.close();
 				} catch (Exception e) {
-					System.out.println("[file] Error closing file " + e);
+					System.out.println("[File] Error closing file " + e);
 				}
 			}
 		}
@@ -244,8 +244,8 @@ public class File implements java.io.Serializable{
 	
 	public String toString(){
 		if(isFile()){
-			return "[file] " + id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
+			return "[File] " + id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();
 		}
-		return "[metadata] " + id + " (" + fileName + "), version " + getVersionToString();
+		return "[File] is a metadata " + id + " (" + fileName + "), version " + getVersionToString();
 	}
 }

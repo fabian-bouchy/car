@@ -27,7 +27,7 @@ public class RemoteServer extends RemoteNode {
 	 */
 	@Override
 	public void write(File file) throws UnknownHostException, IOException {
-		System.out.println("[remote server] writing " + file);
+		System.out.println("[RemoteServer] writing " + file);
 		// Initialize the connection:
 		Socket socketToServer  = this.connect();
 		ObjectOutputStream out = new ObjectOutputStream(socketToServer.getOutputStream());                   
@@ -45,13 +45,13 @@ public class RemoteServer extends RemoteNode {
 				answer = (String) in.readObject();
 				// Check result return by the server.
 				if(answer.equals(UtilBobby.SERVER_WRITE_OK)){
-					System.out.println("[remote server] Write done!");
+					System.out.println("[RemoteServer] Write done!");
 				}else{
-					System.out.println("[remote server] Write failed!");
+					System.out.println("[RemoteServer] Write failed!");
 				}
 			}
 		} catch (ClassNotFoundException e) {
-			System.out.println("[remote server] write failed: " + e.getLocalizedMessage());
+			System.out.println("[RemoteServer] write failed: " + e.getLocalizedMessage());
 		}
 	}
 
@@ -77,14 +77,14 @@ public class RemoteServer extends RemoteNode {
 				answer = (String) in.readObject();
 				// Check if delete succeed
 				if(answer.equals(UtilBobby.SERVER_DELETE_OK)){
-					System.out.println("[remote server] Delete done!");
+					System.out.println("[RemoteServer] Delete done!");
 				}else{
-					System.out.println("[remote server] Delete failed!");
+					System.out.println("[RemoteServer] Delete failed!");
 				}
 			}
 			return false;
 		} catch (ClassNotFoundException e) {
-			System.out.println("[remote server] delete failed: " + e.getLocalizedMessage());
+			System.out.println("[RemoteServer] delete failed: " + e.getLocalizedMessage());
 		}
 		return false;
 	}
@@ -94,7 +94,7 @@ public class RemoteServer extends RemoteNode {
 	 */
 	@Override
 	public File read(File metadata) throws Exception {
-		System.out.println("[remote server] read init");
+		System.out.println("[RemoteServer] read init");
 		// Initialize the connection:
 		Socket socketToServer = this.connect();
 		ObjectOutputStream out = new ObjectOutputStream(socketToServer.getOutputStream());                   
@@ -105,7 +105,7 @@ public class RemoteServer extends RemoteNode {
         String answer = (String) in.readObject();
         
         if(answer.equals(UtilBobby.SERVER_READ_READY)) {
-        	System.out.println("[remote server] ready to read from " + this);
+        	System.out.println("[RemoteServer] ready to read from " + this);
 
         	// Send metadata to identify the request file
         	out.writeObject(metadata);
@@ -125,23 +125,23 @@ public class RemoteServer extends RemoteNode {
 				String nextHopName = answer.split(UtilBobby.SPLIT_REGEX)[3];
 				RemoteNode nextHop =  ConfigManager.getRemoteNode(nextHopName);
 				socketToServer.close();
-				System.out.println("[remote server] Redirected to " + nextHop);
+				System.out.println("[RemoteServer] Redirected to " + nextHop);
 				return nextHop.read(metadata);
 			}
 			else if(answer.equals(UtilBobby.SERVER_READ_FILE_NOT_FOUND)){
-				System.out.println("[remote server] File doesn't exist");
+				System.out.println("[RemoteServer] File doesn't exist");
 			}
 			else {
-				System.out.println("[remote server] Read failed: " + answer);
+				System.out.println("[RemoteServer] Read failed: " + answer);
 			}
         } else {
-        	System.out.println("[remote server] Server not ready for reading..." + answer);
+        	System.out.println("[RemoteServer] Server not ready for reading..." + answer);
         }
 		return null;
 	}
 
 	public String toString(){
-		return "[remote server] "+this.getName()+" ("+this.getPriority()+") @ "+this.getIpAddress()+":"+this.getPort();
+		return "[RemoteServer] "+this.getName()+" ("+this.getPriority()+") @ "+this.getIpAddress()+":"+this.getPort();
 	}
 
 	/**
@@ -149,7 +149,7 @@ public class RemoteServer extends RemoteNode {
 	 */
 	@Override
 	public HashMap<String, File> listFiles(String username) throws Exception {
-		System.out.println("[remote server] listing files for " + username);
+		System.out.println("[RemoteServer] listing files for " + username);
 		// Initialize the connection:
 		Socket socketToServer  = this.connect();
 		ObjectOutputStream out = new ObjectOutputStream(socketToServer.getOutputStream());

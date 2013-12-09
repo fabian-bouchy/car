@@ -124,7 +124,7 @@ public class Server {
 		        }
 
 	            } catch (IOException e) {
-	                System.out.println("Exception caught when trying to listen on port " + me.getPort() + " or listening for a connection");
+	                System.out.println("[Server] Exception caught when trying to listen on port " + me.getPort() + " or listening for a connection");
 	                System.out.println(e.getMessage());
 	            }
 			}

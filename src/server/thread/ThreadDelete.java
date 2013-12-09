@@ -17,7 +17,7 @@ public class ThreadDelete extends ThreadWorker{
 
 	public ThreadDelete(ServerSocket serverSocket, Socket clientSocket, ObjectOutputStream out, ObjectInputStream in){
 		super(serverSocket, clientSocket, out, in);
-		System.out.println("[thread server delete] init");
+		System.out.println("[ThreadDelete] init");
 	}
 
 	@Override
@@ -26,14 +26,14 @@ public class ThreadDelete extends ThreadWorker{
 			// send to client that the server is ready
 			out.writeObject(UtilBobby.SERVER_DELETE_READY);
 			File file = (File) in.readObject();
-			System.out.println("[Server] deleting: " + file);
+			System.out.println("[ThreadDelete] deleting: " + file);
 
 			// Remove file form our list
 			if(FileManager.getFile(file.getId()) != null) {
 				FileManager.removeFile(file.getId());
-				System.out.println("[Server] delete succeeded");
+				System.out.println("[ThreadDelete] delete succeeded");
 			} else {
-				System.out.println("[Server] delete failed: file not found.");
+				System.out.println("[ThreadDelete] delete failed: file not found.");
 			}
 
 			// Broadcast delete to replicas
@@ -44,14 +44,14 @@ public class ThreadDelete extends ThreadWorker{
 				return;
 			}
 		} catch (IOException e )  {
-			System.out.println("[Server] delete failed: " + e.getLocalizedMessage());
+			System.out.println("[ThreadDelete] delete failed: " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			System.out.println("[Server] delete failed: " + e.getLocalizedMessage());
+			System.out.println("[ThreadDelete] delete failed: " + e.getLocalizedMessage());
 		}
 		try {
 			out.writeObject(UtilBobby.SERVER_DELETE_KO);
 		} catch (IOException e) {
-			System.out.println("[Server] delete send message failed: " + e.getLocalizedMessage());
+			System.out.println("[ThreadDelete] delete send message failed: " + e.getLocalizedMessage());
 		}
 	}
 }

@@ -49,7 +49,7 @@ public class RemoteReplica extends RemoteNode{
 				// Check if write OK
 				String status = (String) in.readObject();
 				if(status.equals(UtilBobby.REPLICA_WRITE_OK)){
-					System.out.println("[remote replica] Replication OK: " + file);
+					System.out.println("[RemoteReplica] Replication OK: " + file);
 				}else{
 					throw new InvalidParameterException();
 				}
@@ -57,7 +57,7 @@ public class RemoteReplica extends RemoteNode{
 				throw new IOException();
 			}
 		} catch (ClassNotFoundException e) {
-			System.out.println("[remote replica] Replication failed: " + e.getLocalizedMessage());
+			System.out.println("[RemoteReplica] Replication failed: " + e.getLocalizedMessage());
 		}
 		
 	}
@@ -67,7 +67,7 @@ public class RemoteReplica extends RemoteNode{
 	 */
 	@Override
 	public boolean has(File metadata) throws UnknownHostException, IOException{
-		System.out.println("[RemoteReplica - has] " + metadata + "?");
+		System.out.println("[RemoteReplica] has " + metadata + "?");
 		
 		// Initialize the connection:
 		Socket socketToServer  = this.connect();
@@ -81,9 +81,9 @@ public class RemoteReplica extends RemoteNode{
 		boolean answer = false;
 		try {
 			answer = ((String) in.readObject()).equals(UtilBobby.ANSWER_TRUE);
-			System.out.println("[RemoteReplica - has] " + answer );
+			System.out.println("[RemoteReplica] has " + answer );
 		} catch (ClassNotFoundException e) {
-			System.out.println("[remote replica] has failed: " + e.getLocalizedMessage());
+			System.out.println("[RemoteReplica] has  failed: " + e.getLocalizedMessage());
 		}
 		return answer;
 	}
@@ -104,9 +104,9 @@ public class RemoteReplica extends RemoteNode{
 		boolean answer = false;
 		try {
 			answer = ((String) in.readObject()).equals(UtilBobby.REPLICA_TRANSACTION_COMMITED);
-			System.out.println("[RemoteReplica - has] " + answer );
+			System.out.println("[RemoteReplica] commit write succeed: " + answer );
 		} catch (ClassNotFoundException e) {
-			System.out.println("[RemoteReplica - has] failed " + e.getLocalizedMessage());
+			System.out.println("[RemoteReplica] commit write failed " + e.getLocalizedMessage());
 		}
 		return answer;
 	}
@@ -127,9 +127,9 @@ public class RemoteReplica extends RemoteNode{
 		boolean answer = false;
 		try {
 			answer = ((String) in.readObject()).equals(UtilBobby.REPLICA_TRANSACTION_ABORTED);
-			System.out.println("[RemoteReplica - abortWrite] " + answer );
+			System.out.println("[RemoteReplica] abort write succeed: " + answer );
 		} catch (ClassNotFoundException e) {
-			System.out.println("[RemoteReplica - abortWrite] failed " + e.getLocalizedMessage());
+			System.out.println("[RemoteReplica] abort write failed " + e.getLocalizedMessage());
 		}
 		return answer;
 	}
@@ -151,9 +151,9 @@ public class RemoteReplica extends RemoteNode{
 		try {
 			String text = ((String) in.readObject());
 			answer = text.equals(UtilBobby.REPLICA_DELETE_OK) || text.equals(UtilBobby.REPLICA_DELETE_NOT_FOUND);
-			System.out.println("[RemoteReplica - has] " + answer );
+			System.out.println("[RemoteReplica] delete succeed: " + answer );
 		} catch (ClassNotFoundException e) {
-			System.out.println("[RemoteReplica - delete] failed " + e.getLocalizedMessage());
+			System.out.println("[RemoteReplica] delete failed: " + e.getLocalizedMessage());
 		}
 		return answer;
 	}
@@ -177,17 +177,17 @@ public class RemoteReplica extends RemoteNode{
 				try{
 					HashMap<String, File> metadata = (HashMap<String, File>) in.readObject();
 					out.writeObject(UtilBobby.REPLICA_METADATA_OK);
-					System.out.println("[remote replica] metadata sent");
+					System.out.println("[RemoteReplica] metadata sent");
 					return metadata;
 				} catch (Exception e){
 					out.writeObject(UtilBobby.REPLICA_METADATA_KO);
-					System.out.println("[remote replica] error readObject! " + e.getLocalizedMessage());
+					System.out.println("[RemoteReplica] metadata error readObject! " + e.getLocalizedMessage());
 				}
 			}else{
-				System.out.println("[remote replica] replica not ready to metadata!");
+				System.out.println("[RemoteReplica] replica not ready to metadata!");
 			}
 		} catch(IOException e) {
-			System.out.println("[RemoteReplica - getMetadata] failed " + e.getLocalizedMessage());
+			System.out.println("[RemoteReplica] metadata failed: " + e.getLocalizedMessage());
 		}
 		return null;
 	}
@@ -210,15 +210,15 @@ public class RemoteReplica extends RemoteNode{
 			socketToServer.close();
 			return input;
 		} catch(IOException e) {
-			System.out.println("[RemoteReplica - read] failed " + e.getLocalizedMessage());
+			System.out.println("[RemoteReplica] read failed: " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			System.out.println("[RemoteReplica - read] failed " + e.getLocalizedMessage());
+			System.out.println("[RemoteReplica] read failed: " + e.getLocalizedMessage());
 		}
 		return null;
 	}
 
 	public String toString(){
-		return "[remote replica] ("+this.getPriority()+") "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
+		return "[RemoteReplica] ("+this.getPriority()+") "+this.getName()+" - "+this.getIpAddress()+":"+this.getPort();
 	}
 
 	@Override

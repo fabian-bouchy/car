@@ -15,7 +15,7 @@ public class ServerManager {
 	static RemoteServer currentServer = null;
 	
 	static {
-		System.out.println("[server manager] init");
+		System.out.println("[ServerManager] init");
 	}
 	
 	private ServerManager() {}
@@ -30,16 +30,16 @@ public class ServerManager {
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
 			
 			currentServer = (RemoteServer) server;
-			System.out.println("[server manager] Trying " + currentServer + " ... ");
+			System.out.println("[ServerManager] Trying " + currentServer + " ... ");
 			try{
 				currentServer.write(file);
 				return;
 			}catch(Exception e){
 				// server doesn't respond, display a  message and try another one
-				System.out.println("Error connecting to server: " + e);
+				System.out.println("[ServerManager] Error connecting to server: " + e);
 			}
 		}
-		System.out.println("[server manager] No servers available");
+		System.out.println("[ServerManager] No servers available");
 	}
 
 	/**
@@ -53,16 +53,16 @@ public class ServerManager {
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
 			
 			currentServer = (RemoteServer) server;
-			System.out.print("[server manager] Trying " + currentServer + " ... ");
+			System.out.print("[ServerManager] Trying " + currentServer + " ... ");
 			try{
 				return currentServer.read(file);
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("Error connecting to server: " + e);
+				System.out.println("[ServerManager] Error connecting to server: " + e);
 			}
 		}
 		
-		System.out.println("[server manager] No servers available");
+		System.out.println("[ServerManager] No servers available");
 		return null;
 	}
 
@@ -76,17 +76,17 @@ public class ServerManager {
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
 			
 			currentServer = (RemoteServer) server;
-			System.out.print("[server manager] Trying " + currentServer + " ... ");
+			System.out.print("[ServerManager] Trying " + currentServer + " ... ");
 			try{
 				currentServer.delete(file);
 				return;
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("Error connecting to server: " + e);
+				System.out.println("[ServerManager] Error connecting to server: " + e);
 			}
 		}
 		
-		System.out.println("[server manager] No servers available");
+		System.out.println("[ServerManager] No servers available");
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class ServerManager {
 		for(RemoteNode server : ConfigManager.getRemoteNodesList()){
 
 			currentServer = (RemoteServer) server;
-			System.out.println("[server manager] Trying " + currentServer + " ... ");
+			System.out.println("[ServerManager] Trying " + currentServer + " ... ");
 			try{
 				HashMap<String, File> userMetadata = currentServer.listFiles(username);
 				if(userMetadata != null) {
@@ -108,15 +108,15 @@ public class ServerManager {
 						System.out.println(metadata);
 					}
 				} else {
-					System.out.println("No files found for " + username);
+					System.out.println("[ServerManager] No files found for " + username);
 				}
 				return;
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("Error connecting to server: " + e);
+				System.out.println("[ServerManager] Error connecting to server: " + e);
 			}
 		}
 
-		System.out.println("[server manager] No servers available");
+		System.out.println("[ServerManager] No servers available");
 	}
 }
