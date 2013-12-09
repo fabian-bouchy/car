@@ -42,6 +42,7 @@ public class File implements java.io.Serializable{
 		
 		if(init) {
 			// read the file from hard drive.
+			System.out.println("Reading file from storage...");
 			RandomAccessFile f = new RandomAccessFile(fileName, "r");
 			
 			java.io.File file = new java.io.File(fileName);
