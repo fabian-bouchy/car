@@ -14,6 +14,7 @@ import server.thread.ThreadRead;
 import server.thread.ThreadReplicaServer;
 import server.thread.ThreadWrite;
 import common.ConfigManager;
+import common.UtilPrinter;
 import common.ConfigManager.ConfigType;
 import common.UtilBobby;
 
@@ -124,12 +125,12 @@ public class Server {
 		        }
 
 	            } catch (IOException e) {
-	                System.out.println("[Server] Exception caught when trying to listen on port " + me.getPort() + " or listening for a connection");
+	            	UtilPrinter.printlnError("[Server] Exception caught when trying to listen on port " + me.getPort() + " or listening for a connection");
 	                System.out.println(e.getMessage());
 	            }
 			}
 		} catch (IOException e1) {
-			System.out.println("[Server] Erreur creating server socket " + e1.getLocalizedMessage());
+			UtilPrinter.printlnError("[Server] Erreur creating server socket " + e1.getLocalizedMessage());
 		}
 	}
 }

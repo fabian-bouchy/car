@@ -5,11 +5,11 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import server.RemoteReplica;
-
 import common.ConfigManager;
 import common.File;
 import common.FileManager;
 import common.RemoteNode;
+import common.UtilPrinter;
 
 /**
  * Failure recovery. Start with the server. It's the first action done.
@@ -64,7 +64,7 @@ public class ThreadDiscovery implements Runnable {
 				System.out.println("[ThreadDiscovery] " + files.size() + " files processed");
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("[ThreadDiscovery] Server unavailable");
+				UtilPrinter.printlnError("[ThreadDiscovery] Server unavailable");
 			}
 		}
 		

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import common.ConfigManager;
 import common.File;
 import common.RemoteNode;
+import common.UtilPrinter;
 
 /**
  * Hide to client how to get the current server, redirection works etc...
@@ -36,10 +37,10 @@ public class ServerManager {
 				return;
 			}catch(Exception e){
 				// server doesn't respond, display a  message and try another one
-				System.out.println("[ServerManager] Error connecting to server: " + e);
+				UtilPrinter.printlnError("[ServerManager] Error connecting to server: " + e);
 			}
 		}
-		System.out.println("[ServerManager] No servers available");
+		UtilPrinter.printlnError("[ServerManager] No servers available");
 	}
 
 	/**
@@ -58,11 +59,11 @@ public class ServerManager {
 				return currentServer.read(file);
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("[ServerManager] Error connecting to server: " + e);
+				UtilPrinter.printlnError("[ServerManager] Error connecting to server: " + e);
 			}
 		}
 		
-		System.out.println("[ServerManager] No servers available");
+		UtilPrinter.printlnError("[ServerManager] No servers available");
 		return null;
 	}
 
@@ -82,11 +83,11 @@ public class ServerManager {
 				return;
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("[ServerManager] Error connecting to server: " + e);
+				UtilPrinter.printlnError("[ServerManager] Error connecting to server: " + e);
 			}
 		}
 		
-		System.out.println("[ServerManager] No servers available");
+		UtilPrinter.printlnError("[ServerManager] No servers available");
 	}
 
 	/**
@@ -108,15 +109,15 @@ public class ServerManager {
 						System.out.println(metadata);
 					}
 				} else {
-					System.out.println("[ServerManager] No files found for " + username);
+					UtilPrinter.printlnWarning("[ServerManager] No files found for " + username);
 				}
 				return;
 			}catch(Exception e){
 				// server doesn't respond, try another one
-				System.out.println("[ServerManager] Error connecting to server: " + e);
+				UtilPrinter.printlnError("[ServerManager] Error connecting to server: " + e);
 			}
 		}
 
-		System.out.println("[ServerManager] No servers available");
+		UtilPrinter.printlnError("[ServerManager] No servers available");
 	}
 }

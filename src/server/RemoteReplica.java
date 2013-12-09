@@ -11,6 +11,7 @@ import java.util.HashMap;
 import common.File;
 import common.RemoteNode;
 import common.UtilBobby;
+import common.UtilPrinter;
 
 /**
  * High-level representation of a remote replica.
@@ -57,7 +58,7 @@ public class RemoteReplica extends RemoteNode{
 				throw new IOException();
 			}
 		} catch (ClassNotFoundException e) {
-			System.out.println("[RemoteReplica] Replication failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[RemoteReplica] Replication failed: " + e.getLocalizedMessage());
 		}
 		
 	}

@@ -6,6 +6,7 @@ import server.ReplicaManager.NextStep;
 import common.File;
 import common.RemoteNode;
 import common.Syncer;
+import common.UtilPrinter;
 import common.Syncer.ThreadResult;
 
 /**
@@ -56,10 +57,10 @@ public class ThreadReplicaServerWrite implements Runnable {
 			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] finished");
 			
 		} catch (InvalidParameterException e) {
-			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] write failed");
+			UtilPrinter.printlnError("[ThreadReplicaServerWrite@"+this.hashCode()+"] write failed");
 			this.syncer.callback(this, ThreadResult.FAILED);
 		} catch (Exception e) {
-			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[ThreadReplicaServerWrite@"+this.hashCode()+"] failed: " + e.getLocalizedMessage());
 			this.syncer.callback(this, ThreadResult.UNAVAILABLE);
 		}
 	}

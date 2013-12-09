@@ -10,6 +10,7 @@ import common.File;
 import common.FileManager;
 import common.RemoteNode;
 import common.UtilBobby;
+import common.UtilPrinter;
 
 /**
  * Thread to answer to the read session in the server.
@@ -39,8 +40,8 @@ public class ThreadRead extends ThreadWorker{
 	        	System.out.println("[ThreadRead] reading succeeded!");
 	        	close();
 			} else {
-				System.out.println("[ThreadRead] reading failed: file not found locally");
-				System.out.println("[ThreadRead] reading failed: reading metadata...");
+				UtilPrinter.printlnWarning("[ThreadRead] reading failed: file not found locally");
+				UtilPrinter.printlnError("[ThreadRead] reading failed: reading metadata...");
 
 				File fileMetadata = FileManager.getMetadata(metadata.getId());
 				if(fileMetadata != null) {
@@ -53,14 +54,14 @@ public class ThreadRead extends ThreadWorker{
 					}
 				}
 				// Not found
-				System.out.println("[ThreadRead] file not found anywhere");
+				UtilPrinter.printlnError("[ThreadRead] file not found anywhere");
 				out.writeObject(UtilBobby.SERVER_READ_FILE_NOT_FOUND);
 				close();
 			}
 		} catch (IOException e )  {
-			System.out.println("[ThreadRead] read failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[ThreadRead] read failed: " + e.getLocalizedMessage());
 		} catch (ClassNotFoundException e) {
-			System.out.println("[ThreadRead] read failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[ThreadRead] read failed: " + e.getLocalizedMessage());
 		}
 	}
 }

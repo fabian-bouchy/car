@@ -7,11 +7,11 @@ import java.util.Collections;
 
 import server.thread.ThreadReplicaServerDelete;
 import server.thread.ThreadReplicaServerWrite;
-
 import common.ConfigManager;
 import common.File;
 import common.RemoteNode;
 import common.Syncer;
+import common.UtilPrinter;
 
 /**
  * Manage replicas.
@@ -104,12 +104,12 @@ public class ReplicaManager {
 				done += syncer.getSucceedThreads().size();
 				replicasRemaining = replicasNeeded - done - syncer.getFailedThreads().size() - syncer.getUnavailableThreads().size();
 			} catch (InterruptedException e) {
-				System.out.println("[ReplicaManager] replicate failed, thread interrupted: " + e.getLocalizedMessage());
+				UtilPrinter.printlnError("[ReplicaManager] replicate failed, thread interrupted: " + e.getLocalizedMessage());
 			}
 		}
 		System.out.println("[ReplicaManager] replicate files done");
 		if (replicasRemaining > 0){
-			System.out.println("[ReplicaManager] replicate: could not replicate to K servers");
+			UtilPrinter.printlnWarning("[ReplicaManager] replicate: could not replicate to K servers");
 		}
 		
 		if (initial){

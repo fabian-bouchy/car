@@ -3,6 +3,7 @@ package server.thread;
 import common.File;
 import common.RemoteNode;
 import common.Syncer;
+import common.UtilPrinter;
 import common.Syncer.ThreadResult;
 
 /**
@@ -28,7 +29,7 @@ public class ThreadReplicaServerDelete implements Runnable {
 			this.remoteReplica.delete(this.file);
 			this.syncer.callback(this, ThreadResult.SUCCEEDED);
 		} catch (Exception e) {
-			System.out.println("[ThreadReplicaServerDelete] failed: " + e.getLocalizedMessage());
+			UtilPrinter.printlnError("[ThreadReplicaServerDelete] failed: " + e.getLocalizedMessage());
 			this.syncer.callback(this, ThreadResult.FAILED);
 		}
 	}

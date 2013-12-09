@@ -10,6 +10,7 @@ import java.util.HashMap;
 import common.File;
 import common.FileManager;
 import common.UtilBobby;
+import common.UtilPrinter;
 
 /**
  * Thread to answer to the ListFiles session in the server.
@@ -36,6 +37,7 @@ public class ThreadListFiles extends ThreadWorker{
 			// Send metadata
 			out.writeObject(userMetadata);
 		} catch (IOException e )  {
+			UtilPrinter.printlnError("[ThreadListFiles] failed " + e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 	}
