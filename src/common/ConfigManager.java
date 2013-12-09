@@ -127,10 +127,10 @@ public class ConfigManager {
 				break;
 			}
 
-			if (hostname == null && (sIp.equals(myIP) || sName.equals(myHost))) {
+			if (configType == ConfigType.SERVER && hostname == null && (sIp.equals(myIP) || sName.equals(myHost))) {
 				// when desired hostname not specified, we look by IP
 				sMe = remoteNode;
-			} else if (hostname != null && hostname.equals(sName)) {
+			} else if (configType == ConfigType.SERVER && hostname != null && hostname.equals(sName)) {
 				// otherwise, we just pick the one with the desired hostname
 				sMe = remoteNode;
 			} else {
