@@ -4,6 +4,7 @@ import java.io.Console;
 
 import client.ServerManager;
 import common.ConfigManager;
+import common.UtilPrinter;
 import common.ConfigManager.ConfigType;
 import common.File;
 import server.UserManager;
@@ -28,7 +29,8 @@ public class Client {
 		// Ask the password if it's needed
 		String password = null;
 		if((cmd.startsWith("write") || cmd.startsWith("compress") || cmd.startsWith("read")) && cmd.endsWith("+crypto")) {
-			System.out.println("[Client] Enter password for this file:");
+			UtilPrinter.printlnQuestion("[Client] Enter password for this file:");
+			System.out.print("[Client] password :");
 			Console co = System.console();
 			password = new String(co.readPassword());
 		}
@@ -44,7 +46,7 @@ public class Client {
 			try {
 				ServerManager.write(new File(fileName, true, false));
 			} catch (Exception e) {
-				System.out.println("[Client] Write failed! " + e.getLocalizedMessage());
+				UtilPrinter.printlnError("[Client] Write failed! " + e.getLocalizedMessage());
 			}
 			
 		}else if (cmd.startsWith("compress")){
@@ -64,7 +66,7 @@ public class Client {
 			if(file != null) {
 				file.writeToFile("read_"+ file.getFileName());
 			} else {
-				System.out.println("[Client] File not found.");
+				UtilPrinter.printlnError("[Client] File not found.");
 			}
 
 		}else if ("ls".equals(cmd)){
@@ -78,6 +80,6 @@ public class Client {
 		}
 
 		long elapsedTime = System.nanoTime() - startTime;
-		System.out.println("[Client] Done in "+ ((double)elapsedTime / 1000000000.0) + " seconds");
+		UtilPrinter.printlnSucceed("[Client] Done in "+ ((double)elapsedTime / 1000000000.0) + " seconds");
 	}
 }
