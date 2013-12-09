@@ -68,7 +68,7 @@ public class Benchmark {
 				RandomAccessFile file = new RandomAccessFile(testFilePrefix + size + testFileExtension,"rw");
 				file.setLength(size*1024);
 				file.close();
-				Runtime.getRuntime().exec("dd if=/dev/zero of="+ testFilePrefix + size + testFileExtension + " bs=1kB count=" + size*1024);
+				Runtime.getRuntime().exec("dd if=/dev/zero of="+ testFilePrefix + size + testFileExtension + " bs=1kB count=" + size);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

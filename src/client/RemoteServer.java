@@ -160,11 +160,8 @@ public class RemoteServer extends RemoteNode {
 		try {
 			answer = (String) in.readObject();
 			if(answer.equals(UtilBobby.SERVER_LIST_READY)) {
-				System.out.println("[remote server] anwser : " + answer);
 				HashMap<String, File> metadata = (HashMap<String, File>) in.readObject();
 				return metadata;
-			} else {
-				System.out.println("[remote server] anwser : " + answer);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

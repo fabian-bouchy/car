@@ -62,7 +62,9 @@ public class File implements java.io.Serializable{
 			}
 			
 			// Encrypt
-			this.data = UserManager.getCypherManager().encrypt(this.data);
+			if(UserManager.isCypherEnabled()) {
+				this.data = UserManager.getCypherManager().encrypt(this.data);
+			}
 			f.close();
 			this.hasFile = true;
 		}
@@ -107,7 +109,9 @@ public class File implements java.io.Serializable{
 			FileOutputStream fos = new FileOutputStream(outputPathName);
 			bos = new BufferedOutputStream(fos);
 			if(this.data != null){
-				this.data = UserManager.getCypherManager().decrypt(this.data);
+				if(UserManager.isCypherEnabled()) {
+					this.data = UserManager.getCypherManager().decrypt(this.data);
+				}
 				bos.write(this.data);
 			}
 		} catch (Exception e) {

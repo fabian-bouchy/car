@@ -12,11 +12,17 @@ public class UserManager {
 
 	private static String username;
 
-	private static CypherManager cypherManager;
+	private static CypherManager cypherManager = null;
+
+	private static boolean cypherEnabled = false;
 
 	public static void init(String name, String passPhrase) throws Exception {
 		username = name;
-		cypherManager = new CypherManager(passPhrase, "this is a very lovely salt, my dear!");
+		if(passPhrase != null) {
+			System.out.println("Encryption enabled!");
+			cypherEnabled = true;
+			cypherManager = new CypherManager(passPhrase, "this is a very lovely salt, my dear!");
+		}
 	}
 
 	public static String getUsername() {
@@ -25,5 +31,9 @@ public class UserManager {
 
 	public static CypherManager getCypherManager() {
 		return cypherManager;
+	}
+
+	public static boolean isCypherEnabled() {
+		return cypherEnabled;
 	}
 }

@@ -27,7 +27,7 @@ public class Client {
 
 		// Ask the password if it's needed
 		String password = null;
-		if("write".equals(cmd) || "compress".equals(cmd) || "read".equals(cmd)) {
+		if((cmd.startsWith("write") || cmd.startsWith("compress") || cmd.startsWith("read")) && cmd.endsWith("+crypto")) {
 			System.out.println("Enter password for this file:");
 			Console co = System.console();
 			password = new String(co.readPassword());
@@ -38,12 +38,12 @@ public class Client {
 		
 		long startTime = System.nanoTime();
 		
-		if ("write".equals(cmd)){
+		if (cmd.startsWith("write")){
 			
 			System.out.println("[client] Writing "+fileName);
 			ServerManager.write(new File(fileName, true, false));
 			
-		}else if ("compress".equals(cmd)){
+		}else if (cmd.startsWith("compress")){
 			
 			System.out.println("[client] Compressing and writing "+fileName);
 			ServerManager.write(new File(fileName, true, true));
@@ -53,7 +53,7 @@ public class Client {
 			System.out.println("[client] Deleting "+fileName);
 			ServerManager.delete(new File(fileName, false, false));
 			
-		}else if ("read".equals(cmd)){
+		}else if (cmd.startsWith("read")){
 			
 			System.out.println("[client] Reading "+fileName);
 			File file = ServerManager.read(new File(fileName, false, false));

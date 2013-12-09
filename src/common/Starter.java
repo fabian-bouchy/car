@@ -24,7 +24,7 @@ public class Starter {
 			}
         
         // client mode
-        }else if((args.length == 3 || args.length == 4) && (args[0].equals("write") || args[0].equals("compress") || args[0].equals("delete")  || args[0].equals("read"))){
+        }else if((args.length == 3 || args.length == 4) && (args[0].contains("write") || args[0].contains("compress") || args[0].equals("delete")  || args[0].contains("read"))){
         	// client mode
         	Client client = new Client();
         	try {
