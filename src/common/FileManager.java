@@ -78,7 +78,7 @@ public class FileManager {
 		}
 		for (File file : files.values()) {
 			if(file.getId().startsWith(username + UtilBobby.SPLIT_FILE)) {
-				tmp.put(file.getId(), file);
+				tmp.put(file.getId(), file.generateMetadata());
 			}
 		}
 		return tmp;
