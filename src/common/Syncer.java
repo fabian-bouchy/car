@@ -52,6 +52,7 @@ public class Syncer {
 							int position = waitingthreads.indexOf(runnable);
 							if (position != -1){
 								results[position] = value;
+								System.out.println("[Syncer] stored a value " + results[position] + " for " + runnable);
 								if(value == ThreadResult.FAILED) {
 									failedThreads.add(runnable);
 								} else if(value == ThreadResult.SUCCEEDED) {
@@ -108,8 +109,8 @@ public class Syncer {
 		latch.await();
 		synchronized (resultsLock) {
 			System.out.print("[Syncer] finished " + this.hashCode() + ": [");
-			for (ThreadResult i : results){
-				System.out.print(i + " ");
+			for (int i = 0; i < results.length; i++){
+				System.out.print(results[i] + " ");
 			}
 			System.out.println("]");
 		}
