@@ -15,6 +15,7 @@ public class Syncer {
 	}
 
 	private CountDownLatch latch;
+	private ArrayList<Runnable> runnables;
 	private ArrayList<Runnable> waitingthreads;
 	private ArrayList<Runnable> failedThreads;
 	private ArrayList<Runnable> succeededThreads;
@@ -32,7 +33,10 @@ public class Syncer {
 	
 	public void addThread(Runnable thread){
 		synchronized (waitingthreads){
-			waitingthreads.add(thread);
+			synchronized (runnables){
+				waitingthreads.add(thread);
+				runnables.add(thread);
+			}
 		}
 	}
 	
@@ -40,35 +44,41 @@ public class Syncer {
 	 * Useful to retrieve and store thread results.
 	 */
 	public void callback(Runnable runnable, ThreadResult value){
-		System.out.println("[Syncer] thread finished: " + runnable);
+		System.out.println("[Syncer] thread finished: " + runnable + " with result " + value);
 		
 		synchronized (waitingthreads){
 			synchronized (succeededThreads){
 				synchronized (failedThreads){
 					synchronized (unavailableThreads){
-						synchronized (resultsLock) {
-									
-							// store the value form callback
-							int position = waitingthreads.indexOf(runnable);
-							if (position != -1){
-								results[position] = value;
-								if(value == ThreadResult.FAILED) {
-									failedThreads.add(runnable);
-								} else if(value == ThreadResult.SUCCEEDED) {
-									succeededThreads.add(runnable);
-								} else {
-									unavailableThreads.add(runnable);
-								}
-								waitingthreads.remove(runnable);
-								latch.countDown();
-							}else{
-								System.out.println("[Syncer] fatal error callback from unknown thread " + runnable);
-								if (failedThreads.indexOf(runnable) != -1){
-									System.out.println("[Syncer] fatal error: " + runnable + "has already failed");
-								}else if (succeededThreads.indexOf(runnable) != -1){
-									System.out.println("[Syncer] fatal error: " + runnable + "has already succeeded");
-								}else if (unavailableThreads.indexOf(runnable) != -1){
-									System.out.println("[Syncer] fatal error: " + runnable + "has already been unavailable");
+						synchronized (runnables) {
+							synchronized (resultsLock) {
+								// store the value form callback
+								int position = runnables.indexOf(runnable);
+								
+								// let's verify if the thread is expected
+								if (position != -1){
+									results[position] = value;
+									System.out.println("[Syncer] stored a value " + results[position] + " for " + runnable);
+									if(value == ThreadResult.FAILED) {
+										failedThreads.add(runnable);
+									} else if(value == ThreadResult.SUCCEEDED) {
+										succeededThreads.add(runnable);
+									} else {
+										unavailableThreads.add(runnable);
+									}
+									waitingthreads.remove(runnable);
+									latch.countDown();
+								}else{
+									System.out.println("[Syncer] fatal error callback from unknown thread " + runnable);
+									if (failedThreads.indexOf(runnable) != -1){
+										System.out.println("[Syncer] fatal error: " + runnable + " has already failed");
+									}else if (succeededThreads.indexOf(runnable) != -1){
+										System.out.println("[Syncer] fatal error: " + runnable + " has already succeeded");
+									}else if (unavailableThreads.indexOf(runnable) != -1){
+										System.out.println("[Syncer] fatal error: " + runnable + " has already been unavailable");
+									}else {
+										System.out.println("[Syncer] fatal error: " + runnable + " unknown");
+									}
 								}
 							}
 						}
@@ -108,8 +118,8 @@ public class Syncer {
 		latch.await();
 		synchronized (resultsLock) {
 			System.out.print("[Syncer] finished " + this.hashCode() + ": [");
-			for (ThreadResult i : results){
-				System.out.print(i + " ");
+			for (int i = 0; i < results.length; i++){
+				System.out.print(results[i] + " ");
 			}
 			System.out.println("]");
 		}
