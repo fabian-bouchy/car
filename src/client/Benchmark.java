@@ -22,8 +22,8 @@ import common.ConfigManager.ConfigType;
 public class Benchmark {
 	// Benchmark configuration: file size in kb unit.
 	private static final int[] fileSizes = {50, 100, 500, 1000, 5000, 25000};
-	private static final String outputPath = "./tmp/test_files";
-	private static final String testFilePrefix = outputPath + "/test_";
+	private static final String outputPath = "./tmp/test_files/";
+	private static final String testFilePrefix = "test_";
 	private static final String outputFilePrefix = "./tmp/output_";
 	private static final String outputFileExtension = ".csv";
 	private static final String testFileExtension = ".txt";
@@ -41,7 +41,11 @@ public class Benchmark {
 				ConfigManager.init(ConfigType.CLIENT);
 			}
 			// init the user manager
-			UserManager.init("benchmarker" + Math.random(), "testmdp");
+			String passWord = null;
+			if(args[0].endsWith("+crypto")) {
+				passWord = "testpwd";
+			}
+			UserManager.init("benchmarker" + Math.random(), passWord);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -65,13 +69,18 @@ public class Benchmark {
 		// Creating files of the right sizes
 		for (int size : fileSizes) {
 			try {
-				RandomAccessFile file = new RandomAccessFile(testFilePrefix + size + testFileExtension,"rw");
+				RandomAccessFile file = new RandomAccessFile(outputPath + testFilePrefix + size + testFileExtension,"rw");
 				file.setLength(size*1024);
 				file.close();
-				Runtime.getRuntime().exec("dd if=/dev/zero of="+ testFilePrefix + size + testFileExtension + " bs=1kB count=" + size);
+				String cmd = "dd if=/dev/zero of="+ outputPath + testFilePrefix + size + testFileExtension + " bs=1kB count=" + size;
+				Process p = Runtime.getRuntime().exec(cmd);
+				System.out.println(cmd);
+				p.waitFor();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -110,7 +119,7 @@ public class Benchmark {
 		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
-				common.File file = new common.File(testFilePrefix + size + testFileExtension, true, false);
+				common.File file = new common.File(outputPath + testFilePrefix + size + testFileExtension, true, false);
 				System.out.println(file);
 				// start
 				long startTime = System.nanoTime();
@@ -136,7 +145,7 @@ public class Benchmark {
 		// Do the job for each file
 		for (int size : fileSizes) {
 			try {
-				common.File file = new common.File(testFilePrefix + size + testFileExtension, true, false);
+				common.File file = new common.File(outputPath + testFilePrefix + size + testFileExtension, true, false);
 				System.out.println(file);
 				long startTime = System.nanoTime();
 				ServerManager.write(file);

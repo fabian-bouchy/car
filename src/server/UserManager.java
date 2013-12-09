@@ -16,6 +16,11 @@ public class UserManager {
 
 	private static boolean cypherEnabled = false;
 
+	/**
+	 * Init the UserManager. If passPhrase != null => enable crypto
+	 * @param name UserName
+	 * @param passPhrase PassPhrase if crypto is wanted
+	 */
 	public static void init(String name, String passPhrase) throws Exception {
 		username = name;
 		if(passPhrase != null) {
