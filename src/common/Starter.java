@@ -50,7 +50,7 @@ public class Starter {
 				System.out.println("[Starter] Client crashed! ");
 				e.printStackTrace();
 			}
-        }else if((args.length == 1 || args.length == 2 ) && args[0].equals("benchmark")){
+        }else if((args.length == 1 || args.length == 2 ) && args[0].contains("benchmark")){
         	Benchmark.run(args);
         }else{
             System.err.println("Usage:");
