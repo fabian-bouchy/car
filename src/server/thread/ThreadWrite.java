@@ -99,6 +99,9 @@ public class ThreadWrite extends ThreadWorker{
 				}catch(InterruptedException e){
 					e.printStackTrace();
 				}
+				
+				System.out.println(FileManager.represent());
+				System.out.println(FileManager.representMetadata());
 			}
 		} catch (IOException e )  {
 			e.printStackTrace();

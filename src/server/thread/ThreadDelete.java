@@ -41,6 +41,8 @@ public class ThreadDelete extends ThreadWorker{
 			if(replicaManager.delete(file)) {
 				out.writeObject(UtilBobby.SERVER_DELETE_OK);
 				close();
+				System.out.println(FileManager.represent());
+				System.out.println(FileManager.representMetadata());
 				return;
 			}
 		} catch (IOException e )  {
