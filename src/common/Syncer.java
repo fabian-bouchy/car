@@ -29,6 +29,7 @@ public class Syncer {
 		failedThreads 		= new ArrayList<Runnable>();
 		succeededThreads  	= new ArrayList<Runnable>();
 		unavailableThreads 	= new ArrayList<Runnable>();
+		runnables 			= new ArrayList<Runnable>();
 	}
 	
 	public void addThread(Runnable thread){
