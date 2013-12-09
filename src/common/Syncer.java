@@ -36,10 +36,10 @@ public class Syncer {
 	}
 	
 	/**
-	 * Useful to retreive and store thread results.
+	 * Useful to retrieve and store thread results.
 	 */
 	public void callback(Runnable runnable, ThreadResult value){
-		System.out.println("[syncer] thread finished: " + runnable);
+		System.out.println("[Syncer] thread finished: " + runnable);
 		
 		synchronized (waitingthreads){
 			synchronized (succeededThreads){
@@ -59,8 +59,17 @@ public class Syncer {
 									unavailableThreads.add(runnable);
 								}
 								waitingthreads.remove(runnable);
+								latch.countDown();
+							}else{
+								System.out.println("[Syncer] fatal error callback from unknown thread " + runnable);
+								if (failedThreads.indexOf(runnable) != -1){
+									System.out.println("[Syncer] fatal error: " + runnable + "has already failed");
+								}else if (succeededThreads.indexOf(runnable) != -1){
+									System.out.println("[Syncer] fatal error: " + runnable + "has already succeeded");
+								}else if (unavailableThreads.indexOf(runnable) != -1){
+									System.out.println("[Syncer] fatal error: " + runnable + "has already been unavailable");
+								}
 							}
-							latch.countDown();
 						}
 					}
 				}
@@ -75,7 +84,7 @@ public class Syncer {
 		latch = new CountDownLatch(waitingthreads.size());
 		results = new ThreadResult[waitingthreads.size()];
 		
-		System.out.println("[syncer] " + waitingthreads.size() + " threads to start");
+		System.out.println("[Syncer] " + waitingthreads.size() + " threads to start");
 		
 		synchronized (failedThreads) {
 			failedThreads.clear();
@@ -87,20 +96,22 @@ public class Syncer {
 		synchronized (waitingthreads) {
 			// start all threads
 			for(Runnable runnable : waitingthreads){
-				System.out.println("[syncer] running " + runnable);
+				System.out.println("[Syncer] running " + runnable);
 				Thread thread = new Thread(runnable);
 				thread.start();
 			}
 		}
 
 		// wait for them to finish
-		System.out.println("[syncer] waiting for all " + this.hashCode());
+		System.out.println("[Syncer] waiting for all " + this.hashCode());
 		latch.await();
-		System.out.print("[syncer] finished " + this.hashCode() + ": [");
-		for (ThreadResult i : results){
-			System.out.print(i + " ");
+		synchronized (results) {
+			System.out.print("[Syncer] finished " + this.hashCode() + ": [");
+			for (ThreadResult i : results){
+				System.out.print(i + " ");
+			}
+			System.out.println("]");
 		}
-		System.out.println("]");
 	}
 
 	public boolean allSucceeded() {
