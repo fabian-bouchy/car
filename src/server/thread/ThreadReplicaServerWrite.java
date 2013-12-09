@@ -32,34 +32,34 @@ public class ThreadReplicaServerWrite implements Runnable {
 	
 	@Override
 	public void run() {
-		System.out.println("[ThreadReplicaServerWrite] run");
+		System.out.println("[ThreadReplicaServerWrite@"+this+"] run");
 		try {
 			this.remoteReplica.write(this.file);
-			System.out.println("[ThreadReplicaServerWrite] write ok, calling callback...");
+			System.out.println("[ThreadReplicaServerWrite@"+this+"] write ok, calling callback...");
 			// callback
 			this.syncer.callback(this, ThreadResult.SUCCEEDED);
 			
-			System.out.println("[ThreadReplicaServerWrite] waiting...");
+			System.out.println("[ThreadReplicaServerWrite@"+this+"] waiting...");
 			synchronized (this) {
 				this.wait();
 			}
-			System.out.println("[ThreadReplicaServerWrite] finished waiting");
+			System.out.println("[ThreadReplicaServerWrite@"+this+"] finished waiting");
 		
 			// do the action which was decided
 			if(nextStep == NextStep.ABORT) {
-				System.out.println("[ThreadReplicaServerWrite] abort" + this.file);
+				System.out.println("[ThreadReplicaServerWrite@"+this+"] abort" + this.file);
 				this.remoteReplica.abortWrite(this.file);
 			} else if(nextStep == NextStep.COMMIT) {
-				System.out.println("[ThreadReplicaServerWrite] commit " + this.file);
+				System.out.println("[ThreadReplicaServerWrite@"+this+"] commit " + this.file);
 				this.remoteReplica.commitWrite(this.file);
 			}
-			System.out.println("[ThreadReplicaServerWrite] finished");
+			System.out.println("[ThreadReplicaServerWrite@"+this+"] finished");
 			
 		} catch (InvalidParameterException e) {
-			System.out.println("[ThreadReplicaServerWrite] write failed");
+			System.out.println("[ThreadReplicaServerWrite@"+this+"] write failed");
 			this.syncer.callback(this, ThreadResult.FAILED);
 		} catch (Exception e) {
-			System.out.println("[ThreadReplicaServerWrite] failed: " + e.getLocalizedMessage());
+			System.out.println("[ThreadReplicaServerWrite@"+this+"] failed: " + e.getLocalizedMessage());
 			this.syncer.callback(this, ThreadResult.UNAVAILABLE);
 		}
 	}
