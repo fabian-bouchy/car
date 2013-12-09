@@ -213,7 +213,7 @@ public class Benchmark {
 	private static void log(String line) {
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(currentOutputLogFile, true));
-			bw.write(line );
+			bw.write(line);
 			bw.newLine();
 			bw.close();
 		} catch (IOException e) {
