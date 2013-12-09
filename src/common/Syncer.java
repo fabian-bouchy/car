@@ -20,6 +20,7 @@ public class Syncer {
 	private ArrayList<Runnable> succeededThreads;
 	private ArrayList<Runnable> unavailableThreads;
 	private ThreadResult[] results;
+	private Object resultsLock = new Object();
 	
 	
 	public Syncer(){
@@ -45,7 +46,7 @@ public class Syncer {
 			synchronized (succeededThreads){
 				synchronized (failedThreads){
 					synchronized (unavailableThreads){
-						synchronized (results) {
+						synchronized (resultsLock) {
 									
 							// store the value form callback
 							int position = waitingthreads.indexOf(runnable);
@@ -105,7 +106,7 @@ public class Syncer {
 		// wait for them to finish
 		System.out.println("[Syncer] waiting for all " + this.hashCode());
 		latch.await();
-		synchronized (results) {
+		synchronized (resultsLock) {
 			System.out.print("[Syncer] finished " + this.hashCode() + ": [");
 			for (ThreadResult i : results){
 				System.out.print(i + " ");
