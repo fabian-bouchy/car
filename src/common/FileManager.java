@@ -37,27 +37,27 @@ public class FileManager {
 
 	// TRANSACTIONS
 	public static synchronized void prepare(File file){
-		tmpFiles.put(file.getId(), file);
+		tmpFiles.put(file.getId()+UtilBobby.SPLIT_FILE+file.getVersionString(), file);
 	}
 
-	public static synchronized void commit(String fileId) {
-		File file = tmpFiles.get(fileId);
-		if(file != null) {
+	public static synchronized void commit(File file) {
+		File fileTmp = tmpFiles.get(file.getId()+UtilBobby.SPLIT_FILE+file.getVersionString());
+		if(fileTmp != null) {
 //			try {
 //				file.unlock();
 //			} catch (InterruptedException e) {
 //				e.printStackTrace();
 //			}
-			System.out.println("[FileManager] commit for " + file);
-			tmpFiles.remove(fileId);
-			addOrReplaceFile(file);
+			System.out.println("[FileManager] commit for " + fileTmp);
+			tmpFiles.remove(file.getId()+UtilBobby.SPLIT_FILE+file.getVersionString());
+			addOrReplaceFile(fileTmp);
 		} else {
-			System.out.println("[FileManager] nothing to commit for " + fileId);
+			System.out.println("[FileManager] nothing to commit for " + file.getId()+UtilBobby.SPLIT_FILE+file.getVersionString());
 		}
 	}
 
-	public static synchronized void abort(String fileId) {
-		tmpFiles.remove(fileId);
+	public static synchronized void abort(File file) {
+		tmpFiles.remove(file.getId()+UtilBobby.SPLIT_FILE+file.getVersionString());
 	}
 
 	// GETTERS

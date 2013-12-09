@@ -78,7 +78,7 @@ public class ThreadWrite extends ThreadWorker{
 					
 					System.out.println("[ThreadWrite] Replication succeeded: " + file);
 					
-					FileManager.commit(file.getId());
+					FileManager.commit(file.generateMetadata());
 					if(fileOrMetadata.isFile()){
 						FileManager.addOrReplaceFile(file);
 					}
@@ -89,7 +89,7 @@ public class ThreadWrite extends ThreadWorker{
 					
 					UtilPrinter.printlnError("[ThreadWrite] Replication failed: " + file);
 					
-					FileManager.abort(file.getId());
+					FileManager.abort(file.generateMetadata());
 					
 					// send to client that the write failed
 					out.writeObject(UtilBobby.SERVER_WRITE_KO);

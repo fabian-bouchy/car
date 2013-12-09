@@ -249,6 +249,14 @@ public class File implements java.io.Serializable{
 		return id.charAt(0);
 	}
 	
+	public String getVersionString(){
+		String a = "";
+		for(int i = 0; i < this.version.length; i++ ) {
+			a += "-"+this.version[i];
+		}
+		return a;
+	}
+	
 	public String toString(){
 		if(isFile()){
 			return "[File] " + id + " (" + fileName + "), " + size + "B" + " version " + getVersionToString();

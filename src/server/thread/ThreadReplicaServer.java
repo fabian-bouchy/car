@@ -150,12 +150,8 @@ public class ThreadReplicaServer extends ThreadWorker{
 									if (myPriority > theirPriority){
 										// TODO verify this is correct
 										// oldFile.lock();
-										if (FileManager.getFileOrMetadata(file.getId()).getGlobalVersion() < file.getGlobalVersion()){
-											System.out.println("[ThreadReplicaServer] I obey and store the new file");
-											FileManager.addOrReplaceFile(file);
-										}else{
-											System.out.println("[ThreadReplicaServer] I should obey, but they have the same version, so I ignore it");
-										}
+										System.out.println("[ThreadReplicaServer] I obey and store the new file");
+										FileManager.prepare(file);
 										out.writeObject(UtilBobby.REPLICA_WRITE_OK);
 									} else {
 										// reject the file
@@ -206,13 +202,17 @@ public class ThreadReplicaServer extends ThreadWorker{
 				// commit file
 				if(cmd[1].equals(UtilBobby.REPLICA_TRANSACTION_SYMBOL)){
 
+					File file = (File) in.readObject();
+					
 					if(command.contains(UtilBobby.REPLICA_TRANSACTION_COMMIT)) {
-						System.out.println("[ThreadReplicaServer] commit for " + cmd[3]);
-						FileManager.commit(cmd[3]);
+						
+						
+						System.out.println("[ThreadReplicaServer] commit for " + file);
+						FileManager.commit(file);
 						out.writeObject(UtilBobby.REPLICA_TRANSACTION_COMMITED);
 					} else {
-						System.out.println("[ThreadReplicaServer] abort for " + cmd[3]);
-						FileManager.abort(cmd[3]);
+						System.out.println("[ThreadReplicaServer] abort for " + file);
+						FileManager.abort(file);
 						out.writeObject(UtilBobby.REPLICA_TRANSACTION_ABORTED);
 					}
 				}
@@ -254,6 +254,8 @@ public class ThreadReplicaServer extends ThreadWorker{
 			}
 		} catch (IOException e) {
 			System.out.println("[ThreadReplicaServer] failed, details: ");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		System.out.println("[ThreadReplicaServer] end");

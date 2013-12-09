@@ -100,6 +100,8 @@ public class RemoteReplica extends RemoteNode{
 		ObjectInputStream  in  = new ObjectInputStream(socketToServer.getInputStream());
 		
 		out.writeObject(UtilBobby.REPLICA_TRANSACTION_COMMIT + UtilBobby.SPLIT_REGEX + file.getId());
+		
+		out.writeObject(file.generateMetadata());
 
 		// return the answer
 		boolean answer = false;
@@ -123,6 +125,8 @@ public class RemoteReplica extends RemoteNode{
 		ObjectInputStream  in  = new ObjectInputStream(socketToServer.getInputStream());
 		
 		out.writeObject(UtilBobby.REPLICA_TRANSACTION_ABORT + UtilBobby.SPLIT_REGEX + file.getId());
+		
+		out.writeObject(file.generateMetadata());
 
 		// return the answer
 		boolean answer = false;
