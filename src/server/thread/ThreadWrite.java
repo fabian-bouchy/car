@@ -38,6 +38,7 @@ public class ThreadWrite extends ThreadWorker{
 			{
 				System.out.println("[ThreadWrite] Creating new file " + file);
 				
+				file.reinitializeVector();
 				file.incrementVersion(myId);
 				FileManager.addOrReplaceFile(file);
 				
@@ -67,6 +68,7 @@ public class ThreadWrite extends ThreadWorker{
 					e.printStackTrace();
 				}
 				
+				file.reinitializeVector();
 				file.setVersion(fileOrMetadata.getVersion());
 				file.incrementVersion(myId);
 				

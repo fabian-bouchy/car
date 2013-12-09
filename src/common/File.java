@@ -129,6 +129,13 @@ public class File implements java.io.Serializable{
 		}
 	}
 	
+	public void reinitializeVector(){
+		this.version = new int[ConfigManager.getN()];
+		for (int i = 0; i < this.version.length; i++){
+			this.version[i] = 0;
+		}
+	}
+	
 	public boolean isFile() {
 		return this.data != null;
 	}

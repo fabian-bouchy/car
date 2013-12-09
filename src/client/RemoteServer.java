@@ -90,7 +90,7 @@ public class RemoteServer extends RemoteNode {
 	}
 
 	/**
-	 * Implment the protocol "read" initiate with the thread ThreadRead. 
+	 * Implement the protocol "read" initiate with the thread ThreadRead. 
 	 */
 	@Override
 	public File read(File metadata) throws Exception {
