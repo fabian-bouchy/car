@@ -147,11 +147,15 @@ public class ThreadReplicaServer extends ThreadWorker{
 
 									System.out.println("[ThreadReplicaServer] my priority is " + myPriority + " theirs is " +theirPriority);
 
-									if (myPriority > theirPriority && (file.getGlobalVersion() > FileManager.getFileOrMetadata(file.getId()).getGlobalVersion())){
+									if (myPriority > theirPriority){
 										// TODO verify this is correct
 										// oldFile.lock();
-										System.out.println("[ThreadReplicaServer] I obey and store the new file");
-										FileManager.addOrReplaceFile(file);
+										if (FileManager.getFileOrMetadata(file.getId()).getGlobalVersion() < file.getGlobalVersion()){
+											System.out.println("[ThreadReplicaServer] I obey and store the new file");
+											FileManager.addOrReplaceFile(file);
+										}else{
+											System.out.println("[ThreadReplicaServer] I should obey, but they have the same version, so I ignore it");
+										}
 										out.writeObject(UtilBobby.REPLICA_WRITE_OK);
 									} else {
 										// reject the file
