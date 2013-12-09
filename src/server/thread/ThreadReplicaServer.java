@@ -121,9 +121,9 @@ public class ThreadReplicaServer extends ThreadWorker{
 							} else {
 								System.out.println("[ThreadReplicaServer] update");
 								// TODO acquire a lock on the old file ?
-								System.out.println("[ThreadReplicaServer] acquiring a lock on : "+oldFile);
-								oldFile.lock();
-								System.out.println("[ThreadReplicaServer] lock acquired on : "+oldFile);
+								//System.out.println("[ThreadReplicaServer] acquiring a lock on : "+oldFile);
+								//oldFile.lock();
+								//System.out.println("[ThreadReplicaServer] lock acquired on : "+oldFile);
 
 								System.out.println("[ThreadReplicaServer] comp:" + oldFile.isCompatibleWith(file) + " new:" + file.getGlobalVersion() + " old+1:" + (oldFile.getGlobalVersion() + 1));
 
@@ -135,8 +135,8 @@ public class ThreadReplicaServer extends ThreadWorker{
 									FileManager.prepare(file); // store in temporary storage
 									out.writeObject(UtilBobby.REPLICA_WRITE_OK);
 
-									oldFile.unlock();
-									System.out.println("[ThreadReplicaServer] released the lock on : "+oldFile);
+									//oldFile.unlock();
+									//System.out.println("[ThreadReplicaServer] released the lock on : "+oldFile);
 								} else {
 									// there is a conflicted copy
 									int myPriority = ConfigManager.getMe().getPriority();
