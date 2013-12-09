@@ -40,7 +40,7 @@ public class Syncer {
 	 * Useful to retrieve and store thread results.
 	 */
 	public void callback(Runnable runnable, ThreadResult value){
-		System.out.println("[Syncer] thread finished: " + runnable);
+		System.out.println("[Syncer] thread finished: " + runnable + " with result " + value);
 		
 		synchronized (waitingthreads){
 			synchronized (succeededThreads){
