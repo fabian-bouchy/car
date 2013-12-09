@@ -127,11 +127,9 @@ public class ThreadReplicaServer extends ThreadWorker{
 
 								System.out.println("[ThreadReplicaServer] comp:" + oldFile.isCompatibleWith(file) + " new:" + file.getGlobalVersion() + " old+1:" + (oldFile.getGlobalVersion() + 1));
 
-								if (oldFile.isCompatibleWith(file) && (file.getGlobalVersion() >= (oldFile.getGlobalVersion() + 1)))
+								if (oldFile.isCompatibleWith(file) && (file.getGlobalVersion() > oldFile.getGlobalVersion()))
 								{
 									// not new, but no conflict
-									// TODO verify conditions and locks
-									// TODO unlock in commit
 									FileManager.prepare(file); // store in temporary storage
 									out.writeObject(UtilBobby.REPLICA_WRITE_OK);
 
@@ -148,8 +146,9 @@ public class ThreadReplicaServer extends ThreadWorker{
 
 									System.out.println("[ThreadReplicaServer] my priority is " + myPriority + " theirs is " +theirPriority);
 
-									if (myPriority < theirPriority){
+									if (myPriority > theirPriority && (file.getGlobalVersion() > FileManager.getFileOrMetadata(file.getId()).getGlobalVersion())){
 										// TODO verify this is correct
+										// oldFile.lock();
 										System.out.println("[ThreadReplicaServer] I obey and store the new file");
 										FileManager.addOrReplaceFile(file);
 										out.writeObject(UtilBobby.REPLICA_WRITE_OK);
