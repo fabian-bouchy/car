@@ -41,7 +41,11 @@ public class Client {
 		if (cmd.startsWith("write")){
 			
 			System.out.println("[Client] Writing "+fileName);
-			ServerManager.write(new File(fileName, true, false));
+			try {
+				ServerManager.write(new File(fileName, true, false));
+			} catch (Exception e) {
+				System.out.println("[Client] Write failed! " + e.getLocalizedMessage());
+			}
 			
 		}else if (cmd.startsWith("compress")){
 			
