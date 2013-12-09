@@ -32,34 +32,34 @@ public class ThreadReplicaServerWrite implements Runnable {
 	
 	@Override
 	public void run() {
-		System.out.println("[ThreadReplicaServerWrite@"+this+"] run");
+		System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] run");
 		try {
 			this.remoteReplica.write(this.file);
-			System.out.println("[ThreadReplicaServerWrite@"+this+"] write ok, calling callback...");
+			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] write ok, calling callback...");
 			// callback
 			this.syncer.callback(this, ThreadResult.SUCCEEDED);
 			
-			System.out.println("[ThreadReplicaServerWrite@"+this+"] waiting...");
+			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] waiting...");
 			synchronized (this) {
 				this.wait();
 			}
-			System.out.println("[ThreadReplicaServerWrite@"+this+"] finished waiting");
+			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] finished waiting");
 		
 			// do the action which was decided
 			if(nextStep == NextStep.ABORT) {
-				System.out.println("[ThreadReplicaServerWrite@"+this+"] abort" + this.file);
+				System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] abort" + this.file);
 				this.remoteReplica.abortWrite(this.file);
 			} else if(nextStep == NextStep.COMMIT) {
-				System.out.println("[ThreadReplicaServerWrite@"+this+"] commit " + this.file);
+				System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] commit " + this.file);
 				this.remoteReplica.commitWrite(this.file);
 			}
-			System.out.println("[ThreadReplicaServerWrite@"+this+"] finished");
+			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] finished");
 			
 		} catch (InvalidParameterException e) {
-			System.out.println("[ThreadReplicaServerWrite@"+this+"] write failed");
+			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] write failed");
 			this.syncer.callback(this, ThreadResult.FAILED);
 		} catch (Exception e) {
-			System.out.println("[ThreadReplicaServerWrite@"+this+"] failed: " + e.getLocalizedMessage());
+			System.out.println("[ThreadReplicaServerWrite@"+this.hashCode()+"] failed: " + e.getLocalizedMessage());
 			this.syncer.callback(this, ThreadResult.UNAVAILABLE);
 		}
 	}
